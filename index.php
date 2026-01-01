@@ -1,12 +1,9 @@
 <?php
-// index.php : Le "Portier" de ton site
+require_once 'config/db.php';
+session_start();
 
-session_start(); // On démarre la session pour les futurs logins
-
-// On regarde si une "page" est demandée dans l'URL, sinon on va sur "home"
 $page = $_GET['page'] ?? 'home';
 
-// Routage simple
 switch($page) {
     case 'home':
         $content = "<h1>Bienvenue chez Vite & Gourmand</h1><p>Ceci est la page d'accueil.</p>";
@@ -21,12 +18,10 @@ switch($page) {
         break;
         
     default:
-        // Page 404
         http_response_code(404);
         $content = "<h1>404 - Page introuvable</h1>";
         break;
 }
 
-// Affichage simple pour tester ce soir
 echo $content;
 ?>
