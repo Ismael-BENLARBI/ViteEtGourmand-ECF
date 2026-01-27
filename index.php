@@ -1,14 +1,24 @@
 <?php
 session_start();
 
+require_once 'config/db.php';
+
 $page = $_GET['page'] ?? 'home';
 
 switch($page) {
     case 'home':
-        require_once 'Views/home/index.php';
+        require_once 'views/home/index.php';
         break;
 
+    // --- PAGE NOS MENUS ---
     case 'menus':
+        // 1. On appelle le modèle
+        require_once 'models/menu.php';
+        
+        // 2. On récupère les données
+        $menus = Menu::getAll();
+        
+        // 3. On affiche la vue
         require_once 'views/menus/index.php';
         break;
 

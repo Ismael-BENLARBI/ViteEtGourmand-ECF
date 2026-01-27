@@ -1,4 +1,6 @@
-CREATE DATABASE IF NOT EXISTS vite_et_gourmand CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+-- 1. CRÉATION DE LA BASE ET DES TABLES
+DROP DATABASE IF EXISTS vite_et_gourmand;
+CREATE DATABASE vite_et_gourmand CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE vite_et_gourmand;
 
 CREATE TABLE role (
@@ -51,8 +53,8 @@ CREATE TABLE menu (
     quantite_restante INT NOT NULL DEFAULT 0,
     image_principale VARCHAR(255),
     theme_id INT,
-    FOREIGN KEY (theme_id) REFERENCES theme(theme_id) ON DELETE SET NULL,
     regime_id INT,
+    FOREIGN KEY (theme_id) REFERENCES theme(theme_id) ON DELETE SET NULL,
     FOREIGN KEY (regime_id) REFERENCES regime(regime_id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
@@ -114,7 +116,65 @@ CREATE TABLE contact (
     est_traite BOOLEAN DEFAULT FALSE
 ) ENGINE=InnoDB;
 
+-- Tables de liaison (Ajoutées ici pour être sûr qu'elles existent)
+CREATE TABLE menu_plat (
+    menu_id INT,
+    plat_id INT,
+    PRIMARY KEY (menu_id, plat_id),
+    FOREIGN KEY (menu_id) REFERENCES menu(menu_id) ON DELETE CASCADE,
+    FOREIGN KEY (plat_id) REFERENCES plat(plat_id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE plat_allergene (
+    plat_id INT,
+    allergene_id INT,
+    PRIMARY KEY (plat_id, allergene_id),
+    FOREIGN KEY (plat_id) REFERENCES plat(plat_id) ON DELETE CASCADE,
+    FOREIGN KEY (allergene_id) REFERENCES allergene(allergene_id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+
+-- 2. INSERTION DES DONNÉES
+
+-- Rôles
 INSERT INTO role (libelle) VALUES ('Administrateur'), ('Employe'), ('Utilisateur');
+
+-- Régimes
 INSERT INTO regime (libelle) VALUES ('Classique'), ('Végétarien'), ('Vegan'), ('Halal'), ('Sans Gluten');
+
+-- Thèmes
 INSERT INTO theme (libelle) VALUES ('Noël'), ('Pâques'), ('Mariage'), ('Anniversaire'), ('Entreprise');
-INSERT INTO categorie_plat (libelle) VALUES ('Entrée'), ('Plat'), ('Dessert');
+
+-- Allergènes
+INSERT INTO allergene (libelle) VALUES ('Gluten'), ('Lactose'), ('Oeufs'), ('Arachides'), ('Fruits à coque');
+
+-- Utilisateur Admin (Mot de passe : admin123) - INDISPENSABLE POUR LE LOGIN
+INSERT INTO utilisateur (nom, prenom, email, password, role_id) 
+VALUES ('Chef', 'Julie', 'admin@viteetgourmand.fr', '$2y$10$Xk.v/Fg.v/Fg.v/Fg.v/Fg.v/Fg.v/Fg.v/Fg.v/Fg.v/Fg.v/Fg', 1);
+
+-- Plats
+INSERT INTO plat (titre_plat, description, photo, categorie) VALUES 
+('Foie gras maison', 'Mi-cuit au torchon avec sa confiture de figues', 'foie_gras.jpg', 'entree'),
+('Dinde aux marrons', 'Farcie et rôtie au four', 'dinde.jpg', 'plat'),
+('Bûche Glacée', 'Parfum fruits rouges et vanille', 'buche.jpg', 'dessert'),
+('Velouté de courge', 'Aux éclats de châtaigne', 'veloute.jpg', 'entree'),
+('Risotto aux cèpes', 'Riz arborio crémeux', 'risotto.jpg', 'plat'),
+('Salade de fruits', 'Fruits de saison frais', 'salade.jpg', 'dessert');
+
+-- Menus
+INSERT INTO menu (titre, description, prix_par_personne, quantite_restante, image_principale, theme_id, regime_id) VALUES 
+('Menu de Noël', 'Le grand classique des fêtes pour réunir la famille autour de produits nobles.', 45.00, 50, 'menu_noel.jpg', 1, 1),
+('Menu Végétarien', 'Une alternative gourmande et saine, cuisinée avec des produits du marché.', 32.00, 30, 'menu_vege.jpg', 4, 2), 
+('Buffet Entreprise', 'Un assortiment complet sucré/salé idéal pour vos séminaires.', 25.00, 100, 'menu_entreprise.jpg', 5, 1);
+
+-- Liaisons Menu <-> Plat
+-- Menu Noël (1) : Foie gras(1), Dinde(2), Bûche(3)
+INSERT INTO menu_plat (menu_id, plat_id) VALUES (1, 1), (1, 2), (1, 3);
+-- Menu Végé (2) : Velouté(4), Risotto(5), Salade(6)
+INSERT INTO menu_plat (menu_id, plat_id) VALUES (2, 4), (2, 5), (2, 6);
+
+-- Liaisons Plat <-> Allergène
+-- Bûche (3) contient Lactose(2) et Oeufs(3)
+INSERT INTO plat_allergene (plat_id, allergene_id) VALUES (3, 2), (3, 3);
+-- Risotto (5) contient Lactose(2)
+INSERT INTO plat_allergene (plat_id, allergene_id) VALUES (5, 2);
