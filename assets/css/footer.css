@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+
+.footer-custom {
+    background-color: #8B2635 !important;
+    color: #F2F0ED !important;
+    font-family: 'Montserrat', sans-serif;
+    padding-top: 3rem;
+    margin-top: auto;
+}
+
+.footer-custom h5 {
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
+.footer-custom ul li, 
+.footer-custom p {
+    font-size: 0.9rem;
+    line-height: 1.8;
+}
+
+.footer-custom a {
+    color: #F2F0ED !important;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.footer-custom a:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}
+
+.social-icon {
+    font-size: 1.5rem;
+    margin-right: 15px;
+    display: inline-block;
+}
+
+.footer-copyright {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 15px 0;
+    font-size: 0.8rem;
+    margin-top: 2rem;
+}

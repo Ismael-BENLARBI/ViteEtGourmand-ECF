@@ -1,19 +1,38 @@
 <?php
-require_once 'config/db.php';
 session_start();
 
 $page = $_GET['page'] ?? 'home';
 
-// Fichier: Views/home/index.php
+switch($page) {
+    case 'home':
+        require_once 'Views/home/index.php';
+        break;
 
-$isHomepage = false; // C'est cette ligne qui rend le header transparent !
-require_once 'views/partials/header.php'; 
+    case 'menus':
+        require_once 'views/menus/index.php';
+        break;
+
+    case 'contact':
+        require_once 'views/contact/index.php';
+        break;
+
+    case 'login':
+        require_once 'views/auth/login.php'; 
+        break;
+
+    case 'profil':
+        require_once 'views/users/profil.php'; 
+        break;
+
+    case 'logout':
+        session_destroy();
+        header('Location: index.php?page=home');
+        exit;
+        break;
+
+    default:
+        http_response_code(404);
+        echo "<h1 style='text-align:center; padding-top:100px;'>404 - Page introuvable</h1>";
+        break;
+}
 ?>
-
-<div style="background: url('chemin/vers/ton/image_hero.jpg') no-repeat center center; background-size: cover; height: 100vh; padding-top: 100px;">
-    <div class="container text-white">
-        <h1>L'excellence traiteur livrée chez vous !</h1>
-        </div>
-</div>
-
-<?php require_once 'views/partials/footer.php'; ?>
