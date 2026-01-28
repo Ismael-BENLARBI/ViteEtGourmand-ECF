@@ -12,14 +12,18 @@ switch($page) {
 
     // --- PAGE NOS MENUS ---
     case 'menus':
-        // 1. On appelle le modèle
-        require_once 'models/menu.php';
+        require_once 'Models/Menu.php';
         
-        // 2. On récupère les données
-        $menus = Menu::getAll();
+        // 1. On regarde si l'utilisateur a filtré (via l'URL ?theme=...)
+        $filtreTheme = $_GET['theme'] ?? 'all';
         
-        // 3. On affiche la vue
-        require_once 'views/menus/index.php';
+        // 2. On récupère les menus filtrés (ou tous si $filtreTheme vaut 'all')
+        $menus = Menu::getAll($filtreTheme);
+        
+        // 3. On récupère la liste des thèmes pour remplir le select
+        $themes = Menu::getThemes();
+        
+        require_once 'Views/menus/index.php';
         break;
 
     case 'contact':

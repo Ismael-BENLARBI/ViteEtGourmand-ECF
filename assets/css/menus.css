@@ -1,0 +1,200 @@
+/* --- CONFIGURATION GLOBALE --- */
+body {
+    background-color: #F2F0ED;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* --- TITRE DE PAGE (Nouveau) --- */
+.page-title {
+    text-align: center;
+    color: #8B2635; /* La couleur demandée */
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800; /* Gras pour le style titre */
+    text-transform: uppercase;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    margin-top: 0;
+}
+
+/* --- BLOC FILTRES (Le carré Orange/Doré) --- */
+.filters-container {
+    background-color: #D8A85E;
+    border-radius: 20px;
+    padding: 15px 30px; /* Padding réduit car c'est repliable */
+    max-width: 900px;
+    margin: 0 auto 50px auto;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    color: #8B2635;
+    transition: all 0.3s ease;
+}
+
+/* En-tête du filtre (La partie cliquable avec la flèche) */
+.filters-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    gap: 15px;
+    padding: 10px 0;
+}
+
+.filters-title {
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 1.2rem;
+    margin: 0; /* Pas de marge pour bien aligner */
+}
+
+/* La flèche */
+.toggle-arrow {
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: transform 0.3s ease;
+}
+
+/* Classe pour faire tourner la flèche quand ouvert */
+.toggle-arrow.open {
+    transform: rotate(180deg);
+}
+
+/* Le contenu caché (Formulaire) */
+.filters-content {
+    display: none; /* Caché par défaut ou via JS */
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(139, 38, 53, 0.2); /* Petit trait de séparation */
+}
+
+.filters-grid {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.filter-column h5 {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+.form-check-label {
+    font-weight: 500;
+    color: #5a3e1b;
+}
+
+.form-control-custom {
+    border-radius: 5px;
+    border: none;
+    padding: 5px 10px;
+}
+
+/* --- CARTES DES MENUS --- */
+.menu-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.menu-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Modification Image (Plus de bords blancs) */
+.menu-img-container {
+    height: 220px;
+    overflow: hidden;
+    position: relative;
+    padding: 0; /* PADDING À 0 : L'image touche les bords */
+    width: 100%;
+}
+
+.menu-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Pas de border-radius ici car le conteneur l'a déjà */
+}
+
+.card-body-custom {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+}
+
+/* --- BADGES --- */
+.badges-container {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: -15px;
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 2;
+}
+
+.badge-theme {
+    background-color: #E0E0E0;
+    color: #555;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge-regime {
+    background-color: #D8A85E;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* --- TYPO --- */
+.menu-title {
+    font-weight: 800;
+    color: #000;
+    font-size: 1.3rem;
+    margin-bottom: 5px;
+}
+
+.menu-min-person {
+    font-style: italic;
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.menu-price {
+    color: #D8A85E;
+    font-weight: 800;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.btn-details {
+    background-color: #D8A85E;
+    color: white;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 10px 40px;
+    border-radius: 50px;
+    text-decoration: none;
+    display: inline-block;
+    border: none;
+    transition: background 0.2s;
+}
+
+.btn-details:hover {
+    background-color: #c5964d;
+    color: white;
+}
