@@ -119,7 +119,7 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* Pas de border-radius ici car le conteneur l'a déjà */
+    object-position: center;
 }
 
 .card-body-custom {

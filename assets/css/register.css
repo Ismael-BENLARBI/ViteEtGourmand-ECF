@@ -1,0 +1,105 @@
+/* --- CONFIGURATION GLOBALE --- */
+body {
+    background-color: #F2F0ED; /* Le fond beige du site */
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* --- LA CARTE DU FORMULAIRE --- */
+.register-card {
+    background: #ffffff;
+    border-radius: 30px; /* Gros arrondis comme sur la page détail */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05); /* Ombre légère */
+    padding: 40px;
+    margin-top: 30px;
+    margin-bottom: 50px;
+    border: none; /* Pas de bordure grise moche */
+}
+
+/* --- TITRES --- */
+.form-title {
+    color: #D8A85E; /* Le doré de la marque */
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.section-label {
+    color: #888;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+/* --- CHAMPS DE FORMULAIRE --- */
+.form-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.form-control {
+    border-radius: 10px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    background-color: #FAFAFA;
+    transition: all 0.3s;
+}
+
+.form-control:focus {
+    border-color: #D8A85E; /* Bordure dorée quand on clique dedans */
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(216, 168, 94, 0.1); /* Petite lueur dorée */
+}
+
+.form-text {
+    font-size: 0.75rem;
+    color: #999;
+}
+
+/* --- BOUTON D'ACTION --- */
+.btn-register {
+    background-color: #8B2635; /* Noir/Gris foncé */
+    color: white;
+    font-weight: 800;
+    text-transform: uppercase;
+    border-radius: 50px; /* Bouton pilule */
+    padding: 15px;
+    width: 100%;
+    border: none;
+    margin-top: 20px;
+    transition: transform 0.2s, background-color 0.2s;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.btn-register:hover {
+    background-color: #D8A85E; /* Devient doré au survol */
+    transform: scale(1.02); /* Petit effet de zoom */
+    color: white;
+}
+
+/* --- LIEN RETOUR LOGIN --- */
+.login-link {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.login-link a {
+    color: #D8A85E;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}

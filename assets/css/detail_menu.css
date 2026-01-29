@@ -1,0 +1,355 @@
+/* --- CONFIGURATION GLOBALE --- */
+body {
+    background-color: #F2F0ED;
+    font-family: 'Montserrat', sans-serif;
+    color: #333;
+}
+
+/* --- CONTENEUR PRINCIPAL (La Carte Blanche) --- */
+.detail-card {
+    background: white;
+    border-radius: 30px; /* Arrondis prononcés comme sur la maquette */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    overflow: hidden;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    padding: 40px;
+    position: relative;
+}
+
+/* La ligne verticale de séparation */
+.vertical-divider {
+    border-right: 2px solid #E0C0C0; /* Couleur rosée/beige de la ligne */
+}
+
+/* --- COLONNE GAUCHE (Images & Composition) --- */
+.main-image-container {
+    border-radius: 20px;
+    overflow: hidden;
+    height: 350px;
+    margin-bottom: 20px;
+}
+
+.main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Les petites images en dessous */
+.thumbnails-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.thumb-img {
+    width: calc(50% - 7.5px);
+    height: 120px;
+    border-radius: 15px;
+    object-fit: cover;
+}
+
+/* Section Composition */
+.composition-section {
+    text-align: center;
+}
+
+.composition-title {
+    font-weight: 800;
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    color: #000;
+}
+
+.plat-category {
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 1rem;
+    margin-bottom: 5px;
+    margin-top: 15px;
+}
+
+.plat-name {
+    font-size: 0.95rem;
+    margin-bottom: 2px;
+}
+
+.allergenes {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* --- COLONNE DROITE (Détails & Action) --- */
+.right-col-content {
+    padding-left: 40px; /* Espace après la ligne verticale */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.menu-title-detail {
+    font-weight: 800;
+    font-size: 2.2rem;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    color: #000;
+}
+
+/* Badges */
+.badges-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.badge-pill-theme {
+    background-color: #F5F5F5;
+    border: 1px solid #ddd;
+    border-radius: 50px;
+    padding: 8px 20px;
+    font-weight: 600;
+    color: #333;
+}
+
+.badge-pill-regime {
+    background-color: #D8A85E;
+    border-radius: 50px;
+    padding: 8px 20px;
+    font-weight: 600;
+    color: white;
+}
+
+/* Prix */
+.price-large {
+    color: #D8A85E;
+    font-weight: 800;
+    font-size: 2.5rem;
+    margin-bottom: 0;
+}
+
+.min-personnes {
+    font-style: italic;
+    color: #555;
+    font-size: 1rem;
+    margin-bottom: 20px;
+}
+
+/* Alerte Stock */
+.stock-alert {
+    color: #D8A85E;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+/* Boites Grises (Livraison, Quantité, Réduction) */
+.info-box {
+    background-color: #F4F4F4; /* Gris clair */
+    border-radius: 15px;
+    padding: 15px 20px;
+    margin-bottom: 15px;
+}
+
+.info-box-title {
+    font-weight: 800;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.info-box-text {
+    font-size: 0.9rem;
+    color: #333;
+}
+
+/* Selecteur Quantité */
+.qty-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.qty-btn {
+    background: #ddd;
+    border: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Bouton Panier */
+.btn-panier {
+    background: linear-gradient(90deg, #D8A85E 0%, #c5964d 100%);
+    color: white;
+    font-weight: 800;
+    text-transform: uppercase;
+    border: none;
+    width: 100%;
+    padding: 15px;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    margin-top: 20px;
+    box-shadow: 0 5px 15px rgba(216, 168, 94, 0.4);
+    transition: transform 0.2s;
+}
+
+.btn-panier:hover {
+    transform: scale(1.02);
+}
+
+/* --- CSS POUR LA LIGHTBOX (Image agrandie) --- */
+
+/* 1. Rendre l'image principale cliquable */
+.main-image.clickable {
+    cursor: zoom-in; /* Change le curseur en loupe */
+    transition: opacity 0.2s;
+}
+.main-image.clickable:hover {
+    opacity: 0.9; /* Petit effet au survol */
+}
+
+/* 2. Le fond noir (caché par défaut) */
+.modal-overlay {
+    display: none; /* Caché ! */
+    position: fixed; /* Reste fixe même si on scrolle */
+    z-index: 9999; /* Tout au dessus du reste du site */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.85); /* Noir transparent à 85% */
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+/* 3. L'image agrandie à l'intérieur */
+.modal-content-img {
+    margin: auto;
+    display: block;
+    max-width: 90%; /* Ne dépasse jamais 90% de la largeur d'écran */
+    max-height: 90vh; /* Ne dépasse jamais 90% de la hauteur d'écran */
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255,255,255,0.2);
+    animation: zoom 0.3s; /* Petite animation d'ouverture */
+}
+
+/* 4. Le bouton Fermer (X) */
+.close-modal {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.close-modal:hover,
+.close-modal:focus {
+    color: #D8A85E; /* Devient doré au survol */
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Animation d'ouverture (Optionnel) */
+@keyframes zoom {
+  from {transform:scale(0.7); opacity:0}
+  to {transform:scale(1); opacity:1}
+}
+
+/* Rendre les miniatures interactives */
+.thumb-img {
+    width: calc(50% - 7.5px);
+    height: 120px;
+    border-radius: 15px;
+    object-fit: cover;
+    
+    /* NOUVEAU : */
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0.7; /* Un peu transparentes par défaut */
+}
+
+.thumb-img:hover {
+    opacity: 1; /* Pleine couleur au survol */
+    transform: scale(1.02); /* Petit zoom */
+    border: 2px solid #D8A85E; /* Bordure dorée au survol */
+}
+
+/* =========================================
+   RESPONSIVE (MOBILE & TABLETTE)
+   ========================================= */
+@media (max-width: 768px) {
+    
+    /* 1. On réduit les marges de la carte */
+    .detail-card {
+        padding: 20px; /* Au lieu de 40px */
+        border-radius: 20px;
+    }
+
+    /* 2. On supprime la ligne verticale et on sépare horizontalement */
+    .vertical-divider {
+        border-right: none; /* Plus de ligne à droite */
+        border-bottom: 2px solid #E0C0C0; /* Une ligne en bas à la place */
+        padding-bottom: 30px;
+        margin-bottom: 30px;
+    }
+
+    /* 3. On annule le padding gauche de la colonne de droite */
+    .right-col-content {
+        padding-left: 0;
+    }
+
+    /* 4. Gestion des Images Miniatures (Le problème des 3 images) */
+    .thumbnails-row {
+        gap: 10px; /* Espace un peu plus petit */
+        overflow-x: auto; /* Permet de scroller horizontalement si ça dépasse */
+        justify-content: flex-start; /* Aligner au début */
+    }
+
+    .thumb-img {
+        /* Astuce : On force chaque image à prendre environ 1/3 de la place */
+        /* calc(33.33% - 10px) assure que 3 images rentrent */
+        width: calc(33.33% - 7px); 
+        height: 80px; /* Moins haut sur mobile */
+        flex-shrink: 0; /* Empêche l'image de s'écraser */
+    }
+
+    /* 5. Typographie adaptée (Plus petit) */
+    .menu-title-detail {
+        font-size: 1.8rem; /* Au lieu de 2.2rem */
+        text-align: center;
+    }
+
+    .badges-row {
+        justify-content: center; /* Centrer les badges */
+    }
+
+    .price-large {
+        font-size: 2rem; /* Au lieu de 2.5rem */
+        text-align: center;
+    }
+
+    .min-personnes {
+        text-align: center;
+        display: block;
+    }
+    
+    .stock-alert {
+        justify-content: center;
+        font-size: 0.9rem;
+    }
+    
+    /* Ajustement bouton quantité */
+    .qty-selector {
+        justify-content: center;
+    }
+}
