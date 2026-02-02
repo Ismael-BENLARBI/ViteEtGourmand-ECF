@@ -58,16 +58,23 @@ class Menu {
     }
 
     // 3. Récupérer un menu par ID (inchangé)
+// --- RÉCUPÉRER UN MENU PAR SON ID (POUR LA PAGE DÉTAIL) ---
     public static function getById($id) {
         global $pdo;
-        $sql = "SELECT menu.*, theme.libelle AS theme_nom, regime.libelle AS regime_nom
-                FROM menu
-                LEFT JOIN theme ON menu.theme_id = theme.theme_id
-                LEFT JOIN regime ON menu.regime_id = regime.regime_id
-                WHERE menu.menu_id = :id";
+
+        // On fait des JOINTURES (LEFT JOIN) pour récupérer le NOM du thème et du régime
+        // au lieu de juste leur ID (1, 2...).
+        $sql = "SELECT m.*, 
+                       t.libelle AS theme_nom, 
+                       r.libelle AS regime_nom 
+                FROM menu m
+                LEFT JOIN theme t ON m.theme_id = t.theme_id
+                LEFT JOIN regime r ON m.regime_id = r.regime_id
+                WHERE m.menu_id = :id";
+        
         $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
+        $stmt->execute([':id' => $id]);
+
         return $stmt->fetch();
     }
 
@@ -91,17 +98,20 @@ class Menu {
 
     // --- CRÉER UN NOUVEAU MENU ---
     // Mise à jour de la signature de la fonction et de la requête SQL
-    public static function create($titre, $description, $d_entree, $d_plat, $d_dessert, $prix, $min_personnes, $theme_id, $img_main, $img_entree, $img_plat, $img_dessert) {
+    // --- CRÉER UN NOUVEAU MENU (Mise à jour avec Régime) ---
+    public static function create($titre, $description, $d_entree, $d_plat, $d_dessert, $prix, $min_personnes, $theme_id, $regime_id, $img_main, $img_entree, $img_plat, $img_dessert) {
         global $pdo;
 
         $sql = "INSERT INTO menu (
                     titre, description, description_entree, description_plat, description_dessert, 
-                    prix_par_personne, nombre_personne_min, theme_id, 
+                    prix_par_personne, nombre_personne_min, 
+                    theme_id, regime_id,  /* <-- AJOUT ICI */
                     image_principale, image_entree, image_plat, image_dessert, date_creation
                 ) 
                 VALUES (
                     :titre, :desc, :d_entree, :d_plat, :d_dessert,
-                    :prix, :min, :theme, 
+                    :prix, :min, 
+                    :theme, :regime,      /* <-- AJOUT ICI */
                     :img1, :img2, :img3, :img4, NOW()
                 )";
         
@@ -116,11 +126,20 @@ class Menu {
             ':prix'  => $prix,
             ':min'   => $min_personnes,
             ':theme' => $theme_id,
+            ':regime'=> $regime_id,       /* <-- AJOUT ICI */
             ':img1'  => $img_main,
             ':img2'  => $img_entree,
             ':img3'  => $img_plat,
             ':img4'  => $img_dessert
         ]);
+    }
+
+    // --- SUPPRIMER UN MENU ---
+    public static function delete($id) {
+        global $pdo;
+        // Optionnel : On pourrait d'abord supprimer l'image du dossier, mais restons simple pour l'instant.
+        $stmt = $pdo->prepare("DELETE FROM menu WHERE menu_id = :id");
+        return $stmt->execute([':id' => $id]);
     }
 }
 ?>

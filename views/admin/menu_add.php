@@ -71,6 +71,18 @@
                         </select>
                     </div>
 
+                    <div class="mb-3">
+                        <label class="form-label">Régime Alimentaire</label>
+                        <select name="regime_id" class="form-select">
+                            <option value="">-- Aucun régime spécifique --</option>
+                            <option value="1">Classique</option>
+                            <option value="2">Végétarien</option>
+                            <option value="3">Sans Gluten</option>
+                            <option value="4">Halal</option>
+                            <option value="5">Végan</option>
+                        </select>
+                    </div>
+
                     <div class="mb-4">
                         <label class="form-label">Image Principale (Couverture) *</label>
                         <div class="image-upload-zone" onclick="document.getElementById('img_main').click();">

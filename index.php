@@ -173,15 +173,16 @@ switch($page) {
 
         // --- DASHBOARD ADMIN (Protégé) ---
     case 'admin_dashboard':
-        // 1. On appelle le fichier du vigile
+        // 1. Sécurité (Le Vigile)
         require_once 'Utils/Auth.php';
-        
-        // 2. LE VIGILE FAIT SON TRAVAIL
-        // Si pas admin, le code s'arrête là et redirige
         Auth::checkAdmin(); 
         
-        // 3. Si on passe, on affiche la vue
-        require_once 'Views/admin/dashboard.php';
+        // 2. Récupération des données (C'est ce qui manquait !)
+        require_once 'Models/Menu.php'; // On charge le modèle
+        $menus = Menu::getAll();        // On récupère la liste des menus dans la variable $menus
+        
+        // 3. Affichage (La Vue)
+        require_once 'Views/admin/dashboard.php'; // La vue va utiliser la variable $menus créée juste au-dessus
         break;
     
     // --- PAGE AJOUTER MENU (Formulaire) ---
@@ -189,6 +190,20 @@ switch($page) {
         require_once 'Utils/Auth.php';
         Auth::checkAdmin(); // Sécurité
         require_once 'Views/admin/menu_add.php';
+        break;
+
+    // --- ACTION : SUPPRIMER MENU ---
+    case 'admin_menu_delete':
+        require_once 'Utils/Auth.php';
+        Auth::checkAdmin();
+        require_once 'Models/Menu.php';
+
+        if (isset($_GET['id'])) {
+            Menu::delete($_GET['id']);
+            header('Location: index.php?page=admin_dashboard&success=Menu supprimé !');
+        } else {
+            header('Location: index.php?page=admin_dashboard&error=ID manquant.');
+        }
         break;
     
     // --- ACTION : ENREGISTRER LE MENU (TRAITEMENT) ---
@@ -212,6 +227,7 @@ switch($page) {
 
             $theme_id = !empty($_POST['theme_id']) ? $_POST['theme_id'] : NULL;
 
+            $regime_id = !empty($_POST['regime_id']) ? $_POST['regime_id'] : NULL;
             // 2. Fonction locale pour gérer l'upload d'image
             function uploadImage($fileKey) {
                 // Si pas de fichier ou erreur
@@ -249,7 +265,8 @@ switch($page) {
                 $desc_dessert, 
                 $prix, 
                 $min_personnes, 
-                $theme_id, 
+                $theme_id,
+                $regime_id,
                 $img_principale, 
                 $img_entree, 
                 $img_plat, 

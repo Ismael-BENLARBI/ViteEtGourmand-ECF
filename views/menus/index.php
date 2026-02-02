@@ -96,7 +96,9 @@
                             </div>
 
                             <h3 class="menu-title"><?php echo htmlspecialchars($menu['titre']); ?></h3>
-                            <p class="menu-min-person">*Dès 6 personnes*</p>
+                            <p class="card-text text-muted small">
+                                *Dès <?php echo $menu['nombre_personne_min']; ?> personnes*
+                            </p>
                             
                             <div class="menu-price">
                                 <?php echo number_format($menu['prix_par_personne'], 2, ',', ' '); ?>€/personne

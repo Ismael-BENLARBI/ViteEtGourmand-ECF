@@ -353,3 +353,62 @@ body {
         justify-content: center;
     }
 }
+
+/* --- GALERIE D'IMAGES --- */
+/* --- GALERIE D'IMAGES --- */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 colonnes égales */
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.gallery-thumb {
+    width: 100%;       /* Prend toute la largeur de sa colonne */
+    height: 80px;      /* Hauteur fixe pour aligner */
+    object-fit: cover; /* Coupe l'image proprement sans déformer */
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    border: 1px solid #eee;
+}
+
+.gallery-thumb:hover {
+    transform: scale(1.05);
+    border-color: #D8A85E;
+}
+
+/* --- COMPOSITION DU MENU (TEXTE) --- */
+.menu-composition {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.composition-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.course-block {
+    margin-bottom: 20px;
+}
+
+.course-name {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.course-desc {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.4;
+    font-style: italic;
+    max-width: 80%;
+    margin: 0 auto; /* Centrer le texte */
+}
