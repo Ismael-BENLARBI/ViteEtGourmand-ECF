@@ -141,5 +141,53 @@ class Menu {
         $stmt = $pdo->prepare("DELETE FROM menu WHERE menu_id = :id");
         return $stmt->execute([':id' => $id]);
     }
+
+    // --- MODIFIER UN MENU ---
+    public static function update($id, $titre, $description, $d_entree, $d_plat, $d_dessert, $prix, $min_personnes, $theme_id, $regime_id, $img_main, $img_entree, $img_plat, $img_dessert) {
+        global $pdo;
+
+        $sql = "UPDATE menu SET 
+                    titre = :titre,
+                    description = :desc,
+                    description_entree = :d_entree,
+                    description_plat = :d_plat,
+                    description_dessert = :d_dessert,
+                    prix_par_personne = :prix,
+                    nombre_personne_min = :min,
+                    theme_id = :theme,
+                    regime_id = :regime,
+                    image_principale = :img1,
+                    image_entree = :img2,
+                    image_plat = :img3,
+                    image_dessert = :img4
+                WHERE menu_id = :id";
+        
+        $stmt = $pdo->prepare($sql);
+        
+        return $stmt->execute([
+            ':id'    => $id,
+            ':titre' => $titre,
+            ':desc'  => $description,
+            ':d_entree' => $d_entree,
+            ':d_plat'   => $d_plat,
+            ':d_dessert'=> $d_dessert,
+            ':prix'  => $prix,
+            ':min'   => $min_personnes,
+            ':theme' => $theme_id,
+            ':regime'=> $regime_id,
+            ':img1'  => $img_main,
+            ':img2'  => $img_entree,
+            ':img3'  => $img_plat,
+            ':img4'  => $img_dessert
+        ]);
+    }
+
+    // --- RÉCUPÉRER TOUS LES RÉGIMES ---
+    public static function getRegimes() {
+        global $pdo;
+        // On récupère ID et Libellé pour remplir le select
+        $stmt = $pdo->query("SELECT * FROM regime ORDER BY libelle ASC");
+        return $stmt->fetchAll();
+    }
 }
 ?>

@@ -1,0 +1,211 @@
+/* assets/css/panier.css */
+
+body {
+    background-color: #F2F0ED; /* Le fond beige */
+}
+
+.cart-container {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.cart-title {
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #8B2635;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #D8A85E;
+    display: inline-block;
+    padding-bottom: 10px;
+}
+
+/* TABLEAU */
+.cart-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.cart-table th {
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    color: #888;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+.cart-table td {
+    padding: 20px 15px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+/* Image miniature dans le panier */
+.cart-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.item-title {
+    font-weight: 700;
+    color: #8B2635;
+    display: block;
+}
+
+.item-price {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Totaux */
+.total-section {
+    background-color: #fafafa;
+    border-radius: 15px;
+    padding: 30px;
+    margin-top: 30px;
+    text-align: right;
+}
+
+.grand-total {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #D8A85E;
+}
+
+/* Boutons */
+.btn-checkout {
+    background-color: #8B2635;
+    color: white;
+    padding: 15px 40px;
+    border-radius: 50px;
+    text-transform: uppercase;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 20px;
+    transition: all 0.3s;
+}
+
+.btn-checkout:hover {
+    background-color: #D8A85E;
+    transform: translateY(-2px);
+    color: white;
+}
+
+.btn-delete {
+    color: #e74c3c; /* Rouge */
+    text-decoration: none;
+    font-size: 1.2rem;
+    transition: 0.2s;
+}
+
+.btn-delete:hover {
+    color: #c0392b;
+    transform: scale(1.2);
+}
+
+/* --- RESPONSIVE MOBILE (Max 768px) --- */
+@media screen and (max-width: 768px) {
+
+    /* 1. ON FORCE LE TABLEAU A CASSER SA STRUCTURE */
+    /* On utilise !important pour écraser les styles par défaut */
+    table.cart-table, 
+    .cart-table tbody, 
+    .cart-table tr, 
+    .cart-table td {
+        display: block !important;
+        width: 100% !important;
+    }
+
+    /* 2. ON CACHE L'EN-TÊTE (C'est ce qui apparait encore sur ta photo) */
+    .cart-table thead {
+        display: none !important; 
+    }
+
+    /* 3. STYLE DE LA "CARTE" (Ligne du tableau) */
+    .cart-table tr {
+        margin-bottom: 20px;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 15px;
+        padding: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        position: relative; /* Pour positionner certains éléments si besoin */
+    }
+
+    /* 4. STYLE DES CELLULES (Lignes internes) */
+    .cart-table td {
+        display: flex !important; /* Force le mode flexible */
+        justify-content: space-between; /* Ecarte gauche/droite */
+        align-items: center;
+        text-align: right;
+        padding: 12px 0;
+        border-bottom: 1px solid #eee;
+        min-height: auto;
+    }
+
+    .cart-table td:last-child {
+        border-bottom: none;
+    }
+
+    /* 5. GESTION DU PREMIER ÉLÉMENT (Image + Titre) */
+    .cart-table td:first-child {
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        gap: 10px;
+        border-bottom: 2px solid #D8A85E;
+        padding-bottom: 15px;
+        margin-bottom: 10px;
+    }
+
+    /* 6. LES LABELS (Textes "Prix :", "Qté :"...) */
+    /* On force l'affichage du contenu avant */
+    
+    .cart-table td:nth-of-type(2)::before {
+        content: "Prix Unitaire";
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        color: #888;
+    }
+
+    .cart-table td:nth-of-type(3)::before {
+        content: "Quantité";
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        color: #888;
+    }
+
+    .cart-table td:nth-of-type(4)::before {
+        content: "Total";
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        color: #D8A85E;
+    }
+
+    .cart-table td:nth-of-type(5)::before {
+        content: "Action";
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        color: #888;
+    }
+
+    /* 7. Ajustements visuels */
+    .cart-img {
+        width: 100px; /* Image un peu plus grande sur mobile */
+        height: 100px;
+    }
+    
+    /* Bouton supprimer bien aligné */
+    .btn-delete {
+        font-size: 1.5rem; 
+    }
+}

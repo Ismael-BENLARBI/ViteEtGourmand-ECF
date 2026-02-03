@@ -1,0 +1,130 @@
+/* --- 1. AMBIANCE GÉNÉRALE --- */
+body {
+    background-color: #F2F0ED; /* Ton fond beige */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+}
+
+/* Les titres en Rouge Bordeaux */
+h1, h2, h3, h4 {
+    color: #8B2635;
+}
+
+/* Texte courant */
+.text-muted {
+    color: #6c757d !important;
+}
+
+/* --- 2. LA CARTE CENTRALE --- */
+.card {
+    background: white;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(139, 38, 53, 0.05); /* Ombre légère teintée de rouge */
+}
+
+/* --- 3. LES BOUTONS (Customisation DA) --- */
+
+/* Boutons principaux (ex: "Découvrir nos menus") */
+.btn-primary, .btn-brand {
+    background-color: #8B2635 !important;
+    border-color: #8B2635 !important;
+    color: white !important;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover, .btn-brand:hover {
+    background-color: #D8A85E !important; /* Le hover doré */
+    border-color: #D8A85E !important;
+    transform: translateY(-2px); /* Petit effet de levier */
+    box-shadow: 0 4px 10px rgba(216, 168, 94, 0.3);
+}
+
+/* Bouton Déconnexion (Outline) */
+.btn-outline-danger {
+    color: #8B2635;
+    border-color: #8B2635;
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-danger:hover {
+    background-color: #8B2635;
+    color: white;
+    border-color: #8B2635;
+}
+
+/* Bouton "Voir" (Détails commande) */
+.btn-outline-dark {
+    color: #8B2635;
+    border: 1px solid #8B2635;
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-dark:hover {
+    background-color: #D8A85E; /* Fond doré au survol */
+    border-color: #D8A85E;
+    color: white;
+}
+
+/* --- 4. LE TABLEAU --- */
+
+/* En-têtes du tableau */
+.table thead th {
+    background-color: transparent;
+    color: #8B2635; /* Titres des colonnes en rouge */
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #D8A85E; /* Soulignement doré */
+    padding-bottom: 15px;
+}
+
+/* Cellules */
+.table tbody td {
+    padding: 20px 10px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+/* La référence (#CMD...) */
+td.fw-bold.text-dark {
+    color: #333 !important;
+}
+
+/* Le Prix (Déjà géré dans le HTML, mais on force ici au cas où) */
+td.fw-bold[style*="D8A85E"] {
+    color: #D8A85E !important;
+    font-size: 1.1rem;
+}
+
+/* --- 5. ÉLÉMENTS GRAPHIQUES --- */
+
+/* Icônes générales (Horloge, Panier...) */
+.fa-clock-rotate-left, .fa-basket-shopping {
+    color: #D8A85E;
+}
+
+/* Badges de statut */
+.badge {
+    font-weight: 500;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    padding: 8px 12px !important;
+}
+
+/* Ajustement spécifique pour les badges */
+.bg-warning {
+    background-color: #FFEeba !important;
+    color: #856404 !important;
+}
+.bg-success {
+    background-color: #D4EDDA !important;
+    color: #155724 !important;
+}
+.bg-info {
+    background-color: #D1ECF1 !important;
+    color: #0C5460 !important;
+}

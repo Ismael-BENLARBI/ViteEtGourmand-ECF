@@ -7,6 +7,8 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="assets/css/header.css">
@@ -14,6 +16,14 @@
 <body>
 
 <?php
+// 1. Calcul du nombre d'articles dans le panier
+$nbArticles = 0;
+if(isset($_SESSION['panier'])) {
+    foreach($_SESSION['panier'] as $qty) {
+        $nbArticles += $qty;
+    }
+}
+
 $bgClass = (isset($isHomepage) && $isHomepage === true) ? 'navbar-transparent' : 'navbar-solid';
 ?>
 
@@ -36,10 +46,18 @@ $bgClass = (isset($isHomepage) && $isHomepage === true) ? 'navbar-transparent' :
         <li class="nav-item">
           <a class="nav-link" href="index.php?page=menus">Nos Menus</a>
         </li>
+
+        <?php if(isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin'): ?>
+            <li class="nav-item">
+                <a class="nav-link fw-bold" href="index.php?page=admin_dashboard" style="color: #8B2635;">
+                    <i class="fa-solid fa-user-shield"></i> Admin
+                </a>
+            </li>
+        <?php endif; ?>
         
         <?php if (isset($_SESSION['user'])): ?>
             <li class="nav-item">
-                <a class="nav-link" href="index.php?page=profil">Mon Compte</a>
+                <a class="nav-link" href="index.php?page=compte">Mon Compte</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="index.php?page=logout">Déconnexion</a>
@@ -53,6 +71,20 @@ $bgClass = (isset($isHomepage) && $isHomepage === true) ? 'navbar-transparent' :
         <li class="nav-item">
           <a class="nav-link" href="index.php?page=contact">Contact</a>
         </li>
+
+        <li class="nav-item ms-lg-3">
+            <a class="btn position-relative rounded-pill px-3" href="index.php?page=panier" 
+               style="background-color: #D8A85E; color: white; border:none; padding-top: 8px; padding-bottom: 8px;">
+                <i class="fa-solid fa-cart-shopping"></i>
+                
+                <?php if($nbArticles > 0): ?>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light">
+                        <?php echo $nbArticles; ?>
+                    </span>
+                <?php endif; ?>
+            </a>
+        </li>
+
       </ul>
     </div>
   </div>

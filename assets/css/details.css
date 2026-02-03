@@ -1,0 +1,26 @@
+body {
+    background-color: #F2F0ED;
+}
+
+h4 {
+    color: #8B2635;
+    letter-spacing: 1px;
+}
+
+.detail-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+}
+
+.list-group-item {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* Petit effet sur le bouton retour */
+.btn-link:hover {
+    color: #D8A85E !important;
+    transform: translateX(-5px);
+    transition: transform 0.2s;
+}

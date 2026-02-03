@@ -116,7 +116,7 @@
                         <input type="hidden" name="quantite" id="formQty" value="<?php echo $menu['nombre_personne_min']; ?>">
                         
                         <button type="submit" class="btn-panier">
-                            Ajouter au panier : Commander
+                            <i class="fa-solid fa-cart-plus me-2"></i> Ajouter au panier
                         </button>
                     </form>
 
@@ -125,26 +125,6 @@
         </div>
     </div>
 </div>
-
-<script>
-    // Changer l'image principale au clic sur une miniature
-    function changeMainImage(element) {
-        document.querySelector('.main-image').src = element.src;
-    }
-
-    // Gestion du bouton + et - pour la quantité
-    function updateQty(change) {
-        let input = document.getElementById('qtyInput');
-        let formInput = document.getElementById('formQty');
-        let min = parseInt(input.min);
-        let newVal = parseInt(input.value) + change;
-        
-        if(newVal >= min) {
-            input.value = newVal;
-            formInput.value = newVal; // On met à jour le champ caché pour le formulaire
-        }
-    }
-</script>
 
 <div id="imageModal" class="modal-overlay" onclick="closeModal()">
     <span class="close-modal" onclick="closeModal()">&times;</span>
@@ -157,8 +137,8 @@
         var modal = document.getElementById("imageModal");
         var modalImg = document.getElementById("fullImage");
         
-        modal.style.display = "flex"; // On affiche la boite noire
-        modalImg.src = element.src;   // On met l'image cliquée dedans
+        modal.style.display = "flex"; 
+        modalImg.src = element.src;   
     }
 
     // 2. Fermer la modale
@@ -171,16 +151,16 @@
         document.querySelector('.main-image').src = element.src;
     }
 
-    // 4. Gestion de la quantité (+ / -)
+    // 4. Gestion de la quantité (+ / -) et mise à jour du formulaire
     function updateQty(change) {
-        let input = document.getElementById('qtyInput');
-        let formInput = document.getElementById('formQty');
+        let input = document.getElementById('qtyInput');   // Input visuel
+        let formInput = document.getElementById('formQty'); // Input caché pour le PHP
         let min = parseInt(input.min);
         let newVal = parseInt(input.value) + change;
         
         if(newVal >= min) {
             input.value = newVal;
-            formInput.value = newVal;
+            formInput.value = newVal; // On met à jour la valeur envoyée au panier
         }
     }
 </script>

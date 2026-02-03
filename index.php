@@ -13,30 +13,21 @@ switch($page) {
     // --- PAGE NOS MENUS ---
     case 'menus':
         require_once 'Models/Menu.php';
-        
-        // 1. On regarde si l'utilisateur a filtré (via l'URL ?theme=...)
         $filtreTheme = $_GET['theme'] ?? 'all';
-        
-        // 2. On récupère les menus filtrés (ou tous si $filtreTheme vaut 'all')
         $menus = Menu::getAll($filtreTheme);
-        
-        // 3. On récupère la liste des thèmes pour remplir le select
         $themes = Menu::getThemes();
-        
         require_once 'Views/menus/index.php';
         break;
 
     // --- PAGE DÉTAIL D'UN MENU ---
     case 'menu':
         require_once 'Models/Menu.php';
-        
         if (isset($_GET['id'])) {
             $id = (int)$_GET['id'];
             $menu = Menu::getById($id);
             $plats = Menu::getPlatsByMenuId($id);
             
             if ($menu) {
-                // ICI : On appelle le nouveau fichier
                 require_once 'Views/menus/detail_menu.php'; 
             } else {
                 header('Location: index.php?page=menus');
@@ -50,41 +41,22 @@ switch($page) {
         require_once 'views/contact/index.php';
         break;
 
-    case 'login':
-        require_once 'views/auth/login.php'; 
-        break;
-
-    case 'profil':
-        require_once 'views/users/profil.php'; 
-        break;
-
-    case 'logout':
-        session_destroy();
-        header('Location: index.php?page=home');
-        exit;
-        break;
-
     // --- API : RÉCUPÉRER LES MENUS EN JSON (POUR AJAX) ---
     case 'api_menus':
         require_once 'Models/Menu.php';
-        
-        // On prépare le tableau de filtres pour le modèle
         $filters = [
             'theme'  => $_GET['theme'] ?? 'all',
             'regime' => $_GET['regime'] ?? 'all',
             'prix'   => $_GET['prix'] ?? null,
             'pers'   => $_GET['pers'] ?? null
         ];
-        
-        // On appelle la nouvelle version de getAll
         $menus = Menu::getAll($filters);
-        
         header('Content-Type: application/json');
         echo json_encode($menus);
         exit;
         break;
 
-    // --- PAGE D'INSCRIPTION (Affichage du formulaire) ---
+    // --- PAGE D'INSCRIPTION ---
     case 'register':
         require_once 'Views/auth/register.php';
         break;
@@ -94,27 +66,22 @@ switch($page) {
         require_once 'Models/User.php';
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // 1. Récupération des données du formulaire
             $nom = $_POST['nom'];
             $prenom = $_POST['prenom'];
             $email = $_POST['email'];
             $pass = $_POST['password'];
-            $adresse = $_POST['adresse']; // On récupère l'input 'adresse'
+            $adresse = $_POST['adresse'];
             $cp = $_POST['cp'];
             $ville = $_POST['ville'];
 
-            // 2. Vérifier si l'email existe déjà
             if (User::findByEmail($email)) {
                 header('Location: index.php?page=register&error=Cet email est déjà utilisé');
                 exit;
             }
 
-            // 3. Création du compte via le Modèle
-            // Le modèle va mettre 'adresse' dans la colonne 'adresse_postale'
             $success = User::create($nom, $prenom, $email, $pass, $adresse, $cp, $ville);
 
             if ($success) {
-                // Si ça marche, on envoie vers le login (qu'on fera juste après)
                 header('Location: index.php?page=login&success=Compte créé ! Connectez-vous.');
             } else {
                 header('Location: index.php?page=register&error=Erreur technique lors de la création.');
@@ -135,23 +102,16 @@ switch($page) {
             $email = $_POST['email'];
             $pass_input = $_POST['password'];
 
-            // 1. Chercher l'utilisateur
             $user = User::findByEmail($email);
 
-            // 2. Vérification (Si user existe ET si mot de passe correspond au hachage)
-            // Note : ta colonne s'appelle 'password' dans la BDD
             if ($user && password_verify($pass_input, $user['password'])) {
                 
-                // 3. SUCCÈS : Création de la Session
-                // On traduit le role_id en texte pour faciliter la suite (1 = admin, le reste = client)
-                $role_txt = 'client'; // Par défaut
-            
+                $role_txt = 'client'; 
                 if ($user['role_id'] == 1) {
                     $role_txt = 'admin';
                 } elseif ($user['role_id'] == 2) {
                     $role_txt = 'employe';
                 }
-                // Sinon reste 'client' (pour le 3)
 
                 $_SESSION['user'] = [
                     'id' => $user['utilisateur_id'],
@@ -159,36 +119,43 @@ switch($page) {
                     'nom' => $user['nom'],
                     'role' => $role_txt
                 ];
-                // Redirection vers l'accueil
                 header('Location: index.php?page=home');
                 exit;
 
             } else {
-                // ECHEC
                 header('Location: index.php?page=login&error=Email ou mot de passe incorrect');
                 exit;
             }
         }
         break;
 
-        // --- DASHBOARD ADMIN (Protégé) ---
+    // --- DECONNEXION ---
+    case 'logout':
+        session_destroy();
+        header('Location: index.php?page=home');
+        exit;
+        break;
+
+    // --- DASHBOARD ADMIN ---
+    // --- DASHBOARD ADMIN ---
     case 'admin_dashboard':
-        // 1. Sécurité (Le Vigile)
         require_once 'Utils/Auth.php';
         Auth::checkAdmin(); 
         
-        // 2. Récupération des données (C'est ce qui manquait !)
-        require_once 'Models/Menu.php'; // On charge le modèle
-        $menus = Menu::getAll();        // On récupère la liste des menus dans la variable $menus
+        require_once 'Models/Menu.php'; 
+        require_once 'Models/Commande.php'; // <--- INDISPENSABLE
         
-        // 3. Affichage (La Vue)
-        require_once 'Views/admin/dashboard.php'; // La vue va utiliser la variable $menus créée juste au-dessus
+        // 1. On récupère les deux listes
+        $menus = Menu::getAll();         
+        $commandes = Commande::getAll(); // <--- C'EST CA QUI MANQUAIT PEUT-ETRE ?
+        
+        require_once 'Views/admin/dashboard.php'; 
         break;
     
-    // --- PAGE AJOUTER MENU (Formulaire) ---
+    // --- PAGE AJOUTER MENU ---
     case 'admin_menu_add':
         require_once 'Utils/Auth.php';
-        Auth::checkAdmin(); // Sécurité
+        Auth::checkAdmin();
         require_once 'Views/admin/menu_add.php';
         break;
 
@@ -205,73 +172,102 @@ switch($page) {
             header('Location: index.php?page=admin_dashboard&error=ID manquant.');
         }
         break;
+
+    // --- PAGE : MODIFIER MENU (VUE) ---
+    case 'admin_menu_edit':
+        require_once 'Utils/Auth.php';
+        Auth::checkAdmin();
+        require_once 'Models/Menu.php';
+
+        if(isset($_GET['id'])){
+            $menu = Menu::getById($_GET['id']);
+            $themes = Menu::getThemes();
+            $regimes = Menu::getRegimes();
+            require_once 'Views/admin/menu_edit.php';
+        }
+        break;
+
+    // --- ACTION : MODIFIER MENU (TRAITEMENT) ---
+    case 'admin_menu_edit_action':
+        require_once 'Utils/Auth.php';
+        Auth::checkAdmin();
+        require_once 'Models/Menu.php';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['id'])) {
+            $id = $_GET['id'];
+            
+            $titre = $_POST['titre'];
+            $prix = $_POST['prix'];
+            $min = $_POST['min_personnes'];
+            $desc = $_POST['description'];
+            $d_entree = $_POST['desc_entree'];
+            $d_plat = $_POST['desc_plat'];
+            $d_dessert = $_POST['desc_dessert'];
+            $theme_id = !empty($_POST['theme_id']) ? $_POST['theme_id'] : NULL;
+            $regime_id = !empty($_POST['regime_id']) ? $_POST['regime_id'] : NULL;
+
+            function processImageUpdate($fileKey, $oldImageKey) {
+                if (isset($_FILES[$fileKey]) && $_FILES[$fileKey]['error'] == 0) {
+                    $targetDir = "assets/images/menu/";
+                    $ext = pathinfo($_FILES[$fileKey]['name'], PATHINFO_EXTENSION);
+                    $filename = 'menu_' . uniqid() . '.' . $ext;
+                    if (move_uploaded_file($_FILES[$fileKey]['tmp_name'], $targetDir . $filename)) {
+                        return $filename; 
+                    }
+                }
+                return $_POST[$oldImageKey];
+            }
+
+            $img1 = processImageUpdate('image_principale', 'old_img_principale');
+            $img2 = processImageUpdate('image_entree', 'old_img_entree');
+            $img3 = processImageUpdate('image_plat', 'old_img_plat');
+            $img4 = processImageUpdate('image_dessert', 'old_img_dessert');
+
+            Menu::update($id, $titre, $desc, $d_entree, $d_plat, $d_dessert, $prix, $min, $theme_id, $regime_id, $img1, $img2, $img3, $img4);
+
+            header('Location: index.php?page=admin_dashboard&success=Menu modifié !');
+        }
+        break;
     
     // --- ACTION : ENREGISTRER LE MENU (TRAITEMENT) ---
     case 'admin_menu_create_action':
         require_once 'Utils/Auth.php';
-        Auth::checkAdmin(); // Sécurité : Seul l'admin peut faire ça
+        Auth::checkAdmin(); 
 
         require_once 'Models/Menu.php';
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            
-            // 1. Récupération des textes (y compris les nouveaux champs)
             $titre = $_POST['titre'];
             $prix = $_POST['prix'];
             $min_personnes = $_POST['min_personnes'];
-            $description = $_POST['description']; // L'accroche
-            
+            $description = $_POST['description'];
             $desc_entree = $_POST['desc_entree'];
             $desc_plat = $_POST['desc_plat'];
             $desc_dessert = $_POST['desc_dessert'];
-
             $theme_id = !empty($_POST['theme_id']) ? $_POST['theme_id'] : NULL;
-
             $regime_id = !empty($_POST['regime_id']) ? $_POST['regime_id'] : NULL;
-            // 2. Fonction locale pour gérer l'upload d'image
-            function uploadImage($fileKey) {
-                // Si pas de fichier ou erreur
-                if (!isset($_FILES[$fileKey]) || $_FILES[$fileKey]['error'] != 0) {
-                    return NULL; 
-                }
 
-                // Création du dossier si besoin
+            function uploadImage($fileKey) {
+                if (!isset($_FILES[$fileKey]) || $_FILES[$fileKey]['error'] != 0) return NULL; 
+
                 $targetDir = "assets/images/menu/";
                 if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
 
-                // Nom unique pour éviter d'écraser les fichiers
                 $extension = pathinfo($_FILES[$fileKey]['name'], PATHINFO_EXTENSION);
                 $filename = 'menu_' . uniqid() . '.' . $extension;
                 
-                // Déplacement
                 if (move_uploaded_file($_FILES[$fileKey]['tmp_name'], $targetDir . $filename)) {
                     return $filename;
                 }
                 return NULL;
             }
 
-            // On lance les uploads pour les 4 images
             $img_principale = uploadImage('image_principale');
             $img_entree = uploadImage('image_entree');
             $img_plat = uploadImage('image_plat');
             $img_dessert = uploadImage('image_dessert');
 
-            // 3. Enregistrement en Base de Données avec TOUTES les infos
-            $success = Menu::create(
-                $titre, 
-                $description, 
-                $desc_entree, 
-                $desc_plat, 
-                $desc_dessert, 
-                $prix, 
-                $min_personnes, 
-                $theme_id,
-                $regime_id,
-                $img_principale, 
-                $img_entree, 
-                $img_plat, 
-                $img_dessert
-            );
+            $success = Menu::create($titre, $description, $desc_entree, $desc_plat, $desc_dessert, $prix, $min_personnes, $theme_id, $regime_id, $img_principale, $img_entree, $img_plat, $img_dessert);
 
             if ($success) {
                 header('Location: index.php?page=admin_dashboard&success=Menu ajouté avec succès !');
@@ -280,12 +276,169 @@ switch($page) {
             }
         }
         break;
-    
-    // --- DECONNEXION ---
-    case 'logout':
-        session_destroy();
-        header('Location: index.php?page=login');
-        exit;
+
+    // --- PAGE : VOIR LE PANIER ---
+    case 'panier':
+        require_once 'Models/Menu.php';
+
+        $panierComplet = []; 
+        $totalGeneral = 0; 
+
+        if (isset($_SESSION['panier']) && !empty($_SESSION['panier'])) {
+            foreach ($_SESSION['panier'] as $id_menu => $quantite) {
+                $menu = Menu::getById($id_menu);
+                if ($menu) { 
+                    $totalLigne = $menu['prix_par_personne'] * $quantite;
+                    $panierComplet[] = [
+                        'menu' => $menu,
+                        'quantite' => $quantite,
+                        'total_ligne' => $totalLigne
+                    ];
+                    $totalGeneral += $totalLigne;
+                }
+            }
+        }
+        require_once 'Views/front/panier.php';
+        break;
+
+    // --- AJOUTER AU PANIER ---
+    case 'panier_add':
+        if(isset($_POST['menu_id']) && isset($_POST['quantite'])) {
+            $id = (int)$_POST['menu_id'];
+            $qty = (int)$_POST['quantite'];
+
+            if(!isset($_SESSION['panier'])) {
+                $_SESSION['panier'] = [];
+            }
+
+            if(isset($_SESSION['panier'][$id])) {
+                $_SESSION['panier'][$id] += $qty;
+            } else {
+                $_SESSION['panier'][$id] = $qty;
+            }
+            header('Location: index.php?page=panier');
+            exit;
+        } else {
+            header('Location: index.php');
+        }
+        break;
+
+    // --- ACTION : SUPPRIMER DU PANIER ---
+    case 'panier_delete':
+        if(isset($_GET['id'])) {
+            $id = (int)$_GET['id'];
+            if(isset($_SESSION['panier'][$id])) {
+                unset($_SESSION['panier'][$id]);
+            }
+        }
+        header('Location: index.php?page=panier');
+        break;
+
+    // --- PAGE : TUNNEL DE COMMANDE ---
+    case 'commande':
+        if (!isset($_SESSION['user'])) {
+            header('Location: index.php?page=login&error=Veuillez vous connecter pour valider votre commande.');
+            exit;
+        }
+        if (empty($_SESSION['panier'])) {
+            header('Location: index.php?page=panier');
+            exit;
+        }
+
+        require_once 'Models/Menu.php';
+        $totalPanier = 0;
+        foreach ($_SESSION['panier'] as $id => $qty) {
+            $menu = Menu::getById($id);
+            if($menu) $totalPanier += $menu['prix_par_personne'] * $qty;
+        }
+
+        require_once 'Views/front/commande.php';
+        break;
+
+    // --- ACTION : VALIDER LA COMMANDE ---
+    case 'commande_validation':
+        require_once 'Utils/Auth.php';
+        if (!isset($_SESSION['user'])) { header('Location: index.php?page=login'); exit; }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SESSION['panier'])) {
+            require_once 'Models/Commande.php';
+            require_once 'Models/Menu.php';
+
+            $userId = $_SESSION['user']['id'];
+            
+            $totalFinal = $_POST['total_final'];
+            $frais = $_POST['frais_livraison'];
+            $reduction = $_POST['montant_reduction'];
+
+            $nom = $_POST['nom'];
+            $prenom = $_POST['prenom'];
+            $adresse = $_POST['adresse'];
+            $cp = $_POST['cp'];
+            $ville = $_POST['ville'];
+            $phone = $_POST['phone'];
+            $heure = $_POST['heure_livraison'];
+            $instructions = $_POST['instructions'];
+
+            $commandeId = Commande::create($userId, $totalFinal, $frais, $reduction, $nom, $prenom, $adresse, $cp, $ville, $phone, $heure, $instructions);
+
+            foreach ($_SESSION['panier'] as $menuId => $qty) {
+                $menu = Menu::getById($menuId);
+                if ($menu) {
+                    Commande::addDetail($commandeId, $menuId, $qty, $menu['prix_par_personne']);
+                }
+            }
+
+            unset($_SESSION['panier']);
+            header('Location: index.php?page=commande_success');
+            exit;
+        } else {
+            header('Location: index.php');
+        }
+        break;
+
+    // --- PAGE : SUCCÈS COMMANDE ---
+    case 'commande_success':
+        require_once 'Views/front/commande_success.php';
+        break;
+
+    // --- PAGE : DÉTAILS D'UNE COMMANDE ---
+    case 'commande_details':
+        require_once 'Utils/Auth.php';
+        if (!isset($_SESSION['user'])) { header('Location: index.php?page=login'); exit; }
+        
+        if (!isset($_GET['id']) || empty($_GET['id'])) {
+            header('Location: index.php?page=compte');
+            exit;
+        }
+
+        require_once 'Models/Commande.php';
+        $commandeId = $_GET['id'];
+        $userId = $_SESSION['user']['id'];
+
+        $commande = Commande::getById($commandeId);
+
+        if (!$commande || $commande['utilisateur_id'] != $userId) {
+            header('Location: index.php?page=compte');
+            exit;
+        }
+
+        $details = Commande::getDetails($commandeId);
+        require_once 'Views/front/commande_detail.php';
+        break;
+
+    // --- PAGE : MON COMPTE ---
+    case 'compte':
+        require_once 'Utils/Auth.php';
+        if (!isset($_SESSION['user'])) {
+            header('Location: index.php?page=login');
+            exit;
+        }
+
+        require_once 'Models/Commande.php';
+        $userId = $_SESSION['user']['id']; 
+        $mesCommandes = Commande::getAllByUser($userId);
+
+        require_once 'Views/front/compte.php';
         break;
 
     default:
