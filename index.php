@@ -402,10 +402,13 @@ switch($page) {
         break;
 
     // --- PAGE : DÉTAILS D'UNE COMMANDE ---
+    // --- PAGE : DÉTAILS D'UNE COMMANDE ---
     case 'commande_details':
         require_once 'Utils/Auth.php';
+        // 1. Il faut être connecté
         if (!isset($_SESSION['user'])) { header('Location: index.php?page=login'); exit; }
         
+        // 2. Il faut un ID dans l'URL
         if (!isset($_GET['id']) || empty($_GET['id'])) {
             header('Location: index.php?page=compte');
             exit;
@@ -414,15 +417,27 @@ switch($page) {
         require_once 'Models/Commande.php';
         $commandeId = $_GET['id'];
         $userId = $_SESSION['user']['id'];
+        $userRole = $_SESSION['user']['role'] ?? 'client'; // On récupère le rôle
 
+        // 3. On récupère les infos de la commande
         $commande = Commande::getById($commandeId);
 
-        if (!$commande || $commande['utilisateur_id'] != $userId) {
+        if (!$commande) {
             header('Location: index.php?page=compte');
             exit;
         }
 
+        // 4. SÉCURITÉ MISE À JOUR :
+        // On autorise si c'est le propriétaire de la commande OU si c'est un admin
+        if ($commande['utilisateur_id'] != $userId && $userRole !== 'admin') {
+            // Si ce n'est NI le propriétaire NI l'admin -> Dehors !
+            header('Location: index.php?page=compte');
+            exit;
+        }
+
+        // 5. Tout est bon, on affiche
         $details = Commande::getDetails($commandeId);
+
         require_once 'Views/front/commande_detail.php';
         break;
 

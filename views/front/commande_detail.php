@@ -3,10 +3,23 @@
 
 <div class="container py-5">
 
-    <a href="index.php?page=compte" class="btn btn-link text-decoration-none mb-4" style="color: #8B2635;">
-        <i class="fa-solid fa-arrow-left"></i> Retour à mes commandes
-    </a>
+    <?php 
+        // C'est ICI que la magie opère pour choisir la bonne destination
+        if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin') {
+            // Si je suis ADMIN -> Je retourne au Dashboard
+            $lienRetour = 'index.php?page=admin_dashboard';
+            $texteRetour = 'Retour au Dashboard';
+        } else {
+            // Si je suis CLIENT -> Je retourne à Mon Compte
+            $lienRetour = 'index.php?page=compte';
+            $texteRetour = 'Retour à mes commandes';
+        }
+    ?>
 
+    <a href="<?php echo $lienRetour; ?>" class="btn btn-link text-decoration-none mb-4" style="color: #8B2635;">
+        <i class="fa-solid fa-arrow-left"></i> <?php echo $texteRetour; ?>
+    </a>
+    
     <div class="row">
         
         <div class="col-md-4 mb-4">
