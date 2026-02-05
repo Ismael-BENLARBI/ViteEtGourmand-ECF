@@ -115,4 +115,25 @@ class Commande {
         $stmt = $pdo->query($sql);
         return $stmt->fetchAll();
     }
+
+    // Supprimer une commande et son contenu
+    public static function delete($id) {
+        global $pdo;
+        
+        // 1. On supprime d'abord les détails (les plats contenus dans la commande)
+        $stmt = $pdo->prepare("DELETE FROM commande_detail WHERE commande_id = :id");
+        $stmt->execute([':id' => $id]);
+
+        // 2. Ensuite, on supprime la commande elle-même
+        $stmt = $pdo->prepare("DELETE FROM commande WHERE commande_id = :id");
+        return $stmt->execute([':id' => $id]);
+    }
+
+    // Mettre à jour le statut
+    public static function updateStatus($id, $statut) {
+        global $pdo;
+        $sql = "UPDATE commande SET statut = :statut WHERE commande_id = :id";
+        $stmt = $pdo->prepare($sql);
+        return $stmt->execute([':statut' => $statut, ':id' => $id]);
+    }
 }

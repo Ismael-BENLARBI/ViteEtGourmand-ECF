@@ -117,3 +117,67 @@ h1, h2, h3, h4, h5, p, div, span, a {
     margin-top: 15px;
     font-size: 1.1rem;
 }
+
+/* --- SECTION AVIS CLIENTS --- */
+.section-avis {
+    background-color: #F2F0ED; /* Le fond général de la page reste blanc */
+}
+
+.avis-title {
+    color: #8B2635;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+/* --- LA CARTE AVIS (CHANGEMENTS ICI) --- */
+.card-avis {
+    background-color: #D8A85E; /* FOND DORÉ */
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 4px 15px rgba(216, 168, 94, 0.4); /* Ombre dorée */
+    transition: transform 0.3s ease;
+}
+
+.card-avis:hover {
+    transform: translateY(-5px);
+}
+
+/* Les étoiles (Blanches pour le contraste sur le doré) */
+.avis-stars {
+    color: #8B2635; 
+    font-size: 1.3rem;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Le commentaire */
+/* On force la couleur bordeaux même si Bootstrap met du gris */
+.card-avis .card-text {
+    color: #8B2635 !important; /* TEXTE BORDEAUX */
+    font-weight: 600;
+    font-size: 1.05rem;
+}
+
+/* La petite ligne de séparation */
+.avis-separator {
+    width: 50px;
+    border-top: 2px solid #8B2635; /* Ligne Bordeaux */
+    margin: 15px auto;
+    opacity: 1;
+}
+
+/* Le nom du client */
+.avis-author {
+    color: #8B2635; /* TEXTE BORDEAUX */
+    font-weight: 800;
+    margin-bottom: 0;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+}
+
+/* Le nom du menu goûté */
+.avis-menu-name {
+    color: #8B2635; /* Blanc pour le distinguer du nom du client, ou met #8B2635 si tu préfères */
+    font-size: 0.9rem;
+    font-style: italic;
+    opacity: 0.9;
+}

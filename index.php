@@ -7,6 +7,12 @@ $page = $_GET['page'] ?? 'home';
 
 switch($page) {
     case 'home':
+        require_once 'Models/Menu.php';
+        require_once 'Models/Avis.php'; // On charge le modèle
+
+        $menus = Menu::getAll(); 
+        $avisRecents = Avis::getLastThree(); // On récupère les avis
+        
         require_once 'views/home/index.php';
         break;
 
@@ -137,19 +143,52 @@ switch($page) {
         break;
 
     // --- DASHBOARD ADMIN ---
-    // --- DASHBOARD ADMIN ---
     case 'admin_dashboard':
         require_once 'Utils/Auth.php';
-        Auth::checkAdmin(); 
+        Auth::checkAdmin();
         
-        require_once 'Models/Menu.php'; 
-        require_once 'Models/Commande.php'; // <--- INDISPENSABLE
+        require_once 'Models/Commande.php';
+        require_once 'Models/Menu.php';
+        require_once 'Models/Avis.php'; // <-- Important pour les avis
+
+        // On récupère tout
+        $commandes = Commande::getAll();
+        $menus = Menu::getAll();
+        $avisList = Avis::getAllAdmin(); // <-- Important pour les avis
+
+        require_once 'Views/admin/dashboard.php';
+        break;
+
+    // --- ACTION : SUPPRIMER UNE COMMANDE ---
+    case 'admin_commande_delete':
+        require_once 'Utils/Auth.php';
+        Auth::checkAdmin(); // Sécurité : Seul l'admin peut supprimer
+        require_once 'Models/Commande.php';
+
+        if(isset($_GET['id'])) {
+            Commande::delete($_GET['id']);
+        }
         
-        // 1. On récupère les deux listes
-        $menus = Menu::getAll();         
-        $commandes = Commande::getAll(); // <--- C'EST CA QUI MANQUAIT PEUT-ETRE ?
-        
-        require_once 'Views/admin/dashboard.php'; 
+        // Retour immédiat au tableau de bord
+        header('Location: index.php?page=admin_dashboard');
+        break;
+
+    // --- ACTION : CHANGER LE STATUT D'UNE COMMANDE ---
+    case 'admin_commande_status':
+        require_once 'Utils/Auth.php';
+        Auth::checkAdmin();
+        require_once 'Models/Commande.php';
+
+        if(isset($_POST['id']) && isset($_POST['statut'])) {
+            Commande::updateStatus($_POST['id'], $_POST['statut']);
+            
+            // Si c'est une requête AJAX, on répond en JSON et on s'arrête là
+            if(isset($_POST['ajax'])) {
+                echo json_encode(['status' => 'success', 'message' => 'Statut mis à jour !']);
+                exit;
+            }
+        }
+        header('Location: index.php?page=admin_dashboard');
         break;
     
     // --- PAGE AJOUTER MENU ---
@@ -402,7 +441,6 @@ switch($page) {
         break;
 
     // --- PAGE : DÉTAILS D'UNE COMMANDE ---
-    // --- PAGE : DÉTAILS D'UNE COMMANDE ---
     case 'commande_details':
         require_once 'Utils/Auth.php';
         // 1. Il faut être connecté
@@ -451,9 +489,96 @@ switch($page) {
 
         require_once 'Models/Commande.php';
         $userId = $_SESSION['user']['id']; 
-        $mesCommandes = Commande::getAllByUser($userId);
+        $commandes = Commande::getAllByUser($userId); // On renomme en $commandes pour le nouveau template
 
         require_once 'Views/front/compte.php';
+        break;
+
+    // --- ACTION : AJOUTER UN AVIS ---
+    case 'avis_add':
+        require_once 'Utils/Auth.php';
+        if (!isset($_SESSION['user'])) { header('Location: index.php?page=login'); exit; }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            require_once 'Models/Avis.php';
+            
+            $menuId = $_POST['menu_id'];         // C'est désormais un menu
+            $userId = $_SESSION['user']['id'];
+            $note = $_POST['note'];
+            $description = $_POST['description']; // Ton champ s'appelle 'description'
+
+            Avis::create($menuId, $userId, $note, $description);
+
+            // On redirige vers la commande précédente
+            header('Location: ' . $_SERVER['HTTP_REFERER'] . '&success=Avis enregistré !');
+        }
+        break;
+
+    // --- ACTION : VALIDER UN AVIS ---
+    case 'admin_avis_validate':
+        require_once 'Utils/Auth.php';
+        Auth::checkAdmin();
+        require_once 'Models/Avis.php';
+        
+        if(isset($_GET['id'])) {
+            Avis::validate($_GET['id']);
+            
+            if(isset($_GET['ajax'])) {
+                echo json_encode(['status' => 'success', 'message' => 'Avis validé !']);
+                exit;
+            }
+        }
+        header('Location: index.php?page=admin_dashboard');
+        break;
+
+    // --- ACTION : SUPPRIMER UN AVIS ---
+    case 'admin_avis_delete':
+        require_once 'Utils/Auth.php';
+        Auth::checkAdmin();
+        require_once 'Models/Avis.php';
+        
+        if(isset($_GET['id'])) {
+            Avis::delete($_GET['id']);
+            
+            if(isset($_GET['ajax'])) {
+                echo json_encode(['status' => 'success', 'message' => 'Avis supprimé !']);
+                exit;
+            }
+        }
+        header('Location: index.php?page=admin_dashboard');
+        break;
+
+    // --- ACTION : MODIFIER SON PROFIL ---
+    case 'compte_update':
+        require_once 'Utils/Auth.php';
+        if (!isset($_SESSION['user'])) { header('Location: index.php?page=login'); exit; }
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            require_once 'Models/User.php';
+            
+            $id = $_SESSION['user']['id']; // On prend l'ID de la session par sécurité
+            
+            // Mise à jour en BDD
+            User::update(
+                $id,
+                $_POST['nom'],
+                $_POST['prenom'],
+                $_POST['email'],
+                $_POST['telephone'],
+                $_POST['adresse'],
+                $_POST['code_postal'],
+                $_POST['ville']
+            );
+
+            // Mise à jour de la SESSION (pour affichage immédiat)
+            $userFresh = User::getById($id);
+            $_SESSION['user']['nom'] = $userFresh['nom'];
+            $_SESSION['user']['prenom'] = $userFresh['prenom'];
+            $_SESSION['user']['role'] = $userFresh['role']; // On garde le role
+            // Tu peux stocker d'autres infos en session si besoin
+
+            header('Location: index.php?page=compte&success=Profil mis à jour !');
+        }
         break;
 
     default:

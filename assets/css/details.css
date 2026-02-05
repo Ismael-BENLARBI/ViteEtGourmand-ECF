@@ -24,3 +24,47 @@ h4 {
     transform: translateX(-5px);
     transition: transform 0.2s;
 }
+
+/* --- BOUTON NOTER & AVIS --- */
+.btn-rate {
+    background-color: #fff;
+    border: 1px solid #D8A85E;
+    color: #D8A85E;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.btn-rate:hover {
+    background-color: #D8A85E;
+    color: #fff;
+}
+
+/* Modale d'avis */
+.modal-title-bordeaux {
+    color: #8B2635;
+    font-weight: 800;
+}
+
+.select-rate {
+    color: #D8A85E;
+    border-color: #D8A85E;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.select-rate:focus {
+    border-color: #8B2635;
+    box-shadow: 0 0 0 0.25rem rgba(216, 168, 94, 0.25);
+}
+
+.btn-submit-avis {
+    background-color: #8B2635;
+    color: white;
+    font-weight: 700;
+    border: none;
+}
+
+.btn-submit-avis:hover {
+    background-color: #a02d3d;
+    color: white;
+}

@@ -128,3 +128,75 @@ td.fw-bold[style*="D8A85E"] {
     background-color: #D1ECF1 !important;
     color: #0C5460 !important;
 }
+
+/* ... (Colle ça à la suite de ton code existant) ... */
+
+/* --- 6. NAVIGATION ONGLETS (STYLE DASHBOARD ADMIN) --- */
+.nav-pills {
+    background-color: transparent;
+    padding: 0;
+}
+
+.nav-pills .nav-item {
+    margin-right: 15px; /* Espace entre les onglets */
+}
+
+.nav-pills .nav-link {
+    color: #8B2635; /* Texte Bordeaux par défaut */
+    background-color: #fff; /* Fond blanc */
+    border: 1px solid rgba(139, 38, 53, 0.1); /* Bordure très légère */
+    border-radius: 50px; /* Forme arrondie (Pilule) */
+    padding: 12px 30px; /* Plus d'espace intérieur */
+    font-weight: 800; /* Gras comme l'admin */
+    font-size: 0.95rem;
+    text-transform: uppercase; /* Majuscules élégantes */
+    letter-spacing: 0.5px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+/* Au survol (Hover) */
+.nav-pills .nav-link:hover {
+    color: #D8A85E; /* Texte Doré */
+    background-color: #fff;
+    border-color: #D8A85E;
+    transform: translateY(-3px); /* Légère remontée */
+    box-shadow: 0 5px 15px rgba(216, 168, 94, 0.15);
+}
+
+/* Onglet Actif (Sélectionné) */
+.nav-pills .nav-link.active {
+    background-color: #8B2635 !important; /* Fond Bordeaux */
+    color: white !important; /* Texte Blanc */
+    border-color: #8B2635;
+    box-shadow: 0 8px 20px rgba(139, 38, 53, 0.3); /* Ombre portée bordeaux */
+    transform: translateY(0);
+}
+
+/* Icônes dans les onglets */
+.nav-pills .nav-link i {
+    font-size: 1.1em;
+    vertical-align: -1px;
+}
+
+/* --- 7. FORMULAIRES (PROFIL) --- */
+.form-label {
+    color: #8B2635; /* Label bordeaux */
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.form-control {
+    border: 1px solid #e9ecef;
+    padding: 12px 15px;
+    border-radius: 12px; /* Coins arrondis modernes */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fcfcfc;
+}
+
+.form-control:focus {
+    background-color: #fff;
+    border-color: #D8A85E; /* Bordure dorée au focus */
+    box-shadow: 0 0 0 4px rgba(216, 168, 94, 0.15); /* Halo doré */
+    outline: none;
+}

@@ -1,101 +1,165 @@
-<?php require_once 'Views/partials/header.php'; ?>
+<?php 
+require_once 'Views/partials/header.php'; 
+require_once 'Models/User.php'; 
+
+// On récupère les infos fraîches de l'utilisateur connecté pour pré-remplir le formulaire
+$currentUser = User::getById($_SESSION['user']['id']);
+?>
 <link rel="stylesheet" href="assets/css/compte.css">
 
 <div class="container py-5">
     
-    <div class="d-flex justify-content-between align-items-center mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="fw-bold">Mon Espace</h1>
-            <p class="text-muted">Bonjour, <?php echo htmlspecialchars($_SESSION['user']['prenom']); ?> !</p>
+            <p class="text-muted">Bonjour, <?php echo htmlspecialchars($currentUser['prenom']); ?> !</p>
         </div>
-        <a href="index.php?page=logout" class="btn btn-outline-danger rounded-pill px-4">
-            <i class="fa-solid fa-power-off"></i> Déconnexion
-        </a>
+        <div class="text-end">
+            <?php if(isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin'): ?>
+                <a href="index.php?page=admin_dashboard" class="btn btn-dark rounded-pill px-4 me-2">
+                    <i class="fa-solid fa-gauge-high"></i> Admin
+                </a>
+            <?php endif; ?>
+            <a href="index.php?page=logout" class="btn btn-outline-danger rounded-pill px-4">
+                <i class="fa-solid fa-power-off"></i> Déconnexion
+            </a>
+        </div>
     </div>
 
-    <div class="card shadow-sm border-0 rounded-4 p-4">
-        <h3 class="mb-4 fw-bold text-uppercase" style="font-size: 1.2rem; letter-spacing: 1px;">
-            <i class="fa-solid fa-clock-rotate-left me-2"></i> Historique de commandes
-        </h3>
+    <ul class="nav nav-pills mb-4 gap-2" id="pills-tab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="pills-commandes-tab" data-bs-toggle="pill" data-bs-target="#pills-commandes" type="button">
+                <i class="fa-solid fa-clock-rotate-left me-2"></i> Historique Commandes
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="pills-profil-tab" data-bs-toggle="pill" data-bs-target="#pills-profil" type="button">
+                <i class="fa-solid fa-user-pen me-2"></i> Mes Informations
+            </button>
+        </li>
+    </ul>
 
-        <?php if (empty($mesCommandes)): ?>
-            
-            <div class="text-center py-5">
-                <div class="mb-3 text-muted" style="font-size: 3rem;">
-                    <i class="fa-solid fa-basket-shopping"></i>
-                </div>
-                <h4 class="text-muted">Vous n'avez pas encore passé de commande.</h4>
-                <a href="index.php?page=menus" class="btn btn-primary mt-3 rounded-pill px-4" style="background-color: #D8A85E; border:none;">
-                    Découvrir nos menus
-                </a>
+    <div class="tab-content" id="pills-tabContent">
+        
+        <div class="tab-pane fade show active" id="pills-commandes" role="tabpanel">
+            <div class="card shadow-sm border-0 rounded-4 p-4">
+                
+                <?php if (empty($mesCommandes)): ?>
+                    <div class="text-center py-5">
+                        <div class="mb-3 text-muted" style="font-size: 3rem;">
+                            <i class="fa-solid fa-basket-shopping"></i>
+                        </div>
+                        <h4 class="text-muted">Vous n'avez pas encore passé de commande.</h4>
+                        <a href="index.php?page=menus" class="btn btn-primary mt-3 rounded-pill px-4" style="background-color: #D8A85E; border:none;">
+                            Découvrir nos menus
+                        </a>
+                    </div>
+                <?php else: ?>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Référence</th>
+                                    <th>Date</th>
+                                    <th>Montant</th>
+                                    <th>Statut</th>
+                                    <th class="text-end">Détails</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach($mesCommandes as $cmd): ?>
+                                    <tr>
+                                        <td class="fw-bold text-dark">#<?php echo htmlspecialchars($cmd['numero_commande']); ?></td>
+                                        <td class="text-muted">
+                                            <?php echo (new DateTime($cmd['date_commande']))->format('d/m/Y'); ?>
+                                        </td>
+                                        <td class="fw-bold" style="color: #D8A85E;">
+                                            <?php echo number_format($cmd['prix_total'], 2); ?> €
+                                        </td>
+                                        <td>
+                                            <?php 
+                                                $statusClass = 'bg-secondary';
+                                                $statusText = $cmd['statut'];
+                                                if($cmd['statut'] == 'en_attente') {
+                                                    $statusClass = 'bg-warning text-dark';
+                                                    $statusText = 'En attente';
+                                                } elseif($cmd['statut'] == 'validee') {
+                                                    $statusClass = 'bg-info text-dark';
+                                                    $statusText = 'Validée';
+                                                } elseif($cmd['statut'] == 'livree') {
+                                                    $statusClass = 'bg-success';
+                                                    $statusText = 'Livrée';
+                                                } elseif($cmd['statut'] == 'annulee') {
+                                                    $statusClass = 'bg-danger';
+                                                    $statusText = 'Annulée';
+                                                }
+                                            ?>
+                                            <span class="badge rounded-pill <?php echo $statusClass; ?>">
+                                                <?php echo ucfirst($statusText); ?>
+                                            </span>
+                                        </td>
+                                        <td class="text-end">
+                                            <a href="index.php?page=commande_details&id=<?php echo $cmd['commande_id']; ?>" class="btn btn-sm btn-outline-dark rounded-pill">
+                                                Voir <i class="fa-solid fa-arrow-right ms-1"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
             </div>
+        </div>
 
-        <?php else: ?>
+        <div class="tab-pane fade" id="pills-profil" role="tabpanel">
+            <div class="card shadow-sm border-0 rounded-4 p-4">
+                <h4 class="mb-4 fw-bold">Modifier mes informations</h4>
+                
+                <form action="index.php?page=compte_update" method="POST">
+                    <div class="row g-3">
+                        
+                        <div class="col-md-6">
+                            <label class="form-label small">Prénom</label>
+                            <input type="text" name="prenom" class="form-control" value="<?php echo htmlspecialchars($currentUser['prenom']); ?>" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small">Nom</label>
+                            <input type="text" name="nom" class="form-control" value="<?php echo htmlspecialchars($currentUser['nom']); ?>" required>
+                        </div>
 
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Référence</th>
-                            <th>Date</th>
-                            <th>Montant</th>
-                            <th>Statut</th>
-                            <th class="text-end">Détails</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach($mesCommandes as $cmd): ?>
-                            <tr>
-                                <td class="fw-bold text-dark">
-                                    #<?php echo htmlspecialchars($cmd['numero_commande']); ?>
-                                </td>
-                                
-                                <td class="text-muted">
-                                    <?php 
-                                        $date = new DateTime($cmd['date_commande']);
-                                        echo $date->format('d/m/Y'); 
-                                    ?>
-                                </td>
-                                
-                                <td class="fw-bold" style="color: #D8A85E;">
-                                    <?php echo number_format($cmd['prix_total'], 2); ?> €
-                                </td>
-                                
-                                <td>
-                                    <?php 
-                                        // Gestion des couleurs de statut
-                                        $statusClass = 'bg-secondary';
-                                        $statusText = $cmd['statut'];
+                        <div class="col-md-6">
+                            <label class="form-label small">Email</label>
+                            <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($currentUser['email']); ?>" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small">Téléphone</label>
+                            <input type="text" name="telephone" class="form-control" value="<?php echo htmlspecialchars($currentUser['telephone'] ?? ''); ?>">
+                        </div>
 
-                                        if($cmd['statut'] == 'en_attente') {
-                                            $statusClass = 'bg-warning text-dark';
-                                            $statusText = 'En attente';
-                                        } elseif($cmd['statut'] == 'validee') {
-                                            $statusClass = 'bg-info text-dark';
-                                            $statusText = 'Validée';
-                                        } elseif($cmd['statut'] == 'livree') {
-                                            $statusClass = 'bg-success';
-                                            $statusText = 'Livrée';
-                                        }
-                                    ?>
-                                    <span class="badge rounded-pill <?php echo $statusClass; ?> px-3 py-2">
-                                        <?php echo ucfirst($statusText); ?>
-                                    </span>
-                                </td>
-                                
-                                <td class="text-end">
-                                    <a href="index.php?page=commande_details&id=<?php echo $cmd['commande_id']; ?>" class="btn btn-sm btn-outline-dark rounded-pill">
-                                        Voir 
-                                        <i class="fa-solid fa-arrow-right ms-1"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+                        <div class="col-12">
+                            <label class="form-label small">Adresse complète</label>
+                            <input type="text" name="adresse" class="form-control" value="<?php echo htmlspecialchars($currentUser['adresse_postale'] ?? ''); ?>">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small">Code Postal</label>
+                            <input type="text" name="code_postal" class="form-control" value="<?php echo htmlspecialchars($currentUser['code_postal'] ?? ''); ?>">
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label small">Ville</label>
+                            <input type="text" name="ville" class="form-control" value="<?php echo htmlspecialchars($currentUser['ville'] ?? ''); ?>">
+                        </div>
+
+                        <div class="col-12 mt-4 text-end">
+                            <button type="submit" class="btn btn-brand rounded-pill px-4">
+                                <i class="fa-solid fa-floppy-disk me-2"></i> Enregistrer les modifications
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
+        </div>
 
-        <?php endif; ?>
     </div>
 </div>
 

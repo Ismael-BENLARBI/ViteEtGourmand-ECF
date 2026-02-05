@@ -47,46 +47,38 @@ require_once 'views/partials/header.php';
     </div>
 </section>
 
-<section class="py-5 pb-5">
+<section class="py-5 section-avis">
     <div class="container">
-        <div class="row g-4 mt-2">
-            
-            <div class="col-md-4">
-                <div class="review-card">
-                    <div class="review-stars">
-                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                    </div>
-                    <p class="fst-italic">
-                        "Excellent service de la part de José et son équipe ! La commande pour mes 15 convives a été livrée pile à l'heure sur Bordeaux, avec une présentation soignée."
-                    </p>
-                    <div class="review-author">Johnny S</div>
+        <h2 class="text-center mb-5 avis-title">Les derniers avis gourmands</h2>
+        
+        <div class="row g-4">
+            <?php if(empty($avisRecents)): ?>
+                <div class="col-12 text-center text-muted">
+                    <p>Soyez le premier à donner votre avis !</p>
                 </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="review-card">
-                    <div class="review-stars">
-                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <?php else: ?>
+                <?php foreach($avisRecents as $avis): ?>
+                <div class="col-md-4">
+                    <div class="card h-100 card-avis">
+                        <div class="card-body p-4 text-center">
+                            <div class="mb-3 avis-stars">
+                                <?php for($i=0; $i<$avis['note']; $i++) echo '★'; ?>
+                                <?php for($i=$avis['note']; $i<5; $i++) echo '☆'; ?>
+                            </div>
+                            
+                            <p class="card-text fst-italic text-muted">
+                                "<?php echo htmlspecialchars(substr($avis['description'], 0, 100)) . (strlen($avis['description']) > 100 ? '...' : ''); ?>"
+                            </p>
+                            
+                            <hr class="avis-separator">
+                            
+                            <h6 class="avis-author"><?php echo htmlspecialchars($avis['prenom']); ?></h6>
+                            <small class="avis-menu-name">A goûté : <?php echo htmlspecialchars($avis['titre']); ?></small>
+                        </div>
                     </div>
-                    <p class="fst-italic">
-                        "Enfin un traiteur qui propose de vraies options savoureuses pour tout le monde. Nous avons testé le menu Végétarien thématique et tout le monde a été conquis."
-                    </p>
-                    <div class="review-author">Ada W</div>
                 </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="review-card">
-                    <div class="review-stars">
-                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                    </div>
-                    <p class="fst-italic">
-                        "Une expérience gastronomique incroyable à domicile ! Le menu de Noël était d'une finesse rare, avec des produits d'une fraîcheur irréprochable."
-                    </p>
-                    <div class="review-author">Chris R</div>
-                </div>
-            </div>
-
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </div>
 </section>

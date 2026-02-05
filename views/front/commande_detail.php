@@ -4,13 +4,11 @@
 <div class="container py-5">
 
     <?php 
-        // C'est ICI que la magie opère pour choisir la bonne destination
+        // Gestion du bouton retour
         if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin') {
-            // Si je suis ADMIN -> Je retourne au Dashboard
             $lienRetour = 'index.php?page=admin_dashboard';
             $texteRetour = 'Retour au Dashboard';
         } else {
-            // Si je suis CLIENT -> Je retourne à Mon Compte
             $lienRetour = 'index.php?page=compte';
             $texteRetour = 'Retour à mes commandes';
         }
@@ -67,8 +65,7 @@
                     <?php foreach($details as $item): ?>
                         <div class="list-group-item d-flex justify-content-between align-items-center py-3 border-bottom-0" style="border-bottom: 1px solid #eee !important;">
                             <div class="d-flex align-items-center gap-3">
-                                <img src="assets/images/menu/
-                                <?php echo $item['image_principale']; ?>" 
+                                <img src="assets/images/menu/<?php echo $item['image_principale']; ?>" 
                                 alt="Menu" 
                                 class="rounded-circle" 
                                 style="width: 50px; height: 50px; object-fit: cover;">
@@ -85,6 +82,53 @@
                                     <?php echo number_format($item['prix_unitaire'] * $item['quantite'], 2); ?> €
                                 </div>
                             </div>
+
+                            <?php if($commande['statut'] == 'livree' && $_SESSION['user']['role'] !== 'admin'): ?>
+                                <div class="ms-3">
+                                    <button type="button" 
+                                            class="btn btn-sm btn-rate" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#modalAvisMenu<?php echo $item['menu_id']; ?>">
+                                        <i class="fa-regular fa-star"></i> Noter
+                                    </button>
+                                </div>
+
+                                <div class="modal fade" id="modalAvisMenu<?php echo $item['menu_id']; ?>" tabindex="-1">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title modal-title-bordeaux">Noter : <?php echo htmlspecialchars($item['titre']); ?></h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <form action="index.php?page=avis_add" method="POST">
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="menu_id" value="<?php echo $item['menu_id']; ?>">
+                                                    
+                                                    <div class="mb-3 text-center">
+                                                        <label class="form-label fw-bold">Note / 5</label>
+                                                        <select name="note" class="form-select text-center select-rate">
+                                                            <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                                                            <option value="4">⭐⭐⭐⭐ Très bon</option>
+                                                            <option value="3">⭐⭐⭐ Bon</option>
+                                                            <option value="2">⭐⭐ Moyen</option>
+                                                            <option value="1">⭐ Mauvais</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Votre avis</label>
+                                                        <textarea name="description" class="form-control" rows="3" placeholder="C'était bon ?" required></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-submit-avis w-100">Publier l'avis</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+
                         </div>
                     <?php endforeach; ?>
                 </div>
