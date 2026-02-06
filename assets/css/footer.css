@@ -1,47 +1,32 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
-
-.footer-custom {
-    background-color: #8B2635 !important;
-    color: #F2F0ED !important;
-    font-family: 'Montserrat', sans-serif;
-    padding-top: 3rem;
-    margin-top: auto;
+/* --- STYLE DU FOOTER --- */
+.main-footer {
+    background-color: #8B2635; /* Le fond Bordeaux demandé */
+    color: #F2F0ED; /* Texte en Beige clair (plus doux que le blanc pur) */
+    border-top: 5px solid #D8A85E; /* Bordure Dorée pour le contraste */
 }
 
-.footer-custom h5 {
-    font-weight: 700;
-    text-transform: uppercase;
-    margin-bottom: 1.5rem;
-    font-size: 1.1rem;
+.main-footer h5 {
+    color: #D8A85E; /* Titres en Doré */
+    font-weight: 800;
     letter-spacing: 1px;
 }
 
-.footer-custom ul li, 
-.footer-custom p {
-    font-size: 0.9rem;
-    line-height: 1.8;
-}
-
-.footer-custom a {
-    color: #F2F0ED !important;
+.main-footer a {
+    color: #F2F0ED;
     text-decoration: none;
     transition: all 0.3s ease;
 }
 
-.footer-custom a:hover {
-    text-decoration: underline;
-    opacity: 0.8;
+.main-footer a:hover {
+    color: #D8A85E; /* Devient doré au survol */
+    padding-left: 5px; /* Petit effet de glissement */
 }
 
-.social-icon {
-    font-size: 1.5rem;
-    margin-right: 15px;
-    display: inline-block;
+.main-footer .text-white-50 {
+    color: rgba(242, 240, 237, 0.7) !important; /* Force le beige transparent pour les sous-textes */
 }
 
-.footer-copyright {
-    background-color: rgba(0, 0, 0, 0.2);
-    padding: 15px 0;
-    font-size: 0.8rem;
-    margin-top: 2rem;
+.main-footer hr {
+    background-color: #D8A85E; /* Ligne de séparation dorée */
+    opacity: 0.3;
 }

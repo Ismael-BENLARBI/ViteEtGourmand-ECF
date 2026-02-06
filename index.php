@@ -44,7 +44,73 @@ switch($page) {
         break;
 
     case 'contact':
-        require_once 'views/contact/index.php';
+        require_once 'views/front/contact.php';
+        break;
+
+    // --- ENVOI DU MESSAGE (CLIENT) ---
+    // --- ENVOI DU MESSAGE (CLIENT) ---
+    case 'contact_submit':
+        require_once 'Models/Contact.php';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Nettoyage des données
+            $nom = htmlspecialchars($_POST['nom']);
+            $email = htmlspecialchars($_POST['email']);
+            $sujet = htmlspecialchars($_POST['sujet']);
+            $contenu = htmlspecialchars($_POST['contenu']);
+
+            // 1. Sauvegarde en Base de Données
+            Contact::add($nom, $email, $sujet, $contenu);
+
+            // 2. Envoi du mail de confirmation (Version Production)
+            $to = $email;
+            $emailSujet = "Confirmation de réception - Vite & Gourmand";
+            $message = "Bonjour $nom,\n\nNous avons bien reçu votre message : \"$sujet\".\nNous vous répondrons dans les plus brefs délais.\n\nCordialement,\nL'équipe Vite & Gourmand.";
+            
+            // En-têtes pour un mail propre (encodage et expéditeur)
+            $headers = "From: no-reply@viteetgourmand.com\r\n";
+            $headers .= "Reply-To: contact@viteetgourmand.com\r\n";
+            $headers .= "Content-Type: text/plain; charset=utf-8\r\n";
+            
+            // Envoi réel (Fonctionnera une fois en ligne)
+            @mail($to, $emailSujet, $message, $headers);
+
+            header('Location: index.php?page=contact&success=1');
+        }
+        break;
+
+    // --- AJAX : RÉPONDRE AU MESSAGE (ADMIN) ---
+    // --- AJAX : RÉPONDRE AU MESSAGE (ADMIN) ---
+    case 'admin_message_reply':
+        require_once 'Utils/Auth.php';
+        Auth::checkAdmin();
+        require_once 'Models/Contact.php';
+
+        header('Content-Type: application/json');
+
+        if(isset($_POST['id']) && isset($_POST['message']) && isset($_POST['email'])) {
+            $id = $_POST['id'];
+            $reponse = $_POST['message'];
+            $emailClient = $_POST['email'];
+
+            // 1. Sauvegarde la réponse en BDD et marque comme traité
+            if(Contact::saveReply($id, $reponse)) {
+                
+                // 2. Envoi du mail de réponse (Version Production)
+                $emailSujet = "Réponse à votre demande - Vite & Gourmand";
+                
+                // En-têtes
+                $headers = "From: contact@viteetgourmand.com\r\n";
+                $headers .= "Content-Type: text/plain; charset=utf-8\r\n";
+
+                // Envoi réel (Fonctionnera une fois en ligne)
+                @mail($emailClient, $emailSujet, $reponse, $headers);
+
+                echo json_encode(['status' => 'success', 'message' => 'Réponse envoyée et sauvegardée !']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Erreur sauvegarde BDD']);
+            }
+            exit;
+        }
         break;
 
     // --- API : RÉCUPÉRER LES MENUS EN JSON (POUR AJAX) ---
@@ -143,20 +209,110 @@ switch($page) {
         break;
 
     // --- DASHBOARD ADMIN ---
+    // --- DASHBOARD ADMIN ---
+    // --- DASHBOARD ADMIN ---
+    // --- DASHBOARD ADMIN ---
     case 'admin_dashboard':
         require_once 'Utils/Auth.php';
         Auth::checkAdmin();
         
         require_once 'Models/Commande.php';
         require_once 'Models/Menu.php';
-        require_once 'Models/Avis.php'; // <-- Important pour les avis
+        require_once 'Models/Avis.php';
+        require_once 'Models/User.php';
+        require_once 'Models/Contact.php';
+        require_once 'Models/Horaire.php';
+        // Note : On n'a même plus besoin de require 'Models/Stats.php' ici
+        // car c'est l'appel AJAX (case 'admin_stats_filter') qui s'en charge.
 
-        // On récupère tout
+        // On récupère les données pour les 4 premiers onglets
         $commandes = Commande::getAll();
         $menus = Menu::getAll();
-        $avisList = Avis::getAllAdmin(); // <-- Important pour les avis
+        $avisList = Avis::getAllAdmin();
+        $users = User::getAll();
+        $messages = Contact::getAll();
+        $horaires = Horaire::getAll();
+
+        // On ne charge plus les stats ici ($caTotal, etc.) car le JS le fera !
 
         require_once 'Views/admin/dashboard.php';
+        break;
+
+    case 'admin_horaire_update':
+        require_once 'Utils/Auth.php';
+        Auth::checkAdmin();
+        require_once 'Models/Horaire.php';
+
+        if(isset($_POST['id']) && isset($_POST['creneau'])) {
+            if(Horaire::update($_POST['id'], $_POST['creneau'])) {
+                echo json_encode(['status' => 'success']);
+            } else {
+                echo json_encode(['status' => 'error']);
+            }
+            exit;
+        }
+        break;
+
+    // --- ACTION : MODIFIER MOT DE PASSE ---
+    case 'compte_update_password':
+        require_once 'Utils/Auth.php';
+        Auth::check(); // L'utilisateur doit être connecté
+        require_once 'Models/User.php';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $_SESSION['user']['id'];
+            $oldPwd = $_POST['old_password'];
+            $newPwd = $_POST['new_password'];
+            $confirmPwd = $_POST['confirm_password'];
+
+            // 1. Vérifier si l'ancien mot de passe est bon
+            if (!User::verifyPassword($id, $oldPwd)) {
+                header('Location: index.php?page=compte&error=wrong_pass');
+                exit;
+            }
+
+            // 2. Vérifier si les deux nouveaux sont identiques
+            if ($newPwd !== $confirmPwd) {
+                header('Location: index.php?page=compte&error=mismatch');
+                exit;
+            }
+
+            // 3. Mise à jour
+            User::updatePassword($id, $newPwd);
+            header('Location: index.php?page=compte&success=pass_updated');
+        }
+        break;
+
+    case 'admin_message_read': // On garde le même nom de route pour pas casser le JS
+        require_once 'Utils/Auth.php';
+        Auth::checkAdmin();
+        require_once 'Models/Contact.php';
+        if(isset($_POST['id'])) {
+            Contact::markAsHandled($_POST['id']); // <--- Changement ici
+            echo json_encode(['status' => 'success']);
+            exit;
+        }
+        break;
+
+    // --- AJAX ADMIN : SUPPRIMER MESSAGE ---
+    case 'admin_message_delete':
+        require_once 'Utils/Auth.php';
+        Auth::checkAdmin();
+        require_once 'Models/Contact.php';
+
+        // On force le header JSON pour éviter les erreurs JS
+        header('Content-Type: application/json');
+
+        if(isset($_GET['id'])) {
+            if(Contact::delete($_GET['id'])) {
+                echo json_encode(['status' => 'success']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Erreur SQL lors de la suppression']);
+            }
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'ID manquant']);
+        }
+        exit;
         break;
 
     // --- ACTION : SUPPRIMER UNE COMMANDE ---
@@ -314,6 +470,86 @@ switch($page) {
                 header('Location: index.php?page=admin_menu_add&error=Erreur lors de l\'enregistrement.');
             }
         }
+        break;
+
+    // --- ACTION AJAX : CHANGER ROLE UTILISATEUR ---
+    case 'admin_user_role':
+        require_once 'Utils/Auth.php';
+        Auth::checkAdmin();
+        require_once 'Models/User.php';
+
+        if(isset($_POST['id']) && isset($_POST['role_id'])) {
+            // Sécurité : on empêche de modifier son propre rôle pour ne pas se bloquer
+            if($_POST['id'] == $_SESSION['user']['id']) {
+                echo json_encode(['status' => 'error', 'message' => 'Impossible de modifier votre propre rôle']);
+                exit;
+            }
+
+            User::updateRole($_POST['id'], $_POST['role_id']);
+            
+            if(isset($_POST['ajax'])) {
+                echo json_encode(['status' => 'success', 'message' => 'Rôle mis à jour !']);
+                exit;
+            }
+        }
+        break;
+
+    // --- ACTION AJAX : SUPPRIMER UTILISATEUR ---
+    // --- ACTION AJAX : SUPPRIMER UTILISATEUR ---
+    case 'admin_user_delete':
+        require_once 'Utils/Auth.php';
+        Auth::checkAdmin();
+        require_once 'Models/User.php';
+
+        if(isset($_GET['id'])) {
+            // Sécurité : on empêche de se supprimer soi-même
+            if($_GET['id'] == $_SESSION['user']['id']) {
+                if(isset($_GET['ajax'])) {
+                    echo json_encode(['status' => 'error', 'message' => 'Impossible de supprimer votre propre compte']);
+                    exit;
+                }
+            }
+
+            // Appel de la nouvelle fonction delete() qui nettoie tout
+            if (User::delete($_GET['id'])) {
+                if(isset($_GET['ajax'])) {
+                    echo json_encode(['status' => 'success', 'message' => 'Utilisateur et toutes ses données supprimés !']);
+                    exit;
+                }
+            } else {
+                if(isset($_GET['ajax'])) {
+                    echo json_encode(['status' => 'error', 'message' => 'Erreur technique lors de la suppression.']);
+                    exit;
+                }
+            }
+        }
+        header('Location: index.php?page=admin_dashboard');
+        break;
+    
+        // --- ACTION AJAX : FILTRER LES STATS ---
+    case 'admin_stats_filter':
+        require_once 'Utils/Auth.php';
+        Auth::checkAdmin();
+        require_once 'Models/Stats.php';
+
+        // Par défaut, on prend le mois en cours si pas de date
+        $start = $_POST['start'] ?? date('Y-m-01');
+        $end = $_POST['end'] ?? date('Y-m-t');
+
+        $ca = Stats::getChiffreAffaires($start, $end);
+        $bestSeller = Stats::getBestSeller($start, $end);
+        
+        // On renvoie aussi l'historique global
+        $history = Stats::getOrdersByMonth();
+
+        echo json_encode([
+            'status' => 'success',
+            'ca' => number_format($ca, 2) . ' €',
+            'best_seller_titre' => $bestSeller['titre'] ?? 'Aucun',
+            'best_seller_count' => ($bestSeller['total_ventes'] ?? 0) . ' ventes',
+            'history' => $history
+        ]);
+        exit;
         break;
 
     // --- PAGE : VOIR LE PANIER ---

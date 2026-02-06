@@ -1,11 +1,13 @@
-/* --- CONFIGURATION GLOBALE --- */
+/* --- 1. CONFIGURATION GLOBALE --- */
 body {
     background-color: #F2F0ED; /* Fond Beige */
     font-family: 'Montserrat', sans-serif;
-    color: #444; /* Gris foncé neutre pour le texte courant pour la lisibilité */
+    color: #444; /* Gris foncé neutre */
 }
 
-/* --- EN-TÊTE DASHBOARD --- */
+a { text-decoration: none; }
+
+/* --- 2. EN-TÊTE DASHBOARD --- */
 .dashboard-title {
     color: #8B2635; /* Rouge Bordeaux */
     font-weight: 800;
@@ -21,156 +23,88 @@ body {
     font-style: italic;
 }
 
-/* --- ONGLETS (TABS) --- */
+/* --- 3. ONGLETS (STYLE PILULE HARMONISÉ) --- */
 .nav-pills {
-    border-bottom: 2px solid rgba(216, 168, 94, 0.2); /* Ligne dorée pâle */
-    padding-bottom: 10px;
+    background-color: transparent;
+    padding: 0;
+    border: none;
+    margin-bottom: 20px;
+}
+
+.nav-pills .nav-item {
+    margin-right: 10px;
 }
 
 .nav-pills .nav-link {
-    background-color: transparent;
-    color: #8B2635; /* Texte Bordeaux par défaut */
-    border-radius: 50px;
-    border: 1px solid transparent;
+    color: #8B2635; /* Texte Bordeaux */
+    background-color: #fff;
+    border: 1px solid rgba(139, 38, 53, 0.1);
+    border-radius: 50px; /* Pilule */
+    padding: 12px 25px;
     font-weight: 700;
-    padding: 10px 25px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
 }
 
 .nav-pills .nav-link:hover {
-    background-color: white;
-    color: #D8A85E; /* Devient Doré au survol */
-    box-shadow: 0 2px 10px rgba(139, 38, 53, 0.1);
+    color: #D8A85E; /* Texte Doré */
+    background-color: #fff;
+    border-color: #D8A85E;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(216, 168, 94, 0.15);
 }
 
 .nav-pills .nav-link.active {
-    background-color: #8B2635 !important; /* Fond Bordeaux quand actif */
+    background-color: #8B2635 !important; /* Fond Bordeaux */
     color: white !important;
-    border: none;
-    box-shadow: 0 4px 15px rgba(139, 38, 53, 0.3);
+    border-color: #8B2635;
+    box-shadow: 0 8px 20px rgba(139, 38, 53, 0.3);
+    transform: translateY(0);
 }
 
-/* --- BOUTON AJOUTER (NOUVEAU MENU) --- */
+.nav-pills .nav-link i {
+    font-size: 1.1em;
+    vertical-align: -2px;
+}
+
+/* --- 4. CARTES ET CONTENEURS --- */
+.dashboard-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(139, 38, 53, 0.05);
+    border: none;
+    overflow: hidden;
+}
+
+.card {
+    border-radius: 20px; /* Arrondi pour toutes les cartes (stats incluses) */
+}
+
+/* --- 5. BOUTONS --- */
 .btn-add-menu {
-    background-color: #D8A85E; /* Doré */
+    background-color: #D8A85E;
     color: white;
     font-weight: 700;
     border: none;
     border-radius: 50px;
-    padding: 12px 30px;
+    padding: 10px 25px;
     box-shadow: 0 4px 15px rgba(216, 168, 94, 0.3);
     transition: all 0.3s ease;
-    text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: 10px;
 }
 
 .btn-add-menu:hover {
-    background-color: #8B2635; /* Passe au Bordeaux au survol */
-    transform: translateY(-2px);
-    color: white;
-}
-
-/* --- LA CARTE DU TABLEAU --- */
-.dashboard-card {
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(139, 38, 53, 0.05); /* Ombre teintée de rouge très léger */
-    border: none;
-    overflow: hidden;
-    margin-top: 20px;
-}
-
-/* --- LE TABLEAU --- */
-.table {
-    margin-bottom: 0;
-}
-
-.table thead {
-    background-color: #FFF;
-    border-bottom: 2px solid #F2F0ED;
-}
-
-.table thead th {
-    color: #D8A85E; /* Titres de colonnes Dorés */
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 700;
-    padding: 20px;
-    border: none;
-}
-
-.table tbody td {
-    vertical-align: middle;
-    padding: 20px;
-    border-bottom: 1px solid #F2F0ED; /* Lignes beiges */
-}
-
-/* --- ÉLÉMENTS DU TABLEAU --- */
-.menu-thumb {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 12px;
-    border: 2px solid #F2F0ED;
-}
-
-.menu-title {
-    font-weight: 700;
-    font-size: 1rem;
-    color: #333;
-}
-
-.menu-price {
-    font-weight: 700;
-    color: #8B2635; /* Prix en Bordeaux */
-    font-size: 1.1rem;
-}
-
-/* --- SELECTEUR DE STATUT (Customisé 100% DA) --- */
-.status-select {
-    border-radius: 50px;
-    font-weight: 700;
-    font-size: 0.85rem;
-    padding: 8px 20px;
-    cursor: pointer;
-    appearance: none; /* Enlève le style par défaut du navigateur */
-    text-align: center;
-    transition: all 0.3s;
-}
-
-/* Statut : En attente (Blanc avec bordure Dorée) */
-.status-select.en_attente {
-    background-color: white;
-    color: #D8A85E;
-    border: 2px solid #D8A85E;
-}
-
-/* Statut : Validée (Doré plein) */
-.status-select.validee {
-    background-color: #D8A85E;
-    color: white;
-    border: 2px solid #D8A85E;
-}
-
-/* Statut : Livrée (Bordeaux plein - C'est le but ultime) */
-.status-select.livree {
     background-color: #8B2635;
     color: white;
-    border: 2px solid #8B2635;
+    transform: translateY(-2px);
 }
 
-/* Statut : Annulée (Gris clair texte Bordeaux) */
-.status-select.annulee {
-    background-color: #F2F0ED;
-    color: #8B2635;
-    border: 2px solid #F2F0ED;
-    text-decoration: line-through;
-}
-
-/* --- BOUTONS D'ACTION (L'Oeil, Le Crayon, La Poubelle) --- */
+/* Boutons d'action ronds (Voir, Editer, Supprimer) */
 .action-btn {
     width: 35px;
     height: 35px;
@@ -179,14 +113,12 @@ body {
     justify-content: center;
     border-radius: 50%;
     transition: all 0.3s;
-    text-decoration: none;
     margin-left: 5px;
     border: 1px solid transparent;
 }
 
-/* Bouton Voir / Modifier (Contour Doré) */
 .btn-view, .btn-edit {
-    background-color: white;
+    background-color: #fff;
     color: #D8A85E;
     border-color: #D8A85E;
 }
@@ -195,9 +127,8 @@ body {
     color: white;
 }
 
-/* Bouton Supprimer (Contour Bordeaux) */
 .btn-delete {
-    background-color: white;
+    background-color: #fff;
     color: #8B2635;
     border-color: #8B2635;
 }
@@ -206,12 +137,89 @@ body {
     color: white;
 }
 
-/* Badges Thèmes */
+/* --- 6. TABLEAUX --- */
+.table { margin-bottom: 0; }
+.table thead { background-color: #fff; }
+.table thead th {
+    color: #D8A85E;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    padding: 20px;
+    border-bottom: 2px solid #F2F0ED;
+}
+.table tbody td {
+    vertical-align: middle;
+    padding: 20px;
+    border-bottom: 1px solid #F2F0ED;
+}
+
+/* Images et Textes Tableaux */
+.menu-thumb {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+.menu-title { font-weight: 700; color: #333; }
+.menu-price { font-weight: 700; color: #8B2635; font-size: 1.1rem; }
+
+/* --- 7. ÉLÉMENTS SPÉCIFIQUES (Statuts, Badges, Stars) --- */
+
+/* Sélecteur de statut (Commandes) */
+.status-select {
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 8px 15px;
+    cursor: pointer;
+    text-align: center;
+    border: 1px solid transparent;
+    transition: all 0.3s;
+}
+.status-select:focus { outline: none; box-shadow: none; }
+
+/* Couleurs statuts */
+.status-select.en_attente { background-color: #fff3cd; color: #856404; border-color: #ffeeba; }
+.status-select.validee { background-color: #d1ecf1; color: #0c5460; border-color: #bee5eb; }
+.status-select.livree { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
+.status-select.annulee { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; text-decoration: line-through; }
+
+/* Badges (Menus / Avis) */
 .badge-custom {
     background-color: #F2F0ED;
     color: #8B2635;
-    padding: 5px 15px;
+    padding: 6px 15px;
     border-radius: 50px;
     font-weight: 600;
     font-size: 0.8rem;
+}
+
+.badge.bg-success { background-color: #d4edda !important; color: #155724 !important; }
+.badge.bg-warning { background-color: #fff3cd !important; color: #856404 !important; }
+
+/* Etoiles Avis */
+.fa-star { color: #D8A85E; } /* Étoiles dorées */
+
+/* --- 8. FORMULAIRES (Filtres Stats) --- */
+.form-control {
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+    padding: 10px 15px;
+}
+.form-control:focus {
+    border-color: #8B2635;
+    box-shadow: 0 0 0 0.25rem rgba(139, 38, 53, 0.15);
+}
+
+/* Sélecteur de Rôle (Utilisateurs) */
+.js-role-select {
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+    cursor: pointer;
+}
+.js-role-select:focus {
+    border-color: #D8A85E;
+    box-shadow: none;
 }

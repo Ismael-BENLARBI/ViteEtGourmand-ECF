@@ -1,0 +1,134 @@
+/* --- AMBIANCE GÉNÉRALE --- */
+body {
+    background-color: #F2F0ED; /* Fond Beige */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #444;
+}
+
+/* --- LA CARTE CENTRALE --- */
+.contact-card {
+    background: white;
+    border-radius: 25px; /* Arrondi prononcé */
+    box-shadow: 0 15px 40px rgba(139, 38, 53, 0.08); /* Ombre légère teintée de bordeaux */
+    border: none;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.contact-card:hover {
+    transform: translateY(-5px); /* Petit effet de levitation */
+}
+
+/* --- EN-TÊTE DE LA CARTE --- */
+.contact-header {
+    padding: 40px 40px 20px 40px;
+    text-align: center;
+}
+
+.contact-title {
+    color: #8B2635; /* Rouge Bordeaux */
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    font-size: 2rem;
+}
+
+.contact-subtitle {
+    color: #D8A85E; /* Doré */
+    font-family: 'Georgia', serif; /* Touche d'élégance pour le sous-titre */
+    font-style: italic;
+    font-size: 1.1rem;
+}
+
+.separator {
+    height: 3px;
+    width: 60px;
+    background-color: #D8A85E;
+    margin: 20px auto;
+    border-radius: 2px;
+}
+
+/* --- FORMULAIRE --- */
+.card-body {
+    padding: 20px 50px 50px 50px;
+}
+
+.form-label {
+    color: #8B2635;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-control {
+    background-color: #fdfdfd;
+    border: 2px solid #eee;
+    border-radius: 15px; /* Champs bien arrondis */
+    padding: 15px 20px;
+    font-size: 1rem;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+/* Effet au clic dans le champ (Focus) */
+.form-control:focus {
+    background-color: #fff;
+    border-color: #D8A85E; /* Bordure dorée */
+    box-shadow: 0 0 0 4px rgba(216, 168, 94, 0.15); /* Halo doré */
+    outline: none;
+}
+
+.form-control::placeholder {
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+/* Zone de texte (Textarea) */
+textarea.form-control {
+    resize: none; /* Empêche de déformer le design */
+}
+
+/* --- BOUTON D'ENVOI --- */
+.btn-submit-wrapper {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.btn-send {
+    background-color: #8B2635;
+    color: white;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 15px 50px;
+    border-radius: 50px; /* Bouton Pilule */
+    border: none;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 20px rgba(139, 38, 53, 0.2);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-send:hover {
+    background-color: #D8A85E; /* Passe au doré */
+    transform: translateY(-3px); /* Remonte légèrement */
+    box-shadow: 0 15px 30px rgba(216, 168, 94, 0.3);
+    color: white;
+}
+
+.btn-send:active {
+    transform: translateY(-1px);
+}
+
+/* --- MESSAGES D'ALERTE --- */
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: none;
+    border-left: 5px solid #28a745;
+}

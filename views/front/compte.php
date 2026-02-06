@@ -44,7 +44,7 @@ $currentUser = User::getById($_SESSION['user']['id']);
         <div class="tab-pane fade show active" id="pills-commandes" role="tabpanel">
             <div class="card shadow-sm border-0 rounded-4 p-4">
                 
-                <?php if (empty($mesCommandes)): ?>
+                <?php if (empty($commandes)): ?>
                     <div class="text-center py-5">
                         <div class="mb-3 text-muted" style="font-size: 3rem;">
                             <i class="fa-solid fa-basket-shopping"></i>
@@ -67,7 +67,7 @@ $currentUser = User::getById($_SESSION['user']['id']);
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach($mesCommandes as $cmd): ?>
+                                <?php foreach($commandes as $cmd): ?>
                                     <tr>
                                         <td class="fw-bold text-dark">#<?php echo htmlspecialchars($cmd['numero_commande']); ?></td>
                                         <td class="text-muted">
@@ -114,49 +114,90 @@ $currentUser = User::getById($_SESSION['user']['id']);
 
         <div class="tab-pane fade" id="pills-profil" role="tabpanel">
             <div class="card shadow-sm border-0 rounded-4 p-4">
-                <h4 class="mb-4 fw-bold">Modifier mes informations</h4>
+                
+                <h4 class="mb-4 fw-bold" style="color: #8B2635;">Modifier mes informations</h4>
                 
                 <form action="index.php?page=compte_update" method="POST">
                     <div class="row g-3">
-                        
                         <div class="col-md-6">
-                            <label class="form-label small">Prénom</label>
+                            <label class="form-label small fw-bold text-muted">Prénom</label>
                             <input type="text" name="prenom" class="form-control" value="<?php echo htmlspecialchars($currentUser['prenom']); ?>" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small">Nom</label>
+                            <label class="form-label small fw-bold text-muted">Nom</label>
                             <input type="text" name="nom" class="form-control" value="<?php echo htmlspecialchars($currentUser['nom']); ?>" required>
                         </div>
 
                         <div class="col-md-6">
-                            <label class="form-label small">Email</label>
+                            <label class="form-label small fw-bold text-muted">Email</label>
                             <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($currentUser['email']); ?>" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small">Téléphone</label>
+                            <label class="form-label small fw-bold text-muted">Téléphone</label>
                             <input type="text" name="telephone" class="form-control" value="<?php echo htmlspecialchars($currentUser['telephone'] ?? ''); ?>">
                         </div>
 
                         <div class="col-12">
-                            <label class="form-label small">Adresse complète</label>
+                            <label class="form-label small fw-bold text-muted">Adresse complète</label>
                             <input type="text" name="adresse" class="form-control" value="<?php echo htmlspecialchars($currentUser['adresse_postale'] ?? ''); ?>">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label small">Code Postal</label>
+                            <label class="form-label small fw-bold text-muted">Code Postal</label>
                             <input type="text" name="code_postal" class="form-control" value="<?php echo htmlspecialchars($currentUser['code_postal'] ?? ''); ?>">
                         </div>
                         <div class="col-md-8">
-                            <label class="form-label small">Ville</label>
+                            <label class="form-label small fw-bold text-muted">Ville</label>
                             <input type="text" name="ville" class="form-control" value="<?php echo htmlspecialchars($currentUser['ville'] ?? ''); ?>">
                         </div>
 
                         <div class="col-12 mt-4 text-end">
-                            <button type="submit" class="btn btn-brand rounded-pill px-4">
+                            <button type="submit" class="btn text-white rounded-pill px-4" style="background-color: #8B2635;">
                                 <i class="fa-solid fa-floppy-disk me-2"></i> Enregistrer les modifications
                             </button>
                         </div>
                     </div>
                 </form>
+
+                <hr class="my-5" style="border-color: #D8A85E; opacity: 0.5;">
+
+                <h4 class="fw-bold mb-4" style="color: #8B2635;">
+                    <i class="fa-solid fa-lock me-2"></i>Sécurité
+                </h4>
+
+                <?php if(isset($_GET['error']) && $_GET['error'] == 'wrong_pass'): ?>
+                    <div class="alert alert-danger rounded-3"><i class="fa-solid fa-triangle-exclamation me-2"></i> L'ancien mot de passe est incorrect.</div>
+                <?php elseif(isset($_GET['error']) && $_GET['error'] == 'mismatch'): ?>
+                    <div class="alert alert-danger rounded-3"><i class="fa-solid fa-triangle-exclamation me-2"></i> Les nouveaux mots de passe ne correspondent pas.</div>
+                <?php elseif(isset($_GET['success']) && $_GET['success'] == 'pass_updated'): ?>
+                    <div class="alert alert-success rounded-3"><i class="fa-solid fa-check-circle me-2"></i> Votre mot de passe a été modifié avec succès !</div>
+                <?php endif; ?>
+
+                <form action="index.php?page=compte_update_password" method="POST" class="p-4 bg-light rounded-3 shadow-sm border">
+                    <div class="row g-3 align-items-end">
+                        
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold text-muted">Ancien mot de passe</label>
+                            <input type="password" name="old_password" class="form-control" required placeholder="••••••••">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold text-muted">Nouveau mot de passe</label>
+                            <input type="password" name="new_password" class="form-control" required placeholder="Nouveau..." minlength="6">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold text-muted">Confirmer</label>
+                            <input type="password" name="confirm_password" class="form-control" required placeholder="Confirmer...">
+                        </div>
+
+                        <div class="col-12 mt-3 text-end">
+                            <button type="submit" class="btn text-white fw-bold px-4 rounded-pill" style="background-color: #8B2635;">
+                                <i class="fa-solid fa-sync me-2"></i> Mettre à jour le mot de passe
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
             </div>
         </div>
 
@@ -164,3 +205,5 @@ $currentUser = User::getById($_SESSION['user']['id']);
 </div>
 
 <?php require_once 'Views/partials/footer.php'; ?>
+
+<script src="assets/js/compte.js"></script>

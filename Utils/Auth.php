@@ -1,22 +1,31 @@
 <?php
+
 class Auth {
 
-    // Fonction "Vigile" : Elle bloque l'entrée si on n'est pas Admin
+    // 1. Vérifie si l'utilisateur est admin (Sinon redirige)
     public static function checkAdmin() {
-        
-        // 1. Est-ce que la personne est connectée ?
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Si pas connecté OU pas admin -> Dehors
+        if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+            header('Location: index.php?page=home');
+            exit;
+        }
+    }
+
+    // 2. Vérifie simplement si l'utilisateur est connecté (Sinon redirige vers Login)
+    // C'EST CETTE FONCTION QUI TE MANQUAIT
+    public static function check() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Si l'utilisateur n'est pas connecté
         if (!isset($_SESSION['user'])) {
-            header('Location: index.php?page=login&error=Vous devez être connecté pour accéder à cette page.');
+            header('Location: index.php?page=login'); // On le renvoie se connecter
             exit;
         }
-
-        // 2. Est-ce que la personne a le badge "ADMIN" ?
-        // (Rappel : on a défini 'role' => 'admin' dans le login_action)
-        if ($_SESSION['user']['role'] !== 'admin') {
-            header('Location: index.php?page=home'); // On renvoie poliment à l'accueil
-            exit;
-        }
-
-        // Si on arrive ici, c'est que tout est bon, le code continue !
     }
 }

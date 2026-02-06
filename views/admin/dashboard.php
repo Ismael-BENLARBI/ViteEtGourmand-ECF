@@ -11,19 +11,39 @@
     </div>
 
     <ul class="nav nav-pills mb-4 gap-3" id="pills-tab" role="tablist">
-        <li class="nav-item" role="presentation">
+        <li class="nav-item">
             <button class="nav-link active fw-bold px-4 py-2" id="pills-commandes-tab" data-bs-toggle="pill" data-bs-target="#pills-commandes" type="button">
                 📦 Commandes
             </button>
         </li>
-        <li class="nav-item" role="presentation">
+        <li class="nav-item">
             <button class="nav-link fw-bold px-4 py-2" id="pills-menus-tab" data-bs-toggle="pill" data-bs-target="#pills-menus" type="button">
                 🍽️ Menus
             </button>
         </li>
-        <li class="nav-item" role="presentation">
+        <li class="nav-item">
             <button class="nav-link" id="pills-avis-tab" data-bs-toggle="pill" data-bs-target="#pills-avis" type="button" role="tab">
-                <i class="fa-solid fa-star me-2"></i> Avis Clients
+                <i class="fa-solid fa-star me-2"></i> Avis
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" id="pills-users-tab" data-bs-toggle="pill" data-bs-target="#pills-users" type="button" role="tab">
+                <i class="fa-solid fa-users me-2"></i> Utilisateurs
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" id="pills-messages-tab" data-bs-toggle="pill" data-bs-target="#pills-messages" type="button" role="tab">
+                <i class="fa-solid fa-envelope me-2"></i> Messagerie
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" id="pills-stats-tab" data-bs-toggle="pill" data-bs-target="#pills-stats" type="button" role="tab">
+                <i class="fa-solid fa-chart-line me-2"></i> Statistiques
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" id="pills-horaires-tab" data-bs-toggle="pill" data-bs-target="#pills-horaires" type="button" role="tab">
+                <i class="fa-solid fa-clock me-2"></i> Horaires
             </button>
         </li>
     </ul>
@@ -36,21 +56,12 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Ref</th>
-                                <th>Client</th>
-                                <th>Date</th>
-                                <th>Total</th>
-                                <th>Statut</th>
-                                <th class="text-end">Actions</th>
+                                <th>Ref</th><th>Client</th><th>Date</th><th>Total</th><th>Statut</th><th class="text-end">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if(empty($commandes)): ?>
-                                <tr>
-                                    <td colspan="6" class="text-center py-5 text-muted">
-                                        Aucune commande pour le moment.
-                                    </td>
-                                </tr>
+                                <tr><td colspan="6" class="text-center py-5 text-muted">Aucune commande.</td></tr>
                             <?php else: ?>
                                 <?php foreach($commandes as $cmd): ?>
                                     <tr>
@@ -61,11 +72,9 @@
                                         </td>
                                         <td><?php echo (new DateTime($cmd['date_commande']))->format('d/m H:i'); ?></td>
                                         <td class="menu-price"><?php echo number_format($cmd['prix_total'], 2); ?>€</td>
-                                        
                                         <td>
                                             <form onsubmit="return false;">
-                                                <select class="form-select form-select-sm status-select js-status-select <?php echo $cmd['statut']; ?>" 
-                                                        data-id="<?php echo $cmd['commande_id']; ?>">
+                                                <select class="form-select form-select-sm status-select js-status-select <?php echo $cmd['statut']; ?>" data-id="<?php echo $cmd['commande_id']; ?>">
                                                     <option value="en_attente" <?php echo $cmd['statut'] == 'en_attente' ? 'selected' : ''; ?>>En attente</option>
                                                     <option value="validee" <?php echo $cmd['statut'] == 'validee' ? 'selected' : ''; ?>>Validée</option>
                                                     <option value="livree" <?php echo $cmd['statut'] == 'livree' ? 'selected' : ''; ?>>Livrée</option>
@@ -73,19 +82,9 @@
                                                 </select>
                                             </form>
                                         </td>
-                                        
                                         <td class="text-end">
-                                            <a href="index.php?page=commande_details&id=<?php echo $cmd['commande_id']; ?>" 
-                                               class="action-btn btn-view" title="Voir les détails">
-                                                <i class="fa-solid fa-eye"></i>
-                                            </a>
-
-                                            <a href="index.php?page=admin_commande_delete&id=<?php echo $cmd['commande_id']; ?>" 
-                                               class="action-btn btn-delete" 
-                                               title="Supprimer la commande"
-                                               onclick="return confirm('⚠️ Êtes-vous sûr de vouloir supprimer cette commande ? Cette action est définitive.');">
-                                                <i class="fa-solid fa-trash"></i>
-                                            </a>
+                                            <a href="index.php?page=commande_details&id=<?php echo $cmd['commande_id']; ?>" class="action-btn btn-view"><i class="fa-solid fa-eye"></i></a>
+                                            <a href="index.php?page=admin_commande_delete&id=<?php echo $cmd['commande_id']; ?>" class="action-btn btn-delete" onclick="return confirm('Supprimer ?');"><i class="fa-solid fa-trash"></i></a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -97,70 +96,31 @@
         </div>
 
         <div class="tab-pane fade" id="pills-menus" role="tabpanel">
-            
             <div class="d-flex justify-content-end mb-3">
-                <a href="index.php?page=admin_menu_add" class="btn-add-menu">
-                    <span>+</span> Nouveau Menu
-                </a>
+                <a href="index.php?page=admin_menu_add" class="btn-add-menu"><span>+</span> Nouveau Menu</a>
             </div>
-
             <div class="dashboard-card">
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
-                            <tr>
-                                <th>Visuel</th>
-                                <th>Détails du Menu</th>
-                                <th>Prix / Pers.</th>
-                                <th>Thème</th>
-                                <th class="text-end">Actions</th>
-                            </tr>
+                            <tr><th>Visuel</th><th>Détails</th><th>Prix</th><th>Thème</th><th class="text-end">Actions</th></tr>
                         </thead>
                         <tbody>
                             <?php if(empty($menus)): ?>
-                                <tr>
-                                    <td colspan="5" class="text-center py-5 text-muted">
-                                        Aucun menu pour le moment. Commencez par en ajouter un !
-                                    </td>
-                                </tr>
+                                <tr><td colspan="5" class="text-center py-5 text-muted">Aucun menu.</td></tr>
                             <?php else: ?>
                                 <?php foreach($menus as $menu): ?>
                                     <tr>
-                                        <td>
-                                            <?php 
-                                                $img = !empty($menu['image_principale']) 
-                                                    ? "assets/images/menu/" . $menu['image_principale'] 
-                                                    : "https://via.placeholder.com/70x70?text=Menu";
-                                            ?>
-                                            <img src="<?php echo $img; ?>" alt="Menu" class="menu-thumb">
-                                        </td>
-
+                                        <td><img src="<?php echo !empty($menu['image_principale']) ? "assets/images/menu/" . $menu['image_principale'] : "https://via.placeholder.com/70x70"; ?>" class="menu-thumb"></td>
                                         <td>
                                             <span class="menu-title"><?php echo htmlspecialchars($menu['titre']); ?></span>
-                                            <small class="text-muted">Min. <?php echo $menu['nombre_personne_min']; ?> personnes</small>
+                                            <small class="text-muted d-block">Min. <?php echo $menu['nombre_personne_min']; ?> pers.</small>
                                         </td>
-
-                                        <td>
-                                            <span class="menu-price"><?php echo number_format($menu['prix_par_personne'], 2); ?>€</span>
-                                        </td>
-
-                                        <td>
-                                            <span class="badge-custom">
-                                                <?php echo htmlspecialchars($menu['theme_nom'] ?? 'Aucun'); ?>
-                                            </span>
-                                        </td>
-
+                                        <td><span class="menu-price"><?php echo number_format($menu['prix_par_personne'], 2); ?>€</span></td>
+                                        <td><span class="badge-custom"><?php echo htmlspecialchars($menu['theme_nom'] ?? 'Aucun'); ?></span></td>
                                         <td class="text-end">
-                                            <a href="index.php?page=admin_menu_edit&id=<?php echo $menu['menu_id']; ?>" 
-                                               class="action-btn btn-edit" title="Modifier">
-                                                <i class="fa-solid fa-pen"></i>
-                                            </a>
-                                            <a href="index.php?page=admin_menu_delete&id=<?php echo $menu['menu_id']; ?>" 
-                                               class="action-btn btn-delete"
-                                               title="Supprimer"
-                                               onclick="return confirm('Attention : suppression définitive du menu <?php echo addslashes($menu['titre']); ?> ?');">
-                                                <i class="fa-solid fa-trash"></i>
-                                            </a>
+                                            <a href="index.php?page=admin_menu_edit&id=<?php echo $menu['menu_id']; ?>" class="action-btn btn-edit"><i class="fa-solid fa-pen"></i></a>
+                                            <a href="index.php?page=admin_menu_delete&id=<?php echo $menu['menu_id']; ?>" class="action-btn btn-delete" onclick="return confirm('Supprimer ?');"><i class="fa-solid fa-trash"></i></a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -184,28 +144,30 @@
                                     <th>Date</th>
                                     <th>Client</th>
                                     <th>Menu</th>
+                                    <th style="width: 30%;">Commentaire</th>
                                     <th>Note</th>
-                                    <th>Commentaire</th>
                                     <th>Statut</th>
                                     <th class="text-end">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php if(empty($avisList)): ?>
-                                    <tr>
-                                        <td colspan="7" class="text-center py-4">Aucun avis pour le moment.</td>
-                                    </tr>
+                                    <tr><td colspan="7" class="text-center py-4">Aucun avis.</td></tr>
                                 <?php else: ?>
                                     <?php foreach($avisList as $avis): ?>
                                         <tr>
                                             <td><?php echo (new DateTime($avis['date_publication']))->format('d/m/Y'); ?></td>
                                             <td class="fw-bold"><?php echo htmlspecialchars($avis['prenom'] . ' ' . $avis['nom']); ?></td>
                                             <td class="text-muted small"><?php echo htmlspecialchars($avis['titre']); ?></td>
-                                            <td class="text-warning">
-                                                <?php echo $avis['note']; ?> <i class="fa-solid fa-star text-small"></i>
-                                            </td>
                                             <td>
-                                                <small class="fst-italic">"<?php echo htmlspecialchars($avis['description']); ?>"</small>
+                                                <div style="max-width: 250px; cursor: help;" title="<?php echo htmlspecialchars($avis['description'] ?? ''); ?>">
+                                                    <span class="d-block text-truncate">
+                                                        <?php echo htmlspecialchars($avis['description'] ?? ''); ?>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td class="text-warning" style="white-space: nowrap;">
+                                                <?php echo $avis['note']; ?> <i class="fa-solid fa-star text-small"></i>
                                             </td>
                                             <td>
                                                 <?php if($avis['statut'] == 'valide'): ?>
@@ -216,21 +178,212 @@
                                             </td>
                                             <td class="text-end">
                                                 <?php if($avis['statut'] != 'valide'): ?>
-                                                    <button class="btn btn-sm btn-success text-white me-1 js-validate-avis" 
-                                                            data-id="<?php echo $avis['avis_id']; ?>"
-                                                            title="Valider et publier">
-                                                        <i class="fa-solid fa-check"></i>
-                                                    </button>
+                                                    <button class="btn btn-sm btn-success text-white me-1 js-validate-avis" data-id="<?php echo $avis['avis_id']; ?>"><i class="fa-solid fa-check"></i></button>
                                                 <?php endif; ?>
+                                                <button class="btn btn-sm btn-danger text-white js-delete-avis" data-id="<?php echo $avis['avis_id']; ?>"><i class="fa-solid fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                                                <button class="btn btn-sm btn-danger text-white js-delete-avis" 
-                                                        data-id="<?php echo $avis['avis_id']; ?>"
-                                                        title="Supprimer définitivement">
-                                                    <i class="fa-solid fa-trash"></i>
+        <div class="tab-pane fade" id="pills-users" role="tabpanel">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold" style="color: #8B2635;">👥 Gestion des Utilisateurs</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr><th>ID</th><th>Nom / Prénom</th><th>Email</th><th>Rôle</th><th class="text-end">Actions</th></tr>
+                            </thead>
+                            <tbody>
+                                <?php if(empty($users)): ?>
+                                    <tr><td colspan="5" class="text-center py-4">Aucun utilisateur.</td></tr>
+                                <?php else: ?>
+                                    <?php foreach($users as $u): ?>
+                                        <tr>
+                                            <td class="text-muted">#<?php echo $u['utilisateur_id']; ?></td>
+                                            <td class="fw-bold">
+                                                <?php echo htmlspecialchars($u['nom'] . ' ' . $u['prenom']); ?>
+                                                <?php if($u['utilisateur_id'] == $_SESSION['user']['id']): ?>
+                                                    <span class="badge bg-info ms-2">C'est vous</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td><?php echo htmlspecialchars($u['email']); ?></td>
+                                            <td>
+                                                <form onsubmit="return false;">
+                                                    <select class="form-select form-select-sm js-role-select" 
+                                                            data-id="<?php echo $u['utilisateur_id']; ?>"
+                                                            style="width: 140px; font-weight:bold; color: <?php echo ($u['role_id'] == 1 ? '#d63384' : ($u['role_id'] == 2 ? '#0d6efd' : '#333')); ?>">
+                                                        <option value="3" <?php echo $u['role_id'] == 3 ? 'selected' : ''; ?>>Client</option>
+                                                        <option value="2" <?php echo $u['role_id'] == 2 ? 'selected' : ''; ?>>Employé</option>
+                                                        <option value="1" <?php echo $u['role_id'] == 1 ? 'selected' : ''; ?>>Admin</option>
+                                                    </select>
+                                                </form>
+                                            </td>
+                                            <td class="text-end">
+                                                <?php if($u['utilisateur_id'] != $_SESSION['user']['id']): ?>
+                                                    <button class="btn btn-sm btn-danger text-white js-delete-user" data-id="<?php echo $u['utilisateur_id']; ?>"><i class="fa-solid fa-trash"></i></button>
+                                                <?php endif; ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="pills-messages" role="tabpanel">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold" style="color: #8B2635;">📩 Messages Reçus</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr><th>Date</th><th>Auteur</th><th>Sujet</th><th>Message</th><th class="text-end">Actions</th></tr>
+                            </thead>
+                            <tbody>
+                                <?php if(empty($messages)): ?>
+                                    <tr><td colspan="5" class="text-center py-4">Aucun message.</td></tr>
+                                <?php else: ?>
+                                    <?php foreach($messages as $msg): ?>
+                                        <tr class="<?php echo $msg['est_traite'] == 0 ? 'fw-bold bg-light' : ''; ?> js-message-row">
+                                            <td><?php echo (new DateTime($msg['date_envoi']))->format('d/m H:i'); ?></td>
+                                            <td>
+                                                <strong><?php echo htmlspecialchars($msg['nom_visiteur'] ?? 'Inconnu'); ?></strong><br>
+                                                <small class="text-muted"><?php echo htmlspecialchars($msg['email_visiteur']); ?></small>
+                                            </td>
+                                            <td style="color: #8B2635;"><?php echo htmlspecialchars($msg['sujet']); ?></td>
+                                            <td>
+                                                <div style="max-width: 300px; cursor: help;" title="<?php echo htmlspecialchars($msg['contenu_message']); ?>">
+                                                    <span class="d-block text-truncate"><?php echo htmlspecialchars($msg['contenu_message']); ?></span>
+                                                </div>
+                                            </td>
+                                            <td class="text-end">
+                                                <button class="btn btn-sm btn-outline-dark me-1 js-open-reply-modal" 
+                                                        data-id="<?php echo $msg['message_id']; ?>"
+                                                        data-nom="<?php echo htmlspecialchars($msg['nom_visiteur'] ?? 'Client'); ?>"
+                                                        data-email="<?php echo htmlspecialchars($msg['email_visiteur']); ?>"
+                                                        data-sujet="<?php echo htmlspecialchars($msg['sujet']); ?>"
+                                                        data-message="<?php echo htmlspecialchars($msg['contenu_message']); ?>"
+                                                        data-reponse="<?php echo htmlspecialchars($msg['reponse'] ?? ''); ?>"
+                                                        title="Lire et Répondre">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-danger text-white js-delete-message" data-id="<?php echo $msg['message_id']; ?>"><i class="fa-solid fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="pills-stats" role="tabpanel">
+            <div class="card border-0 shadow-sm p-4">
+                
+                <div class="row g-3 align-items-end mb-4 bg-light p-3 rounded-3">
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-uppercase">Date de début</label>
+                        <input type="date" id="stats-start" class="form-control" value="<?php echo date('Y-m-01'); ?>">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-uppercase">Date de fin</label>
+                        <input type="date" id="stats-end" class="form-control" value="<?php echo date('Y-m-t'); ?>">
+                    </div>
+                    <div class="col-md-4">
+                        <button id="js-filter-stats" class="btn btn-primary w-100 fw-bold text-white" style="background-color:#8B2635; border:none;">
+                            <i class="fa-solid fa-filter me-2"></i> Appliquer le filtre
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-5">
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm" style="background: linear-gradient(135deg, #8B2635 0%, #681c27 100%); color: white;">
+                            <div class="card-body p-4">
+                                <h6 class="text-white-50 text-uppercase mb-2 small fw-bold">Chiffre d'Affaires (Période)</h6>
+                                <h2 class="mb-0 fw-bold display-5" id="stats-ca">-- €</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm" style="background-color: #fdf5e6;">
+                            <div class="card-body p-4">
+                                <h6 class="text-muted text-uppercase mb-2 small fw-bold">Top Vente (Période)</h6>
+                                <h3 class="mb-1 fw-bold text-dark" id="stats-best-titre">--</h3>
+                                <div class="text-success fw-bold" id="stats-best-count">-- ventes</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h5 class="fw-bold mb-3" style="color: #8B2635;">📊 Historique des Commandes (12 derniers mois)</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered text-center align-middle">
+                        <thead class="table-light">
+                            <tr><th>Mois</th><th>Nombre de Commandes</th><th>Barre visuelle</th></tr>
+                        </thead>
+                        <tbody id="stats-history-body">
+                            </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="pills-horaires" role="tabpanel">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold" style="color: #8B2635;">🕒 Horaires (Pied de page)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 20%;">Jour</th>
+                                    <th>Créneaux d'ouverture (Texte libre)</th>
+                                    <th class="text-end" style="width: 15%;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if(!empty($horaires)): ?>
+                                    <?php foreach($horaires as $h): ?>
+                                        <tr>
+                                            <td class="fw-bold text-uppercase" style="color:#8B2635;">
+                                                <?php echo htmlspecialchars($h['jour']); ?>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control" id="horaire-<?php echo $h['horaire_id']; ?>" 
+                                                       value="<?php echo htmlspecialchars($h['creneau']); ?>" 
+                                                       placeholder="Ex: 12h-14h ou Fermé">
+                                            </td>
+                                            <td class="text-end">
+                                                <button class="btn btn-sm btn-success text-white js-save-horaire" 
+                                                        data-id="<?php echo $h['horaire_id']; ?>">
+                                                    <i class="fa-solid fa-save me-1"></i> Enregistrer
                                                 </button>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
+                                <?php else: ?>
+                                    <tr><td colspan="3" class="text-center">Aucun horaire trouvé. Veuillez vérifier la base de données.</td></tr>
                                 <?php endif; ?>
                             </tbody>
                         </table>
@@ -242,91 +395,53 @@
     </div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
+<div class="modal fade" id="replyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header text-white" style="background-color: #8B2635;">
+                <h5 class="modal-title fw-bold"><i class="fa-solid fa-envelope-open-text me-2"></i> Gestion du Message</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                
+                <div class="alert alert-light border mb-4">
+                    <div class="row">
+                        <div class="col-md-6"><strong>De :</strong> <span id="modal-nom"></span> (<span id="modal-email"></span>)</div>
+                        <div class="col-md-6 text-end text-muted small">Sujet : <span id="modal-sujet" class="fw-bold"></span></div>
+                    </div>
+                </div>
 
-    // 1. GESTION DU STATUT COMMANDE (Sans rechargement)
-    const statusSelects = document.querySelectorAll('.js-status-select');
-    statusSelects.forEach(select => {
-        select.addEventListener('change', function() {
-            const commandeId = this.getAttribute('data-id');
-            const newStatus = this.value;
-            
-            // Données à envoyer
-            const formData = new FormData();
-            formData.append('id', commandeId);
-            formData.append('statut', newStatus);
-            formData.append('ajax', '1');
+                <h6 class="fw-bold text-muted text-uppercase small">Message du client :</h6>
+                <div class="p-3 bg-light rounded-3 mb-4" style="border-left: 4px solid #D8A85E;">
+                    <p id="modal-message" class="mb-0" style="white-space: pre-wrap;"></p>
+                </div>
 
-            fetch('index.php?page=admin_commande_status', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.status === 'success') {
-                    // Feedback visuel (bordure verte temporaire)
-                    this.style.borderColor = '#198754';
-                    this.style.boxShadow = '0 0 0 0.25rem rgba(25, 135, 84, 0.25)';
-                    setTimeout(() => { 
-                        this.style.borderColor = ''; 
-                        this.style.boxShadow = '';
-                    }, 1000);
-                    
-                    // Mise à jour de la classe CSS pour la couleur
-                    this.className = `form-select form-select-sm status-select js-status-select ${newStatus}`;
-                }
-            })
-            .catch(error => console.error('Erreur:', error));
-        });
-    });
+                <div id="reply-section">
+                    <h6 class="fw-bold text-muted text-uppercase small">Votre Réponse :</h6>
+                    <form id="form-reply">
+                        <input type="hidden" id="reply-id">
+                        <input type="hidden" id="reply-email">
+                        <textarea class="form-control mb-3" id="reply-content" rows="5" placeholder="Écrivez votre réponse ici... Elle sera envoyée par email au client."></textarea>
+                        <div class="text-end">
+                            <button type="submit" class="btn text-white fw-bold px-4 rounded-pill" style="background-color: #8B2635;">
+                                <i class="fa-solid fa-paper-plane me-2"></i> Envoyer la réponse
+                            </button>
+                        </div>
+                    </form>
+                </div>
 
-    // 2. VALIDATION AVIS (Sans rechargement)
-    document.querySelectorAll('.js-validate-avis').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            const avisId = this.getAttribute('data-id');
-            const row = this.closest('tr');
-            const badge = row.querySelector('.js-badge');
+                <div id="already-replied" class="d-none">
+                    <h6 class="fw-bold text-success text-uppercase small"><i class="fa-solid fa-check me-1"></i> Réponse envoyée :</h6>
+                    <div class="p-3 bg-success bg-opacity-10 border border-success rounded-3 text-success">
+                        <p id="modal-reponse-content" class="mb-0"></p>
+                    </div>
+                </div>
 
-            fetch(`index.php?page=admin_avis_validate&id=${avisId}&ajax=1`)
-            .then(response => response.json())
-            .then(data => {
-                if(data.status === 'success') {
-                    // Mise à jour visuelle du badge
-                    badge.className = 'badge bg-success js-badge';
-                    badge.textContent = 'En ligne';
-                    // Suppression du bouton valider
-                    this.remove(); 
-                }
-            });
-        });
-    });
-
-    // 3. SUPPRESSION AVIS (Sans rechargement)
-    document.querySelectorAll('.js-delete-avis').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            if(!confirm('Voulez-vous vraiment supprimer cet avis ?')) return;
-
-            const avisId = this.getAttribute('data-id');
-            const row = this.closest('tr');
-
-            fetch(`index.php?page=admin_avis_delete&id=${avisId}&ajax=1`)
-            .then(response => response.json())
-            .then(data => {
-                if(data.status === 'success') {
-                    // Animation de disparition
-                    row.style.transition = 'all 0.5s ease';
-                    row.style.opacity = '0';
-                    row.style.transform = 'translateX(20px)';
-                    setTimeout(() => row.remove(), 500);
-                }
-            });
-        });
-    });
-
-});
-</script>
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php require_once 'Views/partials/footer.php'; ?>
+
+<script src="assets/js/admin_dashboard.js"></script>
