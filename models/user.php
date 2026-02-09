@@ -179,4 +179,47 @@ class User {
         return false;
     }
 
+    // --- GESTION MOT DE PASSE OUBLIÉ ---
+
+    // Récupérer un user par email (Utile pour vérifier s'il existe avant d'envoyer le mail)
+    public static function getByEmail($email) {
+        global $pdo;
+        $sql = "SELECT * FROM utilisateur WHERE email = :email";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':email' => $email]);
+        return $stmt->fetch();
+    }
+
+    // Sauvegarder le token
+    public static function setResetToken($email, $token) {
+        global $pdo;
+        // Expire dans 1 heure
+        $expires = date('Y-m-d H:i:s', strtotime('+1 hour'));
+        
+        $sql = "UPDATE utilisateur SET reset_token = :token, reset_expires = :expires WHERE email = :email";
+        $stmt = $pdo->prepare($sql);
+        return $stmt->execute([
+            ':token' => $token,
+            ':expires' => $expires,
+            ':email' => $email
+        ]);
+    }
+
+    // Vérifier le token
+    public static function getUserByResetToken($token) {
+        global $pdo;
+        $sql = "SELECT * FROM utilisateur WHERE reset_token = :token AND reset_expires > NOW()";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':token' => $token]);
+        return $stmt->fetch();
+    }
+
+    // Nettoyer après usage
+    public static function clearResetToken($id) {
+        global $pdo;
+        $sql = "UPDATE utilisateur SET reset_token = NULL, reset_expires = NULL WHERE utilisateur_id = :id";
+        $stmt = $pdo->prepare($sql);
+        return $stmt->execute([':id' => $id]);
+    }
+
 }

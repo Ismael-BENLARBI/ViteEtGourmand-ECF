@@ -1,27 +1,53 @@
 document.addEventListener('DOMContentLoaded', function() {
 
     // ============================================================
-    // 0. CORRECTIF FORCE POUR LES ONGLETS (SI BOOTSTRAP NE RÉPOND PAS)
+    // 0. FILTRES COMMANDES (AJOUTÉ POUR L'ADMIN)
+    // ============================================================
+    const filterClient = document.getElementById('filter-client');
+    const filterStatus = document.getElementById('filter-status');
+    const rows = document.querySelectorAll('.cmd-row');
+
+    function filterTable() {
+        if(!filterClient || !filterStatus) return;
+
+        const text = filterClient.value.toLowerCase();
+        const stat = filterStatus.value;
+        let count = 0;
+        
+        rows.forEach(row => {
+            const rName = row.getAttribute('data-client');
+            const rStat = row.getAttribute('data-status');
+            let show = true;
+            
+            if(text && !rName.includes(text)) show = false;
+            if(stat && rStat !== stat) show = false;
+            
+            row.style.display = show ? '' : 'none';
+            if(show) count++;
+        });
+        
+        const countDisplay = document.getElementById('count-display');
+        if(countDisplay) countDisplay.textContent = count;
+    }
+
+    if(filterClient) filterClient.addEventListener('input', filterTable);
+    if(filterStatus) filterStatus.addEventListener('change', filterTable);
+
+
+    // ============================================================
+    // 1. ONGLETS (SI BOOTSTRAP NE RÉPOND PAS)
     // ============================================================
     const tabButtons = document.querySelectorAll('button[data-bs-toggle="pill"]');
     
     tabButtons.forEach(button => {
         button.addEventListener('click', function(e) {
-            // Si Bootstrap marche, ceci ne gênera pas. S'il ne marche pas, ceci prend le relais.
             e.preventDefault(); 
-
-            // 1. On retire la classe 'active' de tous les boutons
             tabButtons.forEach(btn => btn.classList.remove('active'));
-            // 2. On l'ajoute au bouton cliqué
             this.classList.add('active');
-
-            // 3. On cache tous les contenus
             document.querySelectorAll('.tab-pane').forEach(pane => {
                 pane.classList.remove('show', 'active');
             });
-
-            // 4. On affiche le contenu correspondant
-            const targetId = this.getAttribute('data-bs-target'); // Ex: #pills-menus
+            const targetId = this.getAttribute('data-bs-target');
             const targetPane = document.querySelector(targetId);
             if(targetPane) {
                 targetPane.classList.add('show', 'active');
@@ -30,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ============================================================
-    // 1. GESTION DES COMMANDES (Changement de statut)
+    // 2. GESTION DES COMMANDES (Changement de statut)
     // ============================================================
     const statusSelects = document.querySelectorAll('.js-status-select');
     statusSelects.forEach(select => {
@@ -47,7 +73,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Feedback visuel
                     this.style.borderColor = '#198754';
                     this.style.boxShadow = '0 0 0 0.25rem rgba(25, 135, 84, 0.25)';
+                    
+                    // Mise à jour de la classe CSS pour la couleur
                     this.className = `form-select form-select-sm status-select js-status-select ${this.value}`;
+                    
+                    // IMPORTANT : Mettre à jour l'attribut data-status pour que le filtre marche
+                    this.closest('tr').setAttribute('data-status', this.value);
+
                     setTimeout(() => { 
                         this.style.borderColor = ''; 
                         this.style.boxShadow = '';
@@ -59,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ============================================================
-    // 2. MODÉRATION AVIS : VALIDATION
+    // 3. MODÉRATION AVIS : VALIDATION
     // ============================================================
     document.querySelectorAll('.js-validate-avis').forEach(btn => {
         btn.addEventListener('click', function(e) {
@@ -80,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ============================================================
-    // 3. MODÉRATION AVIS : SUPPRESSION
+    // 4. MODÉRATION AVIS : SUPPRESSION
     // ============================================================
     document.querySelectorAll('.js-delete-avis').forEach(btn => {
         btn.addEventListener('click', function(e) {
@@ -101,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ============================================================
-    // 4. UTILISATEURS : CHANGEMENT DE RÔLE
+    // 5. UTILISATEURS : CHANGEMENT DE RÔLE
     // ============================================================
     document.querySelectorAll('.js-role-select').forEach(select => {
         select.addEventListener('change', function() {
@@ -129,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ============================================================
-    // 5. UTILISATEURS : SUPPRESSION
+    // 6. UTILISATEURS : SUPPRESSION
     // ============================================================
     document.querySelectorAll('.js-delete-user').forEach(btn => {
         btn.addEventListener('click', function(e) {
@@ -152,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ============================================================
-    // 6. STATISTIQUES (Filtre AJAX)
+    // 7. STATISTIQUES (Filtre AJAX)
     // ============================================================
     const btnFilter = document.getElementById('js-filter-stats');
     if(btnFilter) {
@@ -207,7 +239,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ============================================================
-    // 7. MESSAGERIE : SUPPRESSION (C'est ici que ça bloquait)
+    // 8. MESSAGERIE : SUPPRESSION
     // ============================================================
     document.querySelectorAll('.js-delete-message').forEach(btn => {
         btn.addEventListener('click', function(e) {
@@ -215,14 +247,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if(!confirm('Voulez-vous vraiment supprimer ce message ?')) return;
             
             const row = this.closest('tr');
-            // On récupère l'ID
             const id = this.getAttribute('data-id');
 
             fetch(`index.php?page=admin_message_delete&id=${id}&ajax=1`)
             .then(res => res.json())
             .then(data => {
                 if(data.status === 'success') {
-                    // Animation de suppression
                     row.style.transition = 'all 0.5s ease';
                     row.style.opacity = '0';
                     row.style.transform = 'translateX(20px)';
@@ -239,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ============================================================
-    // 8. MESSAGERIE : MODALE & RÉPONSE
+    // 9. MESSAGERIE : MODALE & RÉPONSE
     // ============================================================
     const replyModalEl = document.getElementById('replyModal');
     let replyModal;

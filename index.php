@@ -6,17 +6,19 @@ require_once 'config/db.php';
 $page = $_GET['page'] ?? 'home';
 
 switch($page) {
+    
+    // ============================================================
+    // PARTIE PUBLIQUE (Accessible à tous)
+    // ============================================================
+
     case 'home':
         require_once 'Models/Menu.php';
-        require_once 'Models/Avis.php'; // On charge le modèle
-
+        require_once 'Models/Avis.php';
         $menus = Menu::getAll(); 
-        $avisRecents = Avis::getLastThree(); // On récupère les avis
-        
+        $avisRecents = Avis::getLastThree(); 
         require_once 'views/home/index.php';
         break;
 
-    // --- PAGE NOS MENUS ---
     case 'menus':
         require_once 'Models/Menu.php';
         $filtreTheme = $_GET['theme'] ?? 'all';
@@ -25,7 +27,6 @@ switch($page) {
         require_once 'Views/menus/index.php';
         break;
 
-    // --- PAGE DÉTAIL D'UN MENU ---
     case 'menu':
         require_once 'Models/Menu.php';
         if (isset($_GET['id'])) {
@@ -47,73 +48,26 @@ switch($page) {
         require_once 'views/front/contact.php';
         break;
 
-    // --- ENVOI DU MESSAGE (CLIENT) ---
-    // --- ENVOI DU MESSAGE (CLIENT) ---
     case 'contact_submit':
         require_once 'Models/Contact.php';
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Nettoyage des données
             $nom = htmlspecialchars($_POST['nom']);
             $email = htmlspecialchars($_POST['email']);
             $sujet = htmlspecialchars($_POST['sujet']);
             $contenu = htmlspecialchars($_POST['contenu']);
 
-            // 1. Sauvegarde en Base de Données
             Contact::add($nom, $email, $sujet, $contenu);
 
-            // 2. Envoi du mail de confirmation (Version Production)
             $to = $email;
             $emailSujet = "Confirmation de réception - Vite & Gourmand";
-            $message = "Bonjour $nom,\n\nNous avons bien reçu votre message : \"$sujet\".\nNous vous répondrons dans les plus brefs délais.\n\nCordialement,\nL'équipe Vite & Gourmand.";
-            
-            // En-têtes pour un mail propre (encodage et expéditeur)
-            $headers = "From: no-reply@viteetgourmand.com\r\n";
-            $headers .= "Reply-To: contact@viteetgourmand.com\r\n";
-            $headers .= "Content-Type: text/plain; charset=utf-8\r\n";
-            
-            // Envoi réel (Fonctionnera une fois en ligne)
+            $message = "Bonjour $nom,\n\nNous avons bien reçu votre message.\n\nCordialement,\nL'équipe.";
+            $headers = "From: no-reply@viteetgourmand.com";
             @mail($to, $emailSujet, $message, $headers);
 
             header('Location: index.php?page=contact&success=1');
         }
         break;
 
-    // --- AJAX : RÉPONDRE AU MESSAGE (ADMIN) ---
-    // --- AJAX : RÉPONDRE AU MESSAGE (ADMIN) ---
-    case 'admin_message_reply':
-        require_once 'Utils/Auth.php';
-        Auth::checkAdmin();
-        require_once 'Models/Contact.php';
-
-        header('Content-Type: application/json');
-
-        if(isset($_POST['id']) && isset($_POST['message']) && isset($_POST['email'])) {
-            $id = $_POST['id'];
-            $reponse = $_POST['message'];
-            $emailClient = $_POST['email'];
-
-            // 1. Sauvegarde la réponse en BDD et marque comme traité
-            if(Contact::saveReply($id, $reponse)) {
-                
-                // 2. Envoi du mail de réponse (Version Production)
-                $emailSujet = "Réponse à votre demande - Vite & Gourmand";
-                
-                // En-têtes
-                $headers = "From: contact@viteetgourmand.com\r\n";
-                $headers .= "Content-Type: text/plain; charset=utf-8\r\n";
-
-                // Envoi réel (Fonctionnera une fois en ligne)
-                @mail($emailClient, $emailSujet, $reponse, $headers);
-
-                echo json_encode(['status' => 'success', 'message' => 'Réponse envoyée et sauvegardée !']);
-            } else {
-                echo json_encode(['status' => 'error', 'message' => 'Erreur sauvegarde BDD']);
-            }
-            exit;
-        }
-        break;
-
-    // --- API : RÉCUPÉRER LES MENUS EN JSON (POUR AJAX) ---
     case 'api_menus':
         require_once 'Models/Menu.php';
         $filters = [
@@ -128,15 +82,16 @@ switch($page) {
         exit;
         break;
 
-    // --- PAGE D'INSCRIPTION ---
+    // ============================================================
+    // AUTHENTIFICATION (Login, Register, Logout)
+    // ============================================================
+
     case 'register':
         require_once 'Views/auth/register.php';
         break;
 
-    // --- TRAITEMENT DE L'INSCRIPTION ---
     case 'register_action':
         require_once 'Models/User.php';
-
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $nom = $_POST['nom'];
             $prenom = $_POST['prenom'];
@@ -151,22 +106,19 @@ switch($page) {
                 exit;
             }
 
-            $success = User::create($nom, $prenom, $email, $pass, $adresse, $cp, $ville);
-
-            if ($success) {
+            if (User::create($nom, $prenom, $email, $pass, $adresse, $cp, $ville)) {
                 header('Location: index.php?page=login&success=Compte créé ! Connectez-vous.');
             } else {
-                header('Location: index.php?page=register&error=Erreur technique lors de la création.');
+                header('Location: index.php?page=register&error=Erreur technique.');
             }
         }
         break;
 
-    // --- PAGE LOGIN (Affichage) ---
     case 'login':
         require_once 'Views/auth/login.php';
         break;
 
-    // --- ACTION LOGIN (Traitement) ---
+    // --- C'EST ICI QUE LA REDIRECTION EST GÉRÉE ---
     case 'login_action':
         require_once 'Models/User.php';
 
@@ -178,20 +130,23 @@ switch($page) {
 
             if ($user && password_verify($pass_input, $user['password'])) {
                 
-                $role_txt = 'client'; 
-                if ($user['role_id'] == 1) {
-                    $role_txt = 'admin';
-                } elseif ($user['role_id'] == 2) {
-                    $role_txt = 'employe';
-                }
-
+                // On stocke les infos et surtout le ROLE_ID
                 $_SESSION['user'] = [
                     'id' => $user['utilisateur_id'],
                     'prenom' => $user['prenom'],
                     'nom' => $user['nom'],
-                    'role' => $role_txt
+                    'email' => $user['email'],
+                    'role_id' => $user['role_id'] // 1=Admin, 2=Employé, 3=Client
                 ];
-                header('Location: index.php?page=home');
+
+                // REDIRECTION INTELLIGENTE
+                if ($user['role_id'] == 1) {
+                    header('Location: index.php?page=admin_dashboard'); // Admin
+                } elseif ($user['role_id'] == 2) {
+                    header('Location: index.php?page=employe_dashboard'); // Employé
+                } else {
+                    header('Location: index.php?page=home'); // Client
+                }
                 exit;
 
             } else {
@@ -201,17 +156,362 @@ switch($page) {
         }
         break;
 
-    // --- DECONNEXION ---
     case 'logout':
         session_destroy();
         header('Location: index.php?page=home');
         exit;
         break;
 
-    // --- DASHBOARD ADMIN ---
-    // --- DASHBOARD ADMIN ---
-    // --- DASHBOARD ADMIN ---
-    // --- DASHBOARD ADMIN ---
+    // --- MOT DE PASSE OUBLIÉ ---
+    case 'forgot_password':
+        require_once 'Views/auth/forgot_password.php';
+        break;
+
+    case 'forgot_password_submit':
+        require_once 'Models/User.php';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $email = $_POST['email'];
+            $user = User::getByEmail($email);
+            if ($user) {
+                $token = bin2hex(random_bytes(32));
+                User::setResetToken($email, $token);
+                $link = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . "/index.php?page=reset_password&token=" . $token;
+                // Simulation envoi mail (écrit dans fichier log)
+                $log = "To: $email | Token Link: $link\n";
+                file_put_contents('log_emails.txt', $log, FILE_APPEND);
+            }
+            header('Location: index.php?page=forgot_password&success=1');
+        }
+        break;
+
+    case 'reset_password':
+        require_once 'Models/User.php';
+        if (isset($_GET['token']) && User::getUserByResetToken($_GET['token'])) {
+            require_once 'Views/auth/reset_password.php';
+        } else {
+            echo "Lien invalide.";
+        }
+        break;
+
+    case 'reset_password_submit':
+        require_once 'Models/User.php';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $token = $_POST['token'];
+            $pass = $_POST['password'];
+            $user = User::getUserByResetToken($token);
+            if ($user) {
+                User::updatePassword($user['utilisateur_id'], $pass);
+                User::clearResetToken($user['utilisateur_id']);
+                header('Location: index.php?page=login&success=password_reset');
+            } else {
+                echo "Erreur Token.";
+            }
+        }
+        break;
+
+    // ============================================================
+    // PARTIE CLIENT (Panier, Commande, Compte)
+    // ============================================================
+
+    case 'panier':
+        require_once 'Models/Menu.php';
+        $panierComplet = []; 
+        $totalGeneral = 0; 
+        if (isset($_SESSION['panier']) && !empty($_SESSION['panier'])) {
+            foreach ($_SESSION['panier'] as $id_menu => $quantite) {
+                $menu = Menu::getById($id_menu);
+                if ($menu) { 
+                    $totalLigne = $menu['prix_par_personne'] * $quantite;
+                    $panierComplet[] = ['menu' => $menu, 'quantite' => $quantite, 'total_ligne' => $totalLigne];
+                    $totalGeneral += $totalLigne;
+                }
+            }
+        }
+        require_once 'Views/front/panier.php';
+        break;
+
+    case 'panier_add':
+        if(isset($_POST['menu_id']) && isset($_POST['quantite'])) {
+            $id = (int)$_POST['menu_id'];
+            $qty = (int)$_POST['quantite'];
+            if(!isset($_SESSION['panier'])) $_SESSION['panier'] = [];
+            
+            if(isset($_SESSION['panier'][$id])) $_SESSION['panier'][$id] += $qty;
+            else $_SESSION['panier'][$id] = $qty;
+            
+            header('Location: index.php?page=panier');
+            exit;
+        }
+        header('Location: index.php');
+        break;
+
+    case 'panier_delete':
+        if(isset($_GET['id'])) {
+            unset($_SESSION['panier'][(int)$_GET['id']]);
+        }
+        header('Location: index.php?page=panier');
+        break;
+
+    case 'commande':
+        require_once 'Utils/Auth.php';
+        Auth::check(); // Client connecté obligatoire
+        if (empty($_SESSION['panier'])) { header('Location: index.php?page=panier'); exit; }
+        
+        require_once 'Models/Menu.php';
+        $totalPanier = 0;
+        foreach ($_SESSION['panier'] as $id => $qty) {
+            $menu = Menu::getById($id);
+            if($menu) $totalPanier += $menu['prix_par_personne'] * $qty;
+        }
+        require_once 'Views/front/commande.php';
+        break;
+
+    case 'commande_validation':
+        require_once 'Utils/Auth.php';
+        Auth::check();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SESSION['panier'])) {
+            require_once 'Models/Commande.php';
+            require_once 'Models/Menu.php';
+
+            $userId = $_SESSION['user']['id'];
+            $commandeId = Commande::create($userId, $_POST['total_final'], $_POST['frais_livraison'], $_POST['montant_reduction'], $_POST['nom'], $_POST['prenom'], $_POST['adresse'], $_POST['cp'], $_POST['ville'], $_POST['phone'], $_POST['heure_livraison'], $_POST['instructions']);
+
+            foreach ($_SESSION['panier'] as $menuId => $qty) {
+                $menu = Menu::getById($menuId);
+                if ($menu) Commande::addDetail($commandeId, $menuId, $qty, $menu['prix_par_personne']);
+            }
+            unset($_SESSION['panier']);
+            header('Location: index.php?page=commande_success');
+            exit;
+        }
+        header('Location: index.php');
+        break;
+
+    case 'commande_success':
+        require_once 'Views/front/commande_success.php';
+        break;
+
+    case 'commande_details':
+        require_once 'Utils/Auth.php';
+        Auth::check();
+        require_once 'Models/Commande.php';
+        $commandeId = $_GET['id'];
+        $commande = Commande::getById($commandeId);
+        
+        // Sécurité : Seulement le propriétaire ou Staff (Admin/Employé)
+        $isStaff = isset($_SESSION['user']['role_id']) && in_array($_SESSION['user']['role_id'], [1, 2]);
+        if ($commande['utilisateur_id'] != $_SESSION['user']['id'] && !$isStaff) {
+            header('Location: index.php?page=compte'); exit;
+        }
+        $details = Commande::getDetails($commandeId);
+        require_once 'Views/front/commande_detail.php';
+        break;
+
+    case 'compte':
+        require_once 'Utils/Auth.php';
+        Auth::check();
+        require_once 'Models/Commande.php';
+        $commandes = Commande::getAllByUser($_SESSION['user']['id']);
+        require_once 'Views/front/compte.php';
+        break;
+
+    case 'compte_update':
+        require_once 'Utils/Auth.php';
+        Auth::check();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            require_once 'Models/User.php';
+            $id = $_SESSION['user']['id'];
+            User::update($id, $_POST['nom'], $_POST['prenom'], $_POST['email'], $_POST['telephone'], $_POST['adresse'], $_POST['code_postal'], $_POST['ville']);
+            
+            // Mise à jour session
+            $_SESSION['user']['nom'] = $_POST['nom'];
+            $_SESSION['user']['prenom'] = $_POST['prenom'];
+            
+            header('Location: index.php?page=compte&success=Profil mis à jour');
+        }
+        break;
+
+    case 'compte_update_password':
+        require_once 'Utils/Auth.php';
+        Auth::check();
+        require_once 'Models/User.php';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $_SESSION['user']['id'];
+            if (!User::verifyPassword($id, $_POST['old_password'])) {
+                header('Location: index.php?page=compte&error=wrong_pass'); exit;
+            }
+            if ($_POST['new_password'] !== $_POST['confirm_password']) {
+                header('Location: index.php?page=compte&error=mismatch'); exit;
+            }
+            User::updatePassword($id, $_POST['new_password']);
+            header('Location: index.php?page=compte&success=pass_updated');
+        }
+        break;
+
+    case 'avis_add':
+        require_once 'Utils/Auth.php';
+        Auth::check();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            require_once 'Models/Avis.php';
+            Avis::create($_POST['menu_id'], $_SESSION['user']['id'], $_POST['note'], $_POST['description']);
+            header('Location: ' . $_SERVER['HTTP_REFERER'] . '&success=Avis enregistré');
+        }
+        break;
+
+    // ============================================================
+    // PARTIE STAFF (Partagée Admin + Employé)
+    // ============================================================
+    // Ces routes utilisent checkStaff() pour autoriser Admin (1) et Employé (2)
+
+    case 'admin_menu_add':
+    case 'admin_menu_edit':
+        require_once 'Utils/Auth.php';
+        Auth::checkStaff(); // <-- Autorisé pour l'employé
+        require_once 'Models/Menu.php';
+        $themes = Menu::getThemes();
+        $regimes = Menu::getRegimes();
+        if($page == 'admin_menu_edit' && isset($_GET['id'])) {
+            $menu = Menu::getById($_GET['id']);
+            require_once 'Views/admin/menu_edit.php';
+        } else {
+            require_once 'Views/admin/menu_add.php';
+        }
+        break;
+
+    case 'admin_menu_create_action':
+    case 'admin_menu_edit_action':
+        require_once 'Utils/Auth.php';
+        Auth::checkStaff(); // <-- Autorisé pour l'employé
+        require_once 'Models/Menu.php';
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Logique simplifiée de traitement d'image
+            function handleImage($key) {
+                if(isset($_FILES[$key]) && $_FILES[$key]['error'] == 0) {
+                    $name = 'menu_'.uniqid().'.'.pathinfo($_FILES[$key]['name'], PATHINFO_EXTENSION);
+                    move_uploaded_file($_FILES[$key]['tmp_name'], "assets/images/menu/$name");
+                    return $name;
+                }
+                return $_POST['old_'.$key] ?? null;
+            }
+            
+            $img1 = handleImage('image_principale');
+            $img2 = handleImage('image_entree');
+            $img3 = handleImage('image_plat');
+            $img4 = handleImage('image_dessert');
+
+            if ($page == 'admin_menu_create_action') {
+                Menu::create($_POST['titre'], $_POST['description'], $_POST['desc_entree'], $_POST['desc_plat'], $_POST['desc_dessert'], $_POST['prix'], $_POST['min_personnes'], $_POST['theme_id']?:null, $_POST['regime_id']?:null, $img1, $img2, $img3, $img4);
+            } else {
+                Menu::update($_GET['id'], $_POST['titre'], $_POST['description'], $_POST['desc_entree'], $_POST['desc_plat'], $_POST['desc_dessert'], $_POST['prix'], $_POST['min_personnes'], $_POST['theme_id']?:null, $_POST['regime_id']?:null, $img1, $img2, $img3, $img4);
+            }
+            
+            // Redirection selon le rôle
+            $redir = ($_SESSION['user']['role_id'] == 2) ? 'employe_dashboard' : 'admin_dashboard';
+            header("Location: index.php?page=$redir&success=Menu enregistré");
+        }
+        break;
+
+    case 'admin_menu_delete':
+        require_once 'Utils/Auth.php';
+        Auth::checkStaff(); // <-- Autorisé pour l'employé
+        require_once 'Models/Menu.php';
+        if (isset($_GET['id'])) Menu::delete($_GET['id']);
+        $redir = ($_SESSION['user']['role_id'] == 2) ? 'employe_dashboard' : 'admin_dashboard';
+        header("Location: index.php?page=$redir");
+        break;
+
+    case 'admin_horaire_update':
+        require_once 'Utils/Auth.php';
+        Auth::checkStaff(); // <-- Autorisé pour l'employé
+        require_once 'Models/Horaire.php';
+        if(isset($_POST['id'])) {
+            Horaire::update($_POST['id'], $_POST['creneau']);
+            echo json_encode(['status' => 'success']);
+            exit;
+        }
+        break;
+
+    case 'admin_avis_validate':
+    case 'admin_avis_delete':
+        require_once 'Utils/Auth.php';
+        Auth::checkStaff(); // <-- Autorisé pour l'employé
+        require_once 'Models/Avis.php';
+        if(isset($_GET['id'])) {
+            if($page == 'admin_avis_validate') Avis::validate($_GET['id']);
+            else Avis::delete($_GET['id']);
+            
+            if(isset($_GET['ajax'])) { echo json_encode(['status'=>'success']); exit; }
+        }
+        $redir = ($_SESSION['user']['role_id'] == 2) ? 'employe_dashboard' : 'admin_dashboard';
+        header("Location: index.php?page=$redir");
+        break;
+
+    // ============================================================
+    // PARTIE EMPLOYÉ (Spécifique)
+    // ============================================================
+
+    case 'employe_dashboard':
+        require_once 'Utils/Auth.php';
+        Auth::checkStaff(); // On accepte Admin et Employé pour voir le dashboard
+        
+        require_once 'Models/Commande.php';
+        require_once 'Models/Menu.php';
+        require_once 'Models/Horaire.php';
+        require_once 'Models/Avis.php';
+
+        $commandes = Commande::getAll();
+        $menus = Menu::getAll();
+        $horaires = Horaire::getAll();
+        $avisList = Avis::getAllAdmin();
+
+        require_once 'Views/employe/dashboard.php';
+        break;
+
+    case 'employe_update_status':
+        require_once 'Utils/Auth.php';
+        Auth::checkStaff(); // Seul le staff peut faire ça
+        require_once 'Models/Commande.php';
+        header('Content-Type: application/json');
+
+        if(isset($_POST['id']) && isset($_POST['statut'])) {
+            Commande::updateStatus($_POST['id'], $_POST['statut']);
+            
+            // Logique Métier : Email Matériel
+            if ($_POST['statut'] === 'attente_retour_materiel') {
+                $cmd = Commande::getById($_POST['id']);
+                if ($cmd && !empty($cmd['email'])) {
+                    $msg = "Bonjour,\nVous devez rendre le matériel sous 10 jours ou payer 600€ de pénalité.\nCdlt.";
+                    @mail($cmd['email'], "Retour Matériel", $msg, "From: contact@viteetgourmand.com");
+                }
+            }
+            echo json_encode(['status' => 'success']);
+            exit;
+        }
+        break;
+
+    case 'employe_cancel_order':
+        require_once 'Utils/Auth.php';
+        Auth::checkStaff(); // Seul le staff peut faire ça
+        require_once 'Models/Commande.php';
+        header('Content-Type: application/json');
+
+        if(isset($_POST['id']) && isset($_POST['motif']) && isset($_POST['contact'])) {
+            // Assure-toi que cette méthode existe dans Models/Commande.php !
+            if(Commande::cancelByEmploye($_POST['id'], $_POST['motif'], $_POST['contact'])) {
+                echo json_encode(['status' => 'success']);
+            } else {
+                echo json_encode(['status' => 'error']);
+            }
+            exit;
+        }
+        break;
+
+    // ============================================================
+    // PARTIE ADMIN (Exclusive)
+    // ============================================================
+    // Ces routes utilisent checkAdmin() (Rôle 1 uniquement)
+
     case 'admin_dashboard':
         require_once 'Utils/Auth.php';
         Auth::checkAdmin();
@@ -222,10 +522,7 @@ switch($page) {
         require_once 'Models/User.php';
         require_once 'Models/Contact.php';
         require_once 'Models/Horaire.php';
-        // Note : On n'a même plus besoin de require 'Models/Stats.php' ici
-        // car c'est l'appel AJAX (case 'admin_stats_filter') qui s'en charge.
 
-        // On récupère les données pour les 4 premiers onglets
         $commandes = Commande::getAll();
         $menus = Menu::getAll();
         $avisList = Avis::getAllAdmin();
@@ -233,588 +530,81 @@ switch($page) {
         $messages = Contact::getAll();
         $horaires = Horaire::getAll();
 
-        // On ne charge plus les stats ici ($caTotal, etc.) car le JS le fera !
-
         require_once 'Views/admin/dashboard.php';
         break;
 
-    case 'admin_horaire_update':
-        require_once 'Utils/Auth.php';
-        Auth::checkAdmin();
-        require_once 'Models/Horaire.php';
-
-        if(isset($_POST['id']) && isset($_POST['creneau'])) {
-            if(Horaire::update($_POST['id'], $_POST['creneau'])) {
-                echo json_encode(['status' => 'success']);
-            } else {
-                echo json_encode(['status' => 'error']);
-            }
-            exit;
-        }
-        break;
-
-    // --- ACTION : MODIFIER MOT DE PASSE ---
-    case 'compte_update_password':
-        require_once 'Utils/Auth.php';
-        Auth::check(); // L'utilisateur doit être connecté
-        require_once 'Models/User.php';
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $id = $_SESSION['user']['id'];
-            $oldPwd = $_POST['old_password'];
-            $newPwd = $_POST['new_password'];
-            $confirmPwd = $_POST['confirm_password'];
-
-            // 1. Vérifier si l'ancien mot de passe est bon
-            if (!User::verifyPassword($id, $oldPwd)) {
-                header('Location: index.php?page=compte&error=wrong_pass');
-                exit;
-            }
-
-            // 2. Vérifier si les deux nouveaux sont identiques
-            if ($newPwd !== $confirmPwd) {
-                header('Location: index.php?page=compte&error=mismatch');
-                exit;
-            }
-
-            // 3. Mise à jour
-            User::updatePassword($id, $newPwd);
-            header('Location: index.php?page=compte&success=pass_updated');
-        }
-        break;
-
-    case 'admin_message_read': // On garde le même nom de route pour pas casser le JS
-        require_once 'Utils/Auth.php';
-        Auth::checkAdmin();
-        require_once 'Models/Contact.php';
-        if(isset($_POST['id'])) {
-            Contact::markAsHandled($_POST['id']); // <--- Changement ici
-            echo json_encode(['status' => 'success']);
-            exit;
-        }
-        break;
-
-    // --- AJAX ADMIN : SUPPRIMER MESSAGE ---
-    case 'admin_message_delete':
-        require_once 'Utils/Auth.php';
-        Auth::checkAdmin();
-        require_once 'Models/Contact.php';
-
-        // On force le header JSON pour éviter les erreurs JS
-        header('Content-Type: application/json');
-
-        if(isset($_GET['id'])) {
-            if(Contact::delete($_GET['id'])) {
-                echo json_encode(['status' => 'success']);
-            } else {
-                echo json_encode(['status' => 'error', 'message' => 'Erreur SQL lors de la suppression']);
-            }
-        } else {
-            echo json_encode(['status' => 'error', 'message' => 'ID manquant']);
-        }
-        exit;
-        break;
-
-    // --- ACTION : SUPPRIMER UNE COMMANDE ---
-    case 'admin_commande_delete':
-        require_once 'Utils/Auth.php';
-        Auth::checkAdmin(); // Sécurité : Seul l'admin peut supprimer
-        require_once 'Models/Commande.php';
-
-        if(isset($_GET['id'])) {
-            Commande::delete($_GET['id']);
-        }
-        
-        // Retour immédiat au tableau de bord
-        header('Location: index.php?page=admin_dashboard');
-        break;
-
-    // --- ACTION : CHANGER LE STATUT D'UNE COMMANDE ---
-    case 'admin_commande_status':
-        require_once 'Utils/Auth.php';
-        Auth::checkAdmin();
-        require_once 'Models/Commande.php';
-
-        if(isset($_POST['id']) && isset($_POST['statut'])) {
-            Commande::updateStatus($_POST['id'], $_POST['statut']);
-            
-            // Si c'est une requête AJAX, on répond en JSON et on s'arrête là
-            if(isset($_POST['ajax'])) {
-                echo json_encode(['status' => 'success', 'message' => 'Statut mis à jour !']);
-                exit;
-            }
-        }
-        header('Location: index.php?page=admin_dashboard');
-        break;
-    
-    // --- PAGE AJOUTER MENU ---
-    case 'admin_menu_add':
-        require_once 'Utils/Auth.php';
-        Auth::checkAdmin();
-        require_once 'Views/admin/menu_add.php';
-        break;
-
-    // --- ACTION : SUPPRIMER MENU ---
-    case 'admin_menu_delete':
-        require_once 'Utils/Auth.php';
-        Auth::checkAdmin();
-        require_once 'Models/Menu.php';
-
-        if (isset($_GET['id'])) {
-            Menu::delete($_GET['id']);
-            header('Location: index.php?page=admin_dashboard&success=Menu supprimé !');
-        } else {
-            header('Location: index.php?page=admin_dashboard&error=ID manquant.');
-        }
-        break;
-
-    // --- PAGE : MODIFIER MENU (VUE) ---
-    case 'admin_menu_edit':
-        require_once 'Utils/Auth.php';
-        Auth::checkAdmin();
-        require_once 'Models/Menu.php';
-
-        if(isset($_GET['id'])){
-            $menu = Menu::getById($_GET['id']);
-            $themes = Menu::getThemes();
-            $regimes = Menu::getRegimes();
-            require_once 'Views/admin/menu_edit.php';
-        }
-        break;
-
-    // --- ACTION : MODIFIER MENU (TRAITEMENT) ---
-    case 'admin_menu_edit_action':
-        require_once 'Utils/Auth.php';
-        Auth::checkAdmin();
-        require_once 'Models/Menu.php';
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['id'])) {
-            $id = $_GET['id'];
-            
-            $titre = $_POST['titre'];
-            $prix = $_POST['prix'];
-            $min = $_POST['min_personnes'];
-            $desc = $_POST['description'];
-            $d_entree = $_POST['desc_entree'];
-            $d_plat = $_POST['desc_plat'];
-            $d_dessert = $_POST['desc_dessert'];
-            $theme_id = !empty($_POST['theme_id']) ? $_POST['theme_id'] : NULL;
-            $regime_id = !empty($_POST['regime_id']) ? $_POST['regime_id'] : NULL;
-
-            function processImageUpdate($fileKey, $oldImageKey) {
-                if (isset($_FILES[$fileKey]) && $_FILES[$fileKey]['error'] == 0) {
-                    $targetDir = "assets/images/menu/";
-                    $ext = pathinfo($_FILES[$fileKey]['name'], PATHINFO_EXTENSION);
-                    $filename = 'menu_' . uniqid() . '.' . $ext;
-                    if (move_uploaded_file($_FILES[$fileKey]['tmp_name'], $targetDir . $filename)) {
-                        return $filename; 
-                    }
-                }
-                return $_POST[$oldImageKey];
-            }
-
-            $img1 = processImageUpdate('image_principale', 'old_img_principale');
-            $img2 = processImageUpdate('image_entree', 'old_img_entree');
-            $img3 = processImageUpdate('image_plat', 'old_img_plat');
-            $img4 = processImageUpdate('image_dessert', 'old_img_dessert');
-
-            Menu::update($id, $titre, $desc, $d_entree, $d_plat, $d_dessert, $prix, $min, $theme_id, $regime_id, $img1, $img2, $img3, $img4);
-
-            header('Location: index.php?page=admin_dashboard&success=Menu modifié !');
-        }
-        break;
-    
-    // --- ACTION : ENREGISTRER LE MENU (TRAITEMENT) ---
-    case 'admin_menu_create_action':
-        require_once 'Utils/Auth.php';
-        Auth::checkAdmin(); 
-
-        require_once 'Models/Menu.php';
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $titre = $_POST['titre'];
-            $prix = $_POST['prix'];
-            $min_personnes = $_POST['min_personnes'];
-            $description = $_POST['description'];
-            $desc_entree = $_POST['desc_entree'];
-            $desc_plat = $_POST['desc_plat'];
-            $desc_dessert = $_POST['desc_dessert'];
-            $theme_id = !empty($_POST['theme_id']) ? $_POST['theme_id'] : NULL;
-            $regime_id = !empty($_POST['regime_id']) ? $_POST['regime_id'] : NULL;
-
-            function uploadImage($fileKey) {
-                if (!isset($_FILES[$fileKey]) || $_FILES[$fileKey]['error'] != 0) return NULL; 
-
-                $targetDir = "assets/images/menu/";
-                if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
-
-                $extension = pathinfo($_FILES[$fileKey]['name'], PATHINFO_EXTENSION);
-                $filename = 'menu_' . uniqid() . '.' . $extension;
-                
-                if (move_uploaded_file($_FILES[$fileKey]['tmp_name'], $targetDir . $filename)) {
-                    return $filename;
-                }
-                return NULL;
-            }
-
-            $img_principale = uploadImage('image_principale');
-            $img_entree = uploadImage('image_entree');
-            $img_plat = uploadImage('image_plat');
-            $img_dessert = uploadImage('image_dessert');
-
-            $success = Menu::create($titre, $description, $desc_entree, $desc_plat, $desc_dessert, $prix, $min_personnes, $theme_id, $regime_id, $img_principale, $img_entree, $img_plat, $img_dessert);
-
-            if ($success) {
-                header('Location: index.php?page=admin_dashboard&success=Menu ajouté avec succès !');
-            } else {
-                header('Location: index.php?page=admin_menu_add&error=Erreur lors de l\'enregistrement.');
-            }
-        }
-        break;
-
-    // --- ACTION AJAX : CHANGER ROLE UTILISATEUR ---
     case 'admin_user_role':
-        require_once 'Utils/Auth.php';
-        Auth::checkAdmin();
-        require_once 'Models/User.php';
-
-        if(isset($_POST['id']) && isset($_POST['role_id'])) {
-            // Sécurité : on empêche de modifier son propre rôle pour ne pas se bloquer
-            if($_POST['id'] == $_SESSION['user']['id']) {
-                echo json_encode(['status' => 'error', 'message' => 'Impossible de modifier votre propre rôle']);
-                exit;
-            }
-
-            User::updateRole($_POST['id'], $_POST['role_id']);
-            
-            if(isset($_POST['ajax'])) {
-                echo json_encode(['status' => 'success', 'message' => 'Rôle mis à jour !']);
-                exit;
-            }
-        }
-        break;
-
-    // --- ACTION AJAX : SUPPRIMER UTILISATEUR ---
-    // --- ACTION AJAX : SUPPRIMER UTILISATEUR ---
     case 'admin_user_delete':
         require_once 'Utils/Auth.php';
-        Auth::checkAdmin();
+        Auth::checkAdmin(); // Seul l'admin gère les users
         require_once 'Models/User.php';
-
-        if(isset($_GET['id'])) {
-            // Sécurité : on empêche de se supprimer soi-même
-            if($_GET['id'] == $_SESSION['user']['id']) {
-                if(isset($_GET['ajax'])) {
-                    echo json_encode(['status' => 'error', 'message' => 'Impossible de supprimer votre propre compte']);
-                    exit;
-                }
-            }
-
-            // Appel de la nouvelle fonction delete() qui nettoie tout
-            if (User::delete($_GET['id'])) {
-                if(isset($_GET['ajax'])) {
-                    echo json_encode(['status' => 'success', 'message' => 'Utilisateur et toutes ses données supprimés !']);
-                    exit;
-                }
-            } else {
-                if(isset($_GET['ajax'])) {
-                    echo json_encode(['status' => 'error', 'message' => 'Erreur technique lors de la suppression.']);
-                    exit;
-                }
-            }
+        
+        if($page == 'admin_user_role' && isset($_POST['id'])) {
+            User::updateRole($_POST['id'], $_POST['role_id']);
+            echo json_encode(['status'=>'success']); exit;
         }
-        header('Location: index.php?page=admin_dashboard');
+        if($page == 'admin_user_delete' && isset($_GET['id'])) {
+            User::delete($_GET['id']);
+            echo json_encode(['status'=>'success']); exit;
+        }
         break;
-    
-        // --- ACTION AJAX : FILTRER LES STATS ---
+
+    case 'admin_message_reply':
+    case 'admin_message_delete':
+    case 'admin_message_read':
+        require_once 'Utils/Auth.php';
+        Auth::checkAdmin(); // Seul l'admin gère les messages
+        require_once 'Models/Contact.php';
+        header('Content-Type: application/json');
+
+        if ($page == 'admin_message_reply' && isset($_POST['id'])) {
+            Contact::saveReply($_POST['id'], $_POST['message']);
+            echo json_encode(['status'=>'success']); exit;
+        }
+        if ($page == 'admin_message_delete' && isset($_GET['id'])) {
+            Contact::delete($_GET['id']);
+            echo json_encode(['status'=>'success']); exit;
+        }
+        if ($page == 'admin_message_read' && isset($_POST['id'])) {
+            Contact::markAsHandled($_POST['id']);
+            echo json_encode(['status'=>'success']); exit;
+        }
+        break;
+
     case 'admin_stats_filter':
         require_once 'Utils/Auth.php';
         Auth::checkAdmin();
         require_once 'Models/Stats.php';
-
-        // Par défaut, on prend le mois en cours si pas de date
         $start = $_POST['start'] ?? date('Y-m-01');
         $end = $_POST['end'] ?? date('Y-m-t');
-
-        $ca = Stats::getChiffreAffaires($start, $end);
-        $bestSeller = Stats::getBestSeller($start, $end);
         
-        // On renvoie aussi l'historique global
-        $history = Stats::getOrdersByMonth();
-
         echo json_encode([
             'status' => 'success',
-            'ca' => number_format($ca, 2) . ' €',
-            'best_seller_titre' => $bestSeller['titre'] ?? 'Aucun',
-            'best_seller_count' => ($bestSeller['total_ventes'] ?? 0) . ' ventes',
-            'history' => $history
+            'ca' => number_format(Stats::getChiffreAffaires($start, $end), 2).' €',
+            'best_seller_titre' => Stats::getBestSeller($start, $end)['titre'] ?? 'Aucun',
+            'best_seller_count' => (Stats::getBestSeller($start, $end)['total_ventes'] ?? 0).' ventes',
+            'history' => Stats::getOrdersByMonth()
         ]);
         exit;
         break;
 
-    // --- PAGE : VOIR LE PANIER ---
-    case 'panier':
-        require_once 'Models/Menu.php';
-
-        $panierComplet = []; 
-        $totalGeneral = 0; 
-
-        if (isset($_SESSION['panier']) && !empty($_SESSION['panier'])) {
-            foreach ($_SESSION['panier'] as $id_menu => $quantite) {
-                $menu = Menu::getById($id_menu);
-                if ($menu) { 
-                    $totalLigne = $menu['prix_par_personne'] * $quantite;
-                    $panierComplet[] = [
-                        'menu' => $menu,
-                        'quantite' => $quantite,
-                        'total_ligne' => $totalLigne
-                    ];
-                    $totalGeneral += $totalLigne;
-                }
-            }
-        }
-        require_once 'Views/front/panier.php';
-        break;
-
-    // --- AJOUTER AU PANIER ---
-    case 'panier_add':
-        if(isset($_POST['menu_id']) && isset($_POST['quantite'])) {
-            $id = (int)$_POST['menu_id'];
-            $qty = (int)$_POST['quantite'];
-
-            if(!isset($_SESSION['panier'])) {
-                $_SESSION['panier'] = [];
-            }
-
-            if(isset($_SESSION['panier'][$id])) {
-                $_SESSION['panier'][$id] += $qty;
-            } else {
-                $_SESSION['panier'][$id] = $qty;
-            }
-            header('Location: index.php?page=panier');
-            exit;
-        } else {
-            header('Location: index.php');
-        }
-        break;
-
-    // --- ACTION : SUPPRIMER DU PANIER ---
-    case 'panier_delete':
-        if(isset($_GET['id'])) {
-            $id = (int)$_GET['id'];
-            if(isset($_SESSION['panier'][$id])) {
-                unset($_SESSION['panier'][$id]);
-            }
-        }
-        header('Location: index.php?page=panier');
-        break;
-
-    // --- PAGE : TUNNEL DE COMMANDE ---
-    case 'commande':
-        if (!isset($_SESSION['user'])) {
-            header('Location: index.php?page=login&error=Veuillez vous connecter pour valider votre commande.');
-            exit;
-        }
-        if (empty($_SESSION['panier'])) {
-            header('Location: index.php?page=panier');
-            exit;
-        }
-
-        require_once 'Models/Menu.php';
-        $totalPanier = 0;
-        foreach ($_SESSION['panier'] as $id => $qty) {
-            $menu = Menu::getById($id);
-            if($menu) $totalPanier += $menu['prix_par_personne'] * $qty;
-        }
-
-        require_once 'Views/front/commande.php';
-        break;
-
-    // --- ACTION : VALIDER LA COMMANDE ---
-    case 'commande_validation':
+    case 'admin_commande_delete':
         require_once 'Utils/Auth.php';
-        if (!isset($_SESSION['user'])) { header('Location: index.php?page=login'); exit; }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SESSION['panier'])) {
-            require_once 'Models/Commande.php';
-            require_once 'Models/Menu.php';
-
-            $userId = $_SESSION['user']['id'];
-            
-            $totalFinal = $_POST['total_final'];
-            $frais = $_POST['frais_livraison'];
-            $reduction = $_POST['montant_reduction'];
-
-            $nom = $_POST['nom'];
-            $prenom = $_POST['prenom'];
-            $adresse = $_POST['adresse'];
-            $cp = $_POST['cp'];
-            $ville = $_POST['ville'];
-            $phone = $_POST['phone'];
-            $heure = $_POST['heure_livraison'];
-            $instructions = $_POST['instructions'];
-
-            $commandeId = Commande::create($userId, $totalFinal, $frais, $reduction, $nom, $prenom, $adresse, $cp, $ville, $phone, $heure, $instructions);
-
-            foreach ($_SESSION['panier'] as $menuId => $qty) {
-                $menu = Menu::getById($menuId);
-                if ($menu) {
-                    Commande::addDetail($commandeId, $menuId, $qty, $menu['prix_par_personne']);
-                }
-            }
-
-            unset($_SESSION['panier']);
-            header('Location: index.php?page=commande_success');
-            exit;
-        } else {
-            header('Location: index.php');
-        }
-        break;
-
-    // --- PAGE : SUCCÈS COMMANDE ---
-    case 'commande_success':
-        require_once 'Views/front/commande_success.php';
-        break;
-
-    // --- PAGE : DÉTAILS D'UNE COMMANDE ---
-    case 'commande_details':
-        require_once 'Utils/Auth.php';
-        // 1. Il faut être connecté
-        if (!isset($_SESSION['user'])) { header('Location: index.php?page=login'); exit; }
-        
-        // 2. Il faut un ID dans l'URL
-        if (!isset($_GET['id']) || empty($_GET['id'])) {
-            header('Location: index.php?page=compte');
-            exit;
-        }
-
+        Auth::checkAdmin(); // Suppression brute = Admin seulement
         require_once 'Models/Commande.php';
-        $commandeId = $_GET['id'];
-        $userId = $_SESSION['user']['id'];
-        $userRole = $_SESSION['user']['role'] ?? 'client'; // On récupère le rôle
-
-        // 3. On récupère les infos de la commande
-        $commande = Commande::getById($commandeId);
-
-        if (!$commande) {
-            header('Location: index.php?page=compte');
-            exit;
-        }
-
-        // 4. SÉCURITÉ MISE À JOUR :
-        // On autorise si c'est le propriétaire de la commande OU si c'est un admin
-        if ($commande['utilisateur_id'] != $userId && $userRole !== 'admin') {
-            // Si ce n'est NI le propriétaire NI l'admin -> Dehors !
-            header('Location: index.php?page=compte');
-            exit;
-        }
-
-        // 5. Tout est bon, on affiche
-        $details = Commande::getDetails($commandeId);
-
-        require_once 'Views/front/commande_detail.php';
-        break;
-
-    // --- PAGE : MON COMPTE ---
-    case 'compte':
-        require_once 'Utils/Auth.php';
-        if (!isset($_SESSION['user'])) {
-            header('Location: index.php?page=login');
-            exit;
-        }
-
-        require_once 'Models/Commande.php';
-        $userId = $_SESSION['user']['id']; 
-        $commandes = Commande::getAllByUser($userId); // On renomme en $commandes pour le nouveau template
-
-        require_once 'Views/front/compte.php';
-        break;
-
-    // --- ACTION : AJOUTER UN AVIS ---
-    case 'avis_add':
-        require_once 'Utils/Auth.php';
-        if (!isset($_SESSION['user'])) { header('Location: index.php?page=login'); exit; }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            require_once 'Models/Avis.php';
-            
-            $menuId = $_POST['menu_id'];         // C'est désormais un menu
-            $userId = $_SESSION['user']['id'];
-            $note = $_POST['note'];
-            $description = $_POST['description']; // Ton champ s'appelle 'description'
-
-            Avis::create($menuId, $userId, $note, $description);
-
-            // On redirige vers la commande précédente
-            header('Location: ' . $_SERVER['HTTP_REFERER'] . '&success=Avis enregistré !');
-        }
-        break;
-
-    // --- ACTION : VALIDER UN AVIS ---
-    case 'admin_avis_validate':
-        require_once 'Utils/Auth.php';
-        Auth::checkAdmin();
-        require_once 'Models/Avis.php';
-        
-        if(isset($_GET['id'])) {
-            Avis::validate($_GET['id']);
-            
-            if(isset($_GET['ajax'])) {
-                echo json_encode(['status' => 'success', 'message' => 'Avis validé !']);
-                exit;
-            }
-        }
+        if(isset($_GET['id'])) Commande::delete($_GET['id']);
         header('Location: index.php?page=admin_dashboard');
         break;
 
-    // --- ACTION : SUPPRIMER UN AVIS ---
-    case 'admin_avis_delete':
+    case 'admin_commande_status':
         require_once 'Utils/Auth.php';
-        Auth::checkAdmin();
-        require_once 'Models/Avis.php';
-        
-        if(isset($_GET['id'])) {
-            Avis::delete($_GET['id']);
-            
-            if(isset($_GET['ajax'])) {
-                echo json_encode(['status' => 'success', 'message' => 'Avis supprimé !']);
-                exit;
-            }
+        Auth::checkAdmin(); // Version Admin (sans mail obligatoire)
+        require_once 'Models/Commande.php';
+        if(isset($_POST['id'])) {
+            Commande::updateStatus($_POST['id'], $_POST['statut']);
+            if(isset($_POST['ajax'])) { echo json_encode(['status'=>'success']); exit; }
         }
         header('Location: index.php?page=admin_dashboard');
-        break;
-
-    // --- ACTION : MODIFIER SON PROFIL ---
-    case 'compte_update':
-        require_once 'Utils/Auth.php';
-        if (!isset($_SESSION['user'])) { header('Location: index.php?page=login'); exit; }
-        
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            require_once 'Models/User.php';
-            
-            $id = $_SESSION['user']['id']; // On prend l'ID de la session par sécurité
-            
-            // Mise à jour en BDD
-            User::update(
-                $id,
-                $_POST['nom'],
-                $_POST['prenom'],
-                $_POST['email'],
-                $_POST['telephone'],
-                $_POST['adresse'],
-                $_POST['code_postal'],
-                $_POST['ville']
-            );
-
-            // Mise à jour de la SESSION (pour affichage immédiat)
-            $userFresh = User::getById($id);
-            $_SESSION['user']['nom'] = $userFresh['nom'];
-            $_SESSION['user']['prenom'] = $userFresh['prenom'];
-            $_SESSION['user']['role'] = $userFresh['role']; // On garde le role
-            // Tu peux stocker d'autres infos en session si besoin
-
-            header('Location: index.php?page=compte&success=Profil mis à jour !');
-        }
         break;
 
     default:
@@ -822,4 +612,3 @@ switch($page) {
         echo "<h1 style='text-align:center; padding-top:100px;'>404 - Page introuvable</h1>";
         break;
 }
-?>

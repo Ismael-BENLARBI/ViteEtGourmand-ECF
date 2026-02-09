@@ -24,7 +24,12 @@ if(isset($_SESSION['panier'])) {
     }
 }
 
+// 2. Gestion de l'affichage (Transparence sur Accueil)
 $bgClass = (isset($isHomepage) && $isHomepage === true) ? 'navbar-transparent' : 'navbar-solid';
+
+// 3. SÉCURITÉ : Récupération du Rôle sans erreur
+// On définit une valeur par défaut (0) si role_id n'existe pas encore dans la session
+$userRoleId = isset($_SESSION['user']['role_id']) ? $_SESSION['user']['role_id'] : 0;
 ?>
 
 <nav class="navbar navbar-expand-lg navbar-custom <?php echo $bgClass; ?>">
@@ -47,12 +52,23 @@ $bgClass = (isset($isHomepage) && $isHomepage === true) ? 'navbar-transparent' :
           <a class="nav-link" href="index.php?page=menus">Nos Menus</a>
         </li>
 
-        <?php if(isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin'): ?>
-            <li class="nav-item">
-                <a class="nav-link fw-bold" href="index.php?page=admin_dashboard" style="color: #8B2635;">
-                    <i class="fa-solid fa-user-shield"></i> Admin
-                </a>
-            </li>
+        <?php if(isset($_SESSION['user'])): ?>
+            
+            <?php if($userRoleId == 1): ?>
+                <li class="nav-item">
+                    <a class="nav-link fw-bold" href="index.php?page=admin_dashboard" style="color: #8B2635;">
+                        <i class="fa-solid fa-user-shield"></i> Admin
+                    </a>
+                </li>
+            
+            <?php elseif($userRoleId == 2): ?>
+                <li class="nav-item">
+                    <a class="nav-link fw-bold" href="index.php?page=employe_dashboard" style="color: #8B2635;">
+                        <i class="fa-solid fa-briefcase"></i> Espace Employé
+                    </a>
+                </li>
+            <?php endif; ?>
+
         <?php endif; ?>
         
         <?php if (isset($_SESSION['user'])): ?>

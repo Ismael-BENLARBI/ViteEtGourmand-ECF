@@ -1,0 +1,86 @@
+/* assets/css/auth.css */
+
+/* Fond général léger pour faire ressortir la carte */
+body {
+    background-color: #f8f9fa;
+}
+
+/* La carte centrale */
+.auth-card {
+    border: none;
+    border-radius: 20px; /* Arrondi prononcé comme sur ton dashboard */
+    box-shadow: 0 10px 30px rgba(139, 38, 53, 0.1); /* Ombre légère teintée de bordeaux */
+    background-color: #ffffff;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.auth-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Titres */
+.auth-title {
+    color: #8B2635; /* Bordeaux */
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+/* Champs de formulaire */
+.form-control {
+    border-radius: 10px;
+    padding: 12px 15px;
+    border: 1px solid #e0e0e0;
+    background-color: #fcfcfc;
+}
+
+.form-control:focus {
+    background-color: #fff;
+    border-color: #D8A85E; /* Focus Doré */
+    box-shadow: 0 0 0 0.25rem rgba(216, 168, 94, 0.25); /* Halo Doré */
+}
+
+/* Bouton Principal */
+.btn-auth {
+    background-color: #8B2635; /* Bordeaux */
+    border: none;
+    color: white;
+    font-weight: 700;
+    padding: 12px;
+    border-radius: 50px; /* Pill shape */
+    transition: all 0.3s ease;
+}
+
+.btn-auth:hover {
+    background-color: #6d1e2a; /* Bordeaux plus fonce */
+    color: #D8A85E; /* Texte devient Doré */
+    transform: scale(1.02);
+}
+
+/* Liens */
+.auth-link {
+    color: #6c757d;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.auth-link:hover {
+    color: #8B2635;
+    text-decoration: underline;
+}
+
+/* Alertes */
+.alert-custom {
+    border-radius: 10px;
+    font-size: 0.9rem;
+    border: none;
+}
+.alert-custom-danger {
+    background-color: #fde8e8;
+    color: #c53030;
+}
+.alert-custom-success {
+    background-color: #def7ec;
+    color: #03543f;
+}

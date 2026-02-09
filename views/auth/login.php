@@ -30,6 +30,12 @@
                         <input type="password" name="password" class="form-control" placeholder="••••••" required>
                     </div>
 
+                    <div class="text-end mb-3">
+                        <a href="index.php?page=forgot_password" class="small text-muted" style="text-decoration: none;">
+                            Mot de passe oublié ?
+                        </a>
+                    </div>
+
                     <button type="submit" class="btn-login">
                         SE CONNECTER
                     </button>

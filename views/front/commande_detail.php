@@ -5,12 +5,17 @@
 
     <?php 
         // Gestion du bouton retour
-        if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin') {
-            $lienRetour = 'index.php?page=admin_dashboard';
-            $texteRetour = 'Retour au Dashboard';
-        } else {
-            $lienRetour = 'index.php?page=compte';
-            $texteRetour = 'Retour à mes commandes';
+        $lienRetour = 'index.php?page=compte';
+        $texteRetour = 'Retour à mes commandes';
+
+        if (isset($_SESSION['user']['role_id'])) {
+            if ($_SESSION['user']['role_id'] == 1) {
+                $lienRetour = 'index.php?page=admin_dashboard';
+                $texteRetour = 'Retour au Dashboard';
+            } elseif ($_SESSION['user']['role_id'] == 2) {
+                $lienRetour = 'index.php?page=employe_dashboard';
+                $texteRetour = 'Retour Espace Employé';
+            }
         }
     ?>
 
@@ -83,7 +88,12 @@
                                 </div>
                             </div>
 
-                            <?php if($commande['statut'] == 'livree' && $_SESSION['user']['role'] !== 'admin'): ?>
+                            <?php 
+                                // C'EST ICI LA MODIFICATION DE RESTRICTION : Uniquement 'terminee'
+                                $isClient = isset($_SESSION['user']['role_id']) && $_SESSION['user']['role_id'] != 1 && $_SESSION['user']['role_id'] != 2;
+                                
+                                if($commande['statut'] == 'terminee' && $isClient): 
+                            ?>
                                 <div class="ms-3">
                                     <button type="button" 
                                             class="btn btn-sm btn-rate" 

@@ -78,28 +78,17 @@ class Commande {
         return $stmt->fetchAll();
     }
 
-    // Récupérer UNE commande par son ID
-    public static function getById($id) {
-        global $pdo;
-        $sql = "SELECT * FROM commande WHERE commande_id = :id";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([':id' => $id]);
-        return $stmt->fetch();
-    }
-
     // Récupérer le CONTENU (les menus) d'une commande
     // Récupérer le CONTENU (les menus) d'une commande
     public static function getDetails($commandeId) {
         global $pdo;
-        
-        // CORRECTION ICI : On utilise 'image_principale' au lieu de 'photo'
-        $sql = "SELECT d.*, m.titre, m.image_principale 
-                FROM commande_detail d
-                JOIN menu m ON d.menu_id = m.menu_id
-                WHERE d.commande_id = :cid";
-        
+        // ATTENTION : Il faut bien sélectionner m.menu_id
+        $sql = "SELECT d.*, m.titre, m.image_principale, m.menu_id 
+                FROM commande_detail d 
+                JOIN menu m ON d.menu_id = m.menu_id 
+                WHERE d.commande_id = :id";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([':cid' => $commandeId]);
+        $stmt->execute([':id' => $commandeId]);
         return $stmt->fetchAll();
     }
 
@@ -129,11 +118,48 @@ class Commande {
         return $stmt->execute([':id' => $id]);
     }
 
-    // Mettre à jour le statut
+    // --- GESTION EMPLOYÉ ---
+
+    // 1. Annuler une commande (Spécifique Employé avec Motif)
+    public static function cancelByEmploye($id, $motif, $contact) {
+        global $pdo;
+        
+        $sql = "UPDATE commande 
+                SET statut = 'annulee', 
+                    motif_annulation = :motif, 
+                    mode_contact_annulation = :contact 
+                WHERE commande_id = :id";
+        
+        $stmt = $pdo->prepare($sql);
+        return $stmt->execute([
+            ':motif' => $motif,
+            ':contact' => $contact,
+            ':id' => $id
+        ]);
+    }
+
+    // 2. Mettre à jour le statut (Utilisé par Admin et Employé)
     public static function updateStatus($id, $statut) {
         global $pdo;
         $sql = "UPDATE commande SET statut = :statut WHERE commande_id = :id";
         $stmt = $pdo->prepare($sql);
-        return $stmt->execute([':statut' => $statut, ':id' => $id]);
+        return $stmt->execute([
+            ':statut' => $statut,
+            ':id' => $id
+        ]);
+    }
+
+    // 3. Récupérer une commande par ID (Indispensable pour l'envoi d'email)
+    public static function getById($id) {
+        global $pdo;
+        // On fait une jointure pour avoir l'email et le nom du client
+        $sql = "SELECT c.*, u.email, u.nom, u.prenom 
+                FROM commande c 
+                JOIN utilisateur u ON c.utilisateur_id = u.utilisateur_id 
+                WHERE c.commande_id = :id";
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch();
     }
 }

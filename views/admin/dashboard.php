@@ -51,9 +51,37 @@
     <div class="tab-content" id="pills-tabContent">
         
         <div class="tab-pane fade show active" id="pills-commandes" role="tabpanel">
+            
+            <div class="row g-3 align-items-end mb-4 bg-white p-3 rounded-3 shadow-sm border">
+                <div class="col-md-5">
+                    <label class="form-label small fw-bold text-muted text-uppercase">Rechercher un client</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                        <input type="text" id="filter-client" class="form-control border-start-0 bg-light" placeholder="Nom ou Prénom...">
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label small fw-bold text-muted text-uppercase">Filtrer par statut</label>
+                    <select id="filter-status" class="form-select bg-light">
+                        <option value="">-- Tout afficher --</option>
+                        <option value="en_attente">En attente</option>
+                        <option value="validee">Validée / Acceptée</option>
+                        <option value="en_preparation">En préparation</option>
+                        <option value="en_cours_livraison">En livraison</option>
+                        <option value="livree">Livrée</option>
+                        <option value="attente_retour_materiel">⚠️ Attente retour matériel</option>
+                        <option value="terminee">Terminée</option>
+                        <option value="annulee">Annulée</option>
+                    </select>
+                </div>
+                <div class="col-md-2 text-end">
+                    <span class="badge bg-secondary p-2">Total : <span id="count-display"><?php echo count($commandes); ?></span></span>
+                </div>
+            </div>
+
             <div class="dashboard-card">
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table align-middle">
                         <thead>
                             <tr>
                                 <th>Ref</th><th>Client</th><th>Date</th><th>Total</th><th>Statut</th><th class="text-end">Actions</th>
@@ -64,7 +92,10 @@
                                 <tr><td colspan="6" class="text-center py-5 text-muted">Aucune commande.</td></tr>
                             <?php else: ?>
                                 <?php foreach($commandes as $cmd): ?>
-                                    <tr>
+                                    <tr class="cmd-row" 
+                                        data-client="<?php echo strtolower($cmd['nom'] . ' ' . $cmd['prenom']); ?>" 
+                                        data-status="<?php echo $cmd['statut']; ?>">
+                                        
                                         <td class="fw-bold text-dark">#<?php echo $cmd['numero_commande']; ?></td>
                                         <td>
                                             <span class="d-block fw-bold"><?php echo htmlspecialchars($cmd['prenom'] . ' ' . $cmd['nom']); ?></span>
@@ -76,9 +107,13 @@
                                             <form onsubmit="return false;">
                                                 <select class="form-select form-select-sm status-select js-status-select <?php echo $cmd['statut']; ?>" data-id="<?php echo $cmd['commande_id']; ?>">
                                                     <option value="en_attente" <?php echo $cmd['statut'] == 'en_attente' ? 'selected' : ''; ?>>En attente</option>
-                                                    <option value="validee" <?php echo $cmd['statut'] == 'validee' ? 'selected' : ''; ?>>Validée</option>
-                                                    <option value="livree" <?php echo $cmd['statut'] == 'livree' ? 'selected' : ''; ?>>Livrée</option>
-                                                    <option value="annulee" <?php echo $cmd['statut'] == 'annulee' ? 'selected' : ''; ?>>Annulée</option>
+                                                    <option value="validee" <?php echo ($cmd['statut'] == 'validee' || $cmd['statut'] == 'accepte') ? 'selected' : ''; ?>>✅ Validée</option>
+                                                    <option value="en_preparation" <?php echo $cmd['statut'] == 'en_preparation' ? 'selected' : ''; ?>>👨‍🍳 En prépa.</option>
+                                                    <option value="en_cours_livraison" <?php echo $cmd['statut'] == 'en_cours_livraison' ? 'selected' : ''; ?>>🚚 En livraison</option>
+                                                    <option value="livree" <?php echo $cmd['statut'] == 'livree' ? 'selected' : ''; ?>>🏠 Livrée</option>
+                                                    <option value="attente_retour_materiel" <?php echo $cmd['statut'] == 'attente_retour_materiel' ? 'selected' : ''; ?> style="color:#d63384; font-weight:bold;">⚠️ Attente Matériel</option>
+                                                    <option value="terminee" <?php echo $cmd['statut'] == 'terminee' ? 'selected' : ''; ?>>🏁 Terminée</option>
+                                                    <option value="annulee" <?php echo $cmd['statut'] == 'annulee' ? 'selected' : ''; ?>>❌ Annulée</option>
                                                 </select>
                                             </form>
                                         </td>
