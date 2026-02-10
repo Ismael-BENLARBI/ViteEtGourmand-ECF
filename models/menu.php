@@ -99,38 +99,19 @@ class Menu {
     // --- CRÉER UN NOUVEAU MENU ---
     // Mise à jour de la signature de la fonction et de la requête SQL
     // --- CRÉER UN NOUVEAU MENU (Mise à jour avec Régime) ---
-    public static function create($titre, $description, $d_entree, $d_plat, $d_dessert, $prix, $min_personnes, $theme_id, $regime_id, $img_main, $img_entree, $img_plat, $img_dessert) {
+    public static function create($titre, $desc, $descE, $descP, $descD, $prix, $min, $theme, $regime, $img1, $img2, $img3, $img4, $stock = 50, $conditions = null) {
         global $pdo;
-
         $sql = "INSERT INTO menu (
                     titre, description, description_entree, description_plat, description_dessert, 
-                    prix_par_personne, nombre_personne_min, 
-                    theme_id, regime_id,  /* <-- AJOUT ICI */
-                    image_principale, image_entree, image_plat, image_dessert, date_creation
-                ) 
-                VALUES (
-                    :titre, :desc, :d_entree, :d_plat, :d_dessert,
-                    :prix, :min, 
-                    :theme, :regime,      /* <-- AJOUT ICI */
-                    :img1, :img2, :img3, :img4, NOW()
-                )";
+                    prix_par_personne, nombre_personne_min, theme_id, regime_id, 
+                    image_principale, image_entree, image_plat, image_dessert, quantite_restante, conditions
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $pdo->prepare($sql);
-        
         return $stmt->execute([
-            ':titre' => $titre,
-            ':desc'  => $description,
-            ':d_entree' => $d_entree,
-            ':d_plat'   => $d_plat,
-            ':d_dessert'=> $d_dessert,
-            ':prix'  => $prix,
-            ':min'   => $min_personnes,
-            ':theme' => $theme_id,
-            ':regime'=> $regime_id,       /* <-- AJOUT ICI */
-            ':img1'  => $img_main,
-            ':img2'  => $img_entree,
-            ':img3'  => $img_plat,
-            ':img4'  => $img_dessert
+            $titre, $desc, $descE, $descP, $descD, 
+            $prix, $min, $theme, $regime, 
+            $img1, $img2, $img3, $img4, $stock, $conditions
         ]);
     }
 
@@ -143,42 +124,45 @@ class Menu {
     }
 
     // --- MODIFIER UN MENU ---
-    public static function update($id, $titre, $description, $d_entree, $d_plat, $d_dessert, $prix, $min_personnes, $theme_id, $regime_id, $img_main, $img_entree, $img_plat, $img_dessert) {
+    // --- MISE À JOUR COMPLÈTE (FORMULAIRE) ---
+    public static function update($id, $titre, $desc, $descE, $descP, $descD, $prix, $min, $theme, $regime, $img1, $img2, $img3, $img4, $stock, $conditions) {
         global $pdo;
-
         $sql = "UPDATE menu SET 
-                    titre = :titre,
-                    description = :desc,
-                    description_entree = :d_entree,
-                    description_plat = :d_plat,
-                    description_dessert = :d_dessert,
-                    prix_par_personne = :prix,
-                    nombre_personne_min = :min,
-                    theme_id = :theme,
-                    regime_id = :regime,
-                    image_principale = :img1,
-                    image_entree = :img2,
-                    image_plat = :img3,
-                    image_dessert = :img4
+                titre = :titre, 
+                description = :desc, 
+                description_entree = :descE,
+                description_plat = :descP,
+                description_dessert = :descD,
+                prix_par_personne = :prix, 
+                nombre_personne_min = :min,
+                quantite_restante = :stock, 
+                conditions = :conditions,
+                theme_id = :theme, 
+                regime_id = :regime,
+                image_principale = :img1,
+                image_entree = :img2,
+                image_plat = :img3,
+                image_dessert = :img4
                 WHERE menu_id = :id";
         
         $stmt = $pdo->prepare($sql);
-        
         return $stmt->execute([
-            ':id'    => $id,
+            ':id' => $id,
             ':titre' => $titre,
-            ':desc'  => $description,
-            ':d_entree' => $d_entree,
-            ':d_plat'   => $d_plat,
-            ':d_dessert'=> $d_dessert,
-            ':prix'  => $prix,
-            ':min'   => $min_personnes,
-            ':theme' => $theme_id,
-            ':regime'=> $regime_id,
-            ':img1'  => $img_main,
-            ':img2'  => $img_entree,
-            ':img3'  => $img_plat,
-            ':img4'  => $img_dessert
+            ':desc' => $desc,
+            ':descE' => $descE,
+            ':descP' => $descP,
+            ':descD' => $descD,
+            ':prix' => $prix,
+            ':min' => $min,
+            ':stock' => $stock,
+            ':conditions' => $conditions,
+            ':theme' => $theme,
+            ':regime' => $regime,
+            ':img1' => $img1,
+            ':img2' => $img2,
+            ':img3' => $img3,
+            ':img4' => $img4
         ]);
     }
 
@@ -188,6 +172,27 @@ class Menu {
         // On récupère ID et Libellé pour remplir le select
         $stmt = $pdo->query("SELECT * FROM regime ORDER BY libelle ASC");
         return $stmt->fetchAll();
+    }
+
+    // --- GESTION DES STOCKS (MOUVEMENTS) ---
+
+    // 1. Déduire du stock (Lors de la commande)
+    public static function decrementStock($id, $qty) {
+        global $pdo;
+        // La condition "AND quantite_restante >= :qty" empêche de passer en négatif
+        $sql = "UPDATE menu SET quantite_restante = quantite_restante - :qty 
+                WHERE menu_id = :id AND quantite_restante >= :qty";
+        $stmt = $pdo->prepare($sql);
+        return $stmt->execute([':qty' => $qty, ':id' => $id]);
+    }
+
+    // 2. Remettre en stock (Lors d'une annulation)
+    public static function incrementStock($id, $qty) {
+        global $pdo;
+        $sql = "UPDATE menu SET quantite_restante = quantite_restante + :qty 
+                WHERE menu_id = :id";
+        $stmt = $pdo->prepare($sql);
+        return $stmt->execute([':qty' => $qty, ':id' => $id]);
     }
 }
 ?>

@@ -20,7 +20,7 @@ $footerHoraires = Horaire::getAll();
             <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mt-3">
                 <h5 class="text-uppercase mb-4 fw-bold" style="color: #D8A85E;">Liens</h5>
                 <p><a href="index.php?page=home" class="text-white" style="text-decoration: none;">Accueil</a></p>
-                <p><a href="index.php?page=carte" class="text-white" style="text-decoration: none;">La Carte</a></p>
+                <p><a href="index.php?page=menus" class="text-white" style="text-decoration: none;">La Carte</a></p>
                 <p><a href="index.php?page=contact" class="text-white" style="text-decoration: none;">Contact</a></p>
                 
                 <?php if(isset($_SESSION['user'])): ?>

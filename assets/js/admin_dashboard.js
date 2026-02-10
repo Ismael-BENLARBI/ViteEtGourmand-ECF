@@ -385,4 +385,40 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // ============================================================
+    // 10. CRÉATION UTILISATEUR (C'EST ICI LA NOUVELLE FONCTIONNALITÉ)
+    // ============================================================
+    const formCreateUser = document.getElementById('form-create-user');
+    if (formCreateUser) {
+        formCreateUser.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button');
+            const originalText = btn.innerHTML;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Création...';
+
+            const formData = new FormData(this);
+
+            fetch('index.php?page=admin_user_create', { method: 'POST', body: formData })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert("✅ Utilisateur créé avec succès !");
+                    location.reload();
+                } else {
+                    alert("❌ Erreur : " + data.message);
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Erreur technique (Voir console)");
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            });
+        });
+    }
+
 });

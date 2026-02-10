@@ -3,7 +3,15 @@
 
 <div class="container py-5">
     
-    <a href="index.php?page=admin_dashboard" class="btn-back">
+    <?php 
+        // Logique "Retour Intelligent" (Admin ou Employé)
+        $lienRetour = "index.php?page=admin_dashboard";
+        if (isset($_SESSION['user']['role_id']) && $_SESSION['user']['role_id'] == 2) {
+            $lienRetour = "index.php?page=employe_dashboard";
+        }
+    ?>
+
+    <a href="<?php echo $lienRetour; ?>" class="btn-back">
         ← Retour au tableau de bord
     </a>
 
@@ -27,24 +35,29 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label class="form-label">Prix / Personne (€) *</label>
                             <input type="number" step="0.01" name="prix" class="form-control" placeholder="0.00" required>
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label class="form-label">Min. Personnes</label>
                             <input type="number" name="min_personnes" class="form-control" value="1">
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold text-success">Stock Initial</label>
+                            <input type="number" name="stock" class="form-control fw-bold" value="50" min="0" required style="border-color: #198754;">
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label text-uppercase small fw-bold text-muted">Description Entrée</label>
-                        <textarea name="desc_entree" class="form-control" rows="2" placeholder="Ex: Foie gras poêlé sur brioche (Allergène : Gluten...)"></textarea>
+                        <textarea name="desc_entree" class="form-control" rows="2" placeholder="Ex: Foie gras poêlé sur brioche..."></textarea>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label text-uppercase small fw-bold text-muted">Description Plat</label>
-                        <textarea name="desc_plat" class="form-control" rows="2" placeholder="Ex: Volaille de fête rôtie et ses légumes..."></textarea>
+                        <textarea name="desc_plat" class="form-control" rows="2" placeholder="Ex: Volaille de fête rôtie..."></textarea>
                     </div>
 
                     <div class="mb-3">
@@ -53,8 +66,8 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Accroche (Optionnel)</label>
-                        <input type="text" name="description" class="form-control" placeholder="Une phrase courte pour donner envie...">
+                        <label class="form-label">Conditions & Précautions</label>
+                        <textarea name="conditions" class="form-control" rows="2" placeholder="Ex: Commander 48h à l'avance, Conserver au frais..."></textarea>
                     </div>
                 </div>
 
@@ -64,10 +77,11 @@
                         <label class="form-label">Thème</label>
                         <select name="theme_id" class="form-select">
                             <option value="">-- Choisir un thème --</option>
-                            <option value="1">Noël</option>
-                            <option value="2">Anniversaire</option>
-                            <option value="3">Mariage</option>
-                            <option value="4">Entreprise</option>
+                            <?php foreach($themes as $t): ?>
+                                <option value="<?php echo $t['theme_id']; ?>">
+                                    <?php echo htmlspecialchars($t['libelle']); ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
 
@@ -75,11 +89,11 @@
                         <label class="form-label">Régime Alimentaire</label>
                         <select name="regime_id" class="form-select">
                             <option value="">-- Aucun régime spécifique --</option>
-                            <option value="1">Classique</option>
-                            <option value="2">Végétarien</option>
-                            <option value="3">Sans Gluten</option>
-                            <option value="4">Halal</option>
-                            <option value="5">Végan</option>
+                            <?php foreach($regimes as $r): ?>
+                                <option value="<?php echo $r['regime_id']; ?>">
+                                    <?php echo htmlspecialchars($r['libelle']); ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
 
@@ -127,23 +141,6 @@
     </div>
 </div>
 
-<script>
-// Fonction générique qui marche pour les 4 images
-function previewImage(input, previewId, textId) {
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            // On affiche l'image
-            var img = document.getElementById(previewId);
-            img.src = e.target.result;
-            img.style.display = 'block';
-            
-            // On cache le texte
-            document.getElementById(textId).style.display = 'none';
-        }
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-</script>
+<script src="assets/js/admin_menu_add.js"></script>
 
 <?php require_once 'Views/partials/footer.php'; ?>

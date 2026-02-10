@@ -2,7 +2,7 @@
 require_once 'Views/partials/header.php'; 
 require_once 'Models/User.php'; 
 
-// On récupère les infos fraîches de l'utilisateur connecté pour pré-remplir le formulaire
+// On récupère les infos fraîches de l'utilisateur connecté
 $currentUser = User::getById($_SESSION['user']['id']);
 ?>
 <link rel="stylesheet" href="assets/css/compte.css">
@@ -15,11 +15,20 @@ $currentUser = User::getById($_SESSION['user']['id']);
             <p class="text-muted">Bonjour, <?php echo htmlspecialchars($currentUser['prenom']); ?> !</p>
         </div>
         <div class="text-end">
-            <?php if(isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin'): ?>
+            <?php 
+                // Vérification sécurisée du rôle (Admin = 1, Employé = 2)
+                $role = $_SESSION['user']['role_id'] ?? 3;
+                if ($role == 1): 
+            ?>
                 <a href="index.php?page=admin_dashboard" class="btn btn-dark rounded-pill px-4 me-2">
                     <i class="fa-solid fa-gauge-high"></i> Admin
                 </a>
+            <?php elseif ($role == 2): ?>
+                <a href="index.php?page=employe_dashboard" class="btn btn-primary rounded-pill px-4 me-2">
+                    <i class="fa-solid fa-briefcase"></i> Espace Employé
+                </a>
             <?php endif; ?>
+
             <a href="index.php?page=logout" class="btn btn-outline-danger rounded-pill px-4">
                 <i class="fa-solid fa-power-off"></i> Déconnexion
             </a>
@@ -44,6 +53,13 @@ $currentUser = User::getById($_SESSION['user']['id']);
         <div class="tab-pane fade show active" id="pills-commandes" role="tabpanel">
             <div class="card shadow-sm border-0 rounded-4 p-4">
                 
+                <?php if(isset($_GET['success'])): ?>
+                    <div class="alert alert-success rounded-3"><i class="fa-solid fa-check-circle me-2"></i> <?php echo htmlspecialchars($_GET['success']); ?></div>
+                <?php endif; ?>
+                <?php if(isset($_GET['error'])): ?>
+                    <div class="alert alert-danger rounded-3"><i class="fa-solid fa-circle-exclamation me-2"></i> <?php echo htmlspecialchars($_GET['error']); ?></div>
+                <?php endif; ?>
+
                 <?php if (empty($commandes)): ?>
                     <div class="text-center py-5">
                         <div class="mb-3 text-muted" style="font-size: 3rem;">
@@ -63,7 +79,7 @@ $currentUser = User::getById($_SESSION['user']['id']);
                                     <th>Date</th>
                                     <th>Montant</th>
                                     <th>Statut</th>
-                                    <th class="text-end">Détails</th>
+                                    <th class="text-end">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -71,7 +87,7 @@ $currentUser = User::getById($_SESSION['user']['id']);
                                     <tr>
                                         <td class="fw-bold text-dark">#<?php echo htmlspecialchars($cmd['numero_commande']); ?></td>
                                         <td class="text-muted">
-                                            <?php echo (new DateTime($cmd['date_commande']))->format('d/m/Y'); ?>
+                                            <?php echo (new DateTime($cmd['date_commande']))->format('d/m/Y H:i'); ?>
                                         </td>
                                         <td class="fw-bold" style="color: #D8A85E;">
                                             <?php echo number_format($cmd['prix_total'], 2); ?> €
@@ -80,29 +96,48 @@ $currentUser = User::getById($_SESSION['user']['id']);
                                             <?php 
                                                 $statusClass = 'bg-secondary';
                                                 $statusText = $cmd['statut'];
-                                                if($cmd['statut'] == 'en_attente') {
-                                                    $statusClass = 'bg-warning text-dark';
-                                                    $statusText = 'En attente';
-                                                } elseif($cmd['statut'] == 'validee') {
-                                                    $statusClass = 'bg-info text-dark';
-                                                    $statusText = 'Validée';
-                                                } elseif($cmd['statut'] == 'livree') {
-                                                    $statusClass = 'bg-success';
-                                                    $statusText = 'Livrée';
-                                                } elseif($cmd['statut'] == 'annulee') {
-                                                    $statusClass = 'bg-danger';
-                                                    $statusText = 'Annulée';
+                                                
+                                                switch($cmd['statut']) {
+                                                    case 'en_attente': $statusClass = 'bg-warning text-dark'; $statusText = 'En attente'; break;
+                                                    case 'validee': $statusClass = 'bg-info text-dark'; $statusText = 'Validée'; break;
+                                                    case 'en_preparation': $statusClass = 'bg-primary'; $statusText = 'En prépa.'; break;
+                                                    case 'en_cours_livraison': $statusClass = 'bg-primary text-dark'; $statusText = 'En livraison'; break;
+                                                    case 'livree': $statusClass = 'bg-success'; $statusText = 'Livrée'; break;
+                                                    case 'terminee': $statusClass = 'bg-dark'; $statusText = 'Terminée'; break;
+                                                    case 'annulee': $statusClass = 'bg-danger'; $statusText = 'Annulée'; break;
+                                                    case 'attente_retour_materiel': $statusClass = 'bg-danger'; $statusText = 'Retour Matériel'; break;
                                                 }
                                             ?>
                                             <span class="badge rounded-pill <?php echo $statusClass; ?>">
-                                                <?php echo ucfirst($statusText); ?>
+                                                <?php echo $statusText; ?>
                                             </span>
                                         </td>
+                                        
                                         <td class="text-end">
-                                            <a href="index.php?page=commande_details&id=<?php echo $cmd['commande_id']; ?>" class="btn btn-sm btn-outline-dark rounded-pill">
-                                                Voir <i class="fa-solid fa-arrow-right ms-1"></i>
+                                            <a href="index.php?page=commande_details&id=<?php echo $cmd['commande_id']; ?>" class="btn btn-sm btn-outline-dark rounded-pill" title="Voir les détails">
+                                                <i class="fa-solid fa-eye"></i>
                                             </a>
+
+                                            <?php if($cmd['statut'] == 'en_attente'): ?>
+                                                <a href="index.php?page=client_order_modify&id=<?php echo $cmd['commande_id']; ?>" 
+                                                   class="btn btn-sm rounded-pill ms-1"
+                                                   style="border-color: #8B2635; color: #8B2635;"
+                                                   onmouseover="this.style.backgroundColor='#8B2635'; this.style.color='white';"
+                                                   onmouseout="this.style.backgroundColor='transparent'; this.style.color='#8B2635';"
+                                                   onclick="return confirm('⚠️ Modification :\nCela va annuler cette commande et remettre tous les articles dans votre panier pour que vous puissiez les modifier.\n\nContinuer ?');"
+                                                   title="Modifier la commande">
+                                                    <i class="fa-solid fa-pen"></i>
+                                                </a>
+
+                                                <a href="index.php?page=client_order_cancel&id=<?php echo $cmd['commande_id']; ?>" 
+                                                   class="btn btn-sm btn-outline-danger rounded-pill ms-1"
+                                                   onclick="return confirm('⚠️ Êtes-vous sûr de vouloir annuler définitivement cette commande ?');"
+                                                   title="Annuler la commande">
+                                                    <i class="fa-solid fa-xmark"></i>
+                                                </a>
+                                            <?php endif; ?>
                                         </td>
+
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>

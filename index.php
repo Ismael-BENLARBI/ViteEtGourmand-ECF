@@ -139,6 +139,28 @@ switch($page) {
                     'role_id' => $user['role_id'] // 1=Admin, 2=Employé, 3=Client
                 ];
 
+                // --- DEBUT AJOUT : GESTION DU PANIER SAUVEGARDÉ ---
+                require_once 'Models/Panier.php';
+                
+                // 1. On récupère le panier sauvegardé en BDD
+                $panierBdd = Panier::loadFromUser($user['utilisateur_id']);
+                
+                // 2. Initialisation si pas de panier session
+                if (!isset($_SESSION['panier'])) $_SESSION['panier'] = [];
+
+                // 3. Fusion : On ajoute les produits de la BDD au panier de la session
+                foreach($panierBdd as $mid => $qty) {
+                    if (isset($_SESSION['panier'][$mid])) {
+                        $_SESSION['panier'][$mid] += $qty; // On additionne si existe déjà
+                    } else {
+                        $_SESSION['panier'][$mid] = $qty; // Sinon on crée
+                    }
+                }
+
+                // 4. On sauvegarde le résultat fusionné immédiatement en BDD
+                Panier::saveForUser($user['utilisateur_id'], $_SESSION['panier']);
+                // --- FIN AJOUT ---
+
                 // REDIRECTION INTELLIGENTE
                 if ($user['role_id'] == 1) {
                     header('Location: index.php?page=admin_dashboard'); // Admin
@@ -234,11 +256,19 @@ switch($page) {
         if(isset($_POST['menu_id']) && isset($_POST['quantite'])) {
             $id = (int)$_POST['menu_id'];
             $qty = (int)$_POST['quantite'];
+            
             if(!isset($_SESSION['panier'])) $_SESSION['panier'] = [];
             
             if(isset($_SESSION['panier'][$id])) $_SESSION['panier'][$id] += $qty;
             else $_SESSION['panier'][$id] = $qty;
-            
+
+            // --- AJOUT : SAUVEGARDE EN BDD SI CONNECTÉ ---
+            if(isset($_SESSION['user'])) {
+                require_once 'Models/Panier.php';
+                Panier::saveForUser($_SESSION['user']['id'], $_SESSION['panier']);
+            }
+            // ---------------------------------------------
+
             header('Location: index.php?page=panier');
             exit;
         }
@@ -246,8 +276,15 @@ switch($page) {
         break;
 
     case 'panier_delete':
-        if(isset($_GET['id'])) {
-            unset($_SESSION['panier'][(int)$_GET['id']]);
+        if(isset($_GET['id'])) { 
+            unset($_SESSION['panier'][(int)$_GET['id']]); 
+            
+            // --- AJOUT : MISE À JOUR BDD SI CONNECTÉ ---
+            if(isset($_SESSION['user'])) {
+                require_once 'Models/Panier.php';
+                Panier::saveForUser($_SESSION['user']['id'], $_SESSION['panier']);
+            }
+            // -------------------------------------------
         }
         header('Location: index.php?page=panier');
         break;
@@ -269,9 +306,12 @@ switch($page) {
     case 'commande_validation':
         require_once 'Utils/Auth.php';
         Auth::check();
+        
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SESSION['panier'])) {
             require_once 'Models/Commande.php';
             require_once 'Models/Menu.php';
+            // On a besoin du modèle Panier pour nettoyer la BDD après commande
+            require_once 'Models/Panier.php'; 
 
             $userId = $_SESSION['user']['id'];
             $commandeId = Commande::create($userId, $_POST['total_final'], $_POST['frais_livraison'], $_POST['montant_reduction'], $_POST['nom'], $_POST['prenom'], $_POST['adresse'], $_POST['cp'], $_POST['ville'], $_POST['phone'], $_POST['heure_livraison'], $_POST['instructions']);
@@ -279,7 +319,13 @@ switch($page) {
             foreach ($_SESSION['panier'] as $menuId => $qty) {
                 $menu = Menu::getById($menuId);
                 if ($menu) Commande::addDetail($commandeId, $menuId, $qty, $menu['prix_par_personne']);
+                Menu::decrementStock($menuId, $qty);
             }
+
+            // --- DEBUT AJOUT : VIDER LE PANIER EN BDD ---
+            Panier::clearSavedCart($userId);
+            // --- FIN AJOUT ---
+
             unset($_SESSION['panier']);
             header('Location: index.php?page=commande_success');
             exit;
@@ -348,6 +394,72 @@ switch($page) {
         }
         break;
 
+    // --- ACTIONS CLIENT SUR COMMANDE ---
+
+    case 'client_order_cancel':
+        require_once 'Utils/Auth.php';
+        Auth::check(); 
+        require_once 'Models/Commande.php';
+        require_once 'Models/Menu.php'; // Nécessaire pour le stock
+
+        if(isset($_GET['id'])) {
+            $id = (int)$_GET['id'];
+            $cmd = Commande::getById($id);
+
+            if($cmd && $cmd['utilisateur_id'] == $_SESSION['user']['id'] && $cmd['statut'] == 'en_attente') {
+                
+                // --- RESTOCKAGE AVANT ANNULATION ---
+                $details = Commande::getDetails($id);
+                foreach($details as $d) {
+                    Menu::incrementStock($d['menu_id'], $d['quantite']);
+                }
+                // -----------------------------------
+
+                Commande::updateStatus($id, 'annulee');
+                header('Location: index.php?page=compte&success=Commande annulée');
+            } else {
+                header('Location: index.php?page=compte&error=Action impossible');
+            }
+            exit;
+        }
+        break;
+
+    case 'client_order_modify':
+        require_once 'Utils/Auth.php';
+        Auth::check();
+        require_once 'Models/Commande.php';
+        require_once 'Models/Panier.php';
+        require_once 'Models/Menu.php'; // Nécessaire pour le stock
+
+        if(isset($_GET['id'])) {
+            $id = (int)$_GET['id'];
+            $cmd = Commande::getById($id);
+
+            if($cmd && $cmd['utilisateur_id'] == $_SESSION['user']['id'] && $cmd['statut'] == 'en_attente') {
+                
+                $details = Commande::getDetails($id);
+
+                // 1. Remettre dans le panier (Session)
+                $_SESSION['panier'] = [];
+                foreach($details as $d) {
+                    $_SESSION['panier'][$d['menu_id']] = $d['quantite'];
+                    
+                    // --- 2. RESTOCKAGE (Important car on annule la commande) ---
+                    Menu::incrementStock($d['menu_id'], $d['quantite']);
+                    // -----------------------------------------------------------
+                }
+
+                Panier::saveForUser($_SESSION['user']['id'], $_SESSION['panier']);
+                Commande::updateStatus($id, 'annulee');
+
+                header('Location: index.php?page=panier&success=Commande modifiable dans le panier');
+            } else {
+                header('Location: index.php?page=compte&error=Action impossible');
+            }
+            exit;
+        }
+        break;
+
     case 'avis_add':
         require_once 'Utils/Auth.php';
         Auth::check();
@@ -381,34 +493,61 @@ switch($page) {
     case 'admin_menu_create_action':
     case 'admin_menu_edit_action':
         require_once 'Utils/Auth.php';
-        Auth::checkStaff(); // <-- Autorisé pour l'employé
+        Auth::checkStaff();
         require_once 'Models/Menu.php';
-        
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Logique simplifiée de traitement d'image
-            function handleImage($key) {
-                if(isset($_FILES[$key]) && $_FILES[$key]['error'] == 0) {
-                    $name = 'menu_'.uniqid().'.'.pathinfo($_FILES[$key]['name'], PATHINFO_EXTENSION);
-                    move_uploaded_file($_FILES[$key]['tmp_name'], "assets/images/menu/$name");
-                    return $name;
-                }
-                return $_POST['old_'.$key] ?? null;
-            }
-            
-            $img1 = handleImage('image_principale');
-            $img2 = handleImage('image_entree');
-            $img3 = handleImage('image_plat');
-            $img4 = handleImage('image_dessert');
 
-            if ($page == 'admin_menu_create_action') {
-                Menu::create($_POST['titre'], $_POST['description'], $_POST['desc_entree'], $_POST['desc_plat'], $_POST['desc_dessert'], $_POST['prix'], $_POST['min_personnes'], $_POST['theme_id']?:null, $_POST['regime_id']?:null, $img1, $img2, $img3, $img4);
-            } else {
-                Menu::update($_GET['id'], $_POST['titre'], $_POST['description'], $_POST['desc_entree'], $_POST['desc_plat'], $_POST['desc_dessert'], $_POST['prix'], $_POST['min_personnes'], $_POST['theme_id']?:null, $_POST['regime_id']?:null, $img1, $img2, $img3, $img4);
-            }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
-            // Redirection selon le rôle
+            // Fonction helper interne pour les images
+            function getUploadedImageOrKeepOld($inputName) {
+                // 1. Nouveau fichier uploadé ?
+                if (isset($_FILES[$inputName]) && $_FILES[$inputName]['error'] === 0) {
+                    $ext = pathinfo($_FILES[$inputName]['name'], PATHINFO_EXTENSION);
+                    $filename = 'menu_' . uniqid() . '.' . $ext;
+                    move_uploaded_file($_FILES[$inputName]['tmp_name'], "assets/images/menu/" . $filename);
+                    return $filename;
+                }
+                // 2. Sinon, on garde l'ancien (champ caché)
+                $oldKey = 'old_' . $inputName;
+                return !empty($_POST[$oldKey]) ? $_POST[$oldKey] : null;
+            }
+
+            // Traitement des 4 images
+            $img1 = getUploadedImageOrKeepOld('image_principale');
+            $img2 = getUploadedImageOrKeepOld('image_entree');
+            $img3 = getUploadedImageOrKeepOld('image_plat');
+            $img4 = getUploadedImageOrKeepOld('image_dessert');
+
+            // --- CAS 1 : CRÉATION ---
+            if ($page == 'admin_menu_create_action') {
+                Menu::create(
+                    $_POST['titre'], $_POST['description'], 
+                    $_POST['desc_entree'], $_POST['desc_plat'], $_POST['desc_dessert'], 
+                    $_POST['prix'], $_POST['min_personnes'], 
+                    $_POST['theme_id'] ?: null, $_POST['regime_id'] ?: null, 
+                    $img1, $img2, $img3, $img4,
+                    $_POST['stock'],
+                    $_POST['conditions'] // <--- AJOUT ICI
+                );
+            } 
+            // --- CAS 2 : MODIFICATION ---
+            else {
+                Menu::update(
+                    $_GET['id'], 
+                    $_POST['titre'], $_POST['description'], 
+                    $_POST['desc_entree'], $_POST['desc_plat'], $_POST['desc_dessert'], 
+                    $_POST['prix'], $_POST['min_personnes'], 
+                    $_POST['theme_id'] ?: null, $_POST['regime_id'] ?: null, 
+                    $img1, $img2, $img3, $img4,
+                    $_POST['stock'],
+                    $_POST['conditions'] // <--- AJOUT ICI
+                );
+            }
+
+            // Redirection intelligente selon le rôle
             $redir = ($_SESSION['user']['role_id'] == 2) ? 'employe_dashboard' : 'admin_dashboard';
             header("Location: index.php?page=$redir&success=Menu enregistré");
+            exit;
         }
         break;
 
@@ -540,10 +679,24 @@ switch($page) {
         require_once 'Models/User.php';
         
         if($page == 'admin_user_role' && isset($_POST['id'])) {
+            
+            // --- AJOUT SÉCURITÉ ICI ---
+            // Si on essaie de passer le rôle à 1 (Admin), on bloque tout.
+            if ($_POST['role_id'] == 1) {
+                echo json_encode([
+                    'status' => 'error', 
+                    'message' => 'Impossible de promouvoir un Admin via le dashboard. Faites-le en base de données.'
+                ]);
+                exit;
+            }
+            // --------------------------
+
             User::updateRole($_POST['id'], $_POST['role_id']);
             echo json_encode(['status'=>'success']); exit;
         }
+
         if($page == 'admin_user_delete' && isset($_GET['id'])) {
+            // Optionnel : Tu peux aussi empêcher de supprimer un autre admin ici si tu veux
             User::delete($_GET['id']);
             echo json_encode(['status'=>'success']); exit;
         }
@@ -605,6 +758,43 @@ switch($page) {
             if(isset($_POST['ajax'])) { echo json_encode(['status'=>'success']); exit; }
         }
         header('Location: index.php?page=admin_dashboard');
+        break;
+
+    // --- ACTION : CRÉER UN UTILISATEUR (ADMIN SEULEMENT) ---
+    case 'admin_user_create':
+        require_once 'Utils/Auth.php';
+        Auth::checkAdmin(); // Sécurité absolue
+        require_once 'Models/User.php';
+
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $nom = $_POST['nom'];
+            $prenom = $_POST['prenom'];
+            $email = $_POST['email'];
+            $pass = $_POST['password'];
+            $role = (int)$_POST['role']; // 2 ou 3
+
+            // 1. Règle métier : Interdiction de créer un Admin (ID 1)
+            if ($role === 1) {
+                echo json_encode(['status' => 'error', 'message' => 'Interdit de créer un Admin ici.']);
+                exit;
+            }
+
+            // 2. Vérifier si l'email existe déjà
+            if (User::findByEmail($email)) {
+                echo json_encode(['status' => 'error', 'message' => 'Cet email existe déjà.']);
+                exit;
+            }
+
+            // 3. Création
+            if (User::createByAdmin($nom, $prenom, $email, $pass, $role)) {
+                echo json_encode(['status' => 'success']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Erreur SQL.']);
+            }
+            exit;
+        }
         break;
 
     default:

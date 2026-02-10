@@ -83,9 +83,36 @@
                     </div>
                     <p class="min-personnes">*Dès <?php echo $menu['nombre_personne_min']; ?> personnes*</p>
 
-                    <div class="stock-alert">
-                         ⚠️ STOCK : Plus que <?php echo $menu['quantite_restante'] ?? 50; ?> menus disponibles !
+                    <?php 
+                        $stock = $menu['quantite_restante'] ?? 0;
+                        $minReq = $menu['nombre_personne_min'];
+                        // Est-ce qu'on peut commander ? (Stock doit être >= au minimum requis)
+                        $isOrderable = ($stock >= $minReq);
+                    ?>
+
+                    <div class="stock-alert" style="<?php echo (!$isOrderable) ? 'color:red; border-color:red; background-color:#ffe6e6;' : ''; ?>">
+                        <?php if($stock == 0): ?>
+                            ❌ RUPTURE DE STOCK DÉFINITIVE
+                        <?php elseif(!$isOrderable): ?>
+                            ⚠️ Stock insuffisant (<?php echo $stock; ?> restants pour min. <?php echo $minReq; ?> pers.)
+                        <?php else: ?>
+                            ⚠️ STOCK : Plus que <?php echo $stock; ?> menus disponibles !
+                        <?php endif; ?>
                     </div>
+
+                    <?php if(!empty($menu['conditions'])): ?>
+                        <div class="alert alert-warning mt-3 mb-3 border-0 shadow-sm" style="background-color: #fff3cd; color: #856404;">
+                            <div class="d-flex">
+                                <div class="me-3 fs-4">
+                                    <i class="fa-solid fa-circle-exclamation"></i>
+                                </div>
+                                <div>
+                                    <strong class="text-uppercase small">Conditions importantes :</strong><br>
+                                    <?php echo nl2br(htmlspecialchars($menu['conditions'])); ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
 
                     <div class="info-box">
                         <div class="info-box-title">Infos Livraison</div>
@@ -95,30 +122,47 @@
                         </div>
                     </div>
 
-                    <div class="info-box d-flex justify-content-between align-items-center">
-                        <div class="info-box-title mb-0">Quantité :</div>
-                        <div class="qty-selector">
-                            <button type="button" class="qty-btn" onclick="updateQty(-1)">-</button>
-                            <input type="number" id="qtyInput" value="<?php echo $menu['nombre_personne_min']; ?>" min="<?php echo $menu['nombre_personne_min']; ?>" style="width: 50px; text-align: center; border:none; background: transparent; font-weight: bold;">
-                            <button type="button" class="qty-btn" onclick="updateQty(1)">+</button>
-                        </div>
-                    </div>
-
-                    <div class="info-box">
-                        <div class="info-box-title">RÉDUCTION GROUPE</div>
-                        <div class="info-box-text">
-                            -10% si vous commandez pour + de 13 pers.
-                        </div>
-                    </div>
-
-                    <form action="index.php?page=panier_add" method="POST">
-                        <input type="hidden" name="menu_id" value="<?php echo $menu['menu_id']; ?>">
-                        <input type="hidden" name="quantite" id="formQty" value="<?php echo $menu['nombre_personne_min']; ?>">
+                    <?php if($isOrderable): ?>
                         
-                        <button type="submit" class="btn-panier">
-                            <i class="fa-solid fa-cart-plus me-2"></i> Ajouter au panier
-                        </button>
-                    </form>
+                        <div class="info-box d-flex justify-content-between align-items-center">
+                            <div class="info-box-title mb-0">Quantité :</div>
+                            <div class="qty-selector">
+                                <button type="button" class="qty-btn" onclick="updateQty(-1)">-</button>
+                                <input type="number" id="qtyInput" 
+                                       value="<?php echo $minReq; ?>" 
+                                       min="<?php echo $minReq; ?>" 
+                                       max="<?php echo $stock; ?>"
+                                       style="width: 50px; text-align: center; border:none; background: transparent; font-weight: bold;">
+                                <button type="button" class="qty-btn" onclick="updateQty(1)">+</button>
+                            </div>
+                        </div>
+
+                        <div class="info-box">
+                            <div class="info-box-title">RÉDUCTION GROUPE</div>
+                            <div class="info-box-text">
+                                -10% si vous commandez pour + de 13 pers.
+                            </div>
+                        </div>
+
+                        <form action="index.php?page=panier_add" method="POST">
+                            <input type="hidden" name="menu_id" value="<?php echo $menu['menu_id']; ?>">
+                            <input type="hidden" name="quantite" id="formQty" value="<?php echo $minReq; ?>">
+                            
+                            <button type="submit" class="btn-panier">
+                                <i class="fa-solid fa-cart-plus me-2"></i> Ajouter au panier
+                            </button>
+                        </form>
+
+                    <?php else: ?>
+                        
+                        <div class="mt-4">
+                            <button disabled class="btn w-100 py-3 fw-bold text-white" style="background-color: #ccc; cursor: not-allowed; border-radius: 50px;">
+                                <i class="fa-solid fa-ban me-2"></i> Stock Insuffisant
+                            </button>
+                            <small class="d-block text-center mt-2 text-muted">Ce menu n'est plus disponible en quantité suffisante.</small>
+                        </div>
+
+                    <?php endif; ?>
 
                 </div>
             </div>
@@ -131,38 +175,6 @@
     <img class="modal-content-img" id="fullImage">
 </div>
 
-<script>
-    // 1. Ouvrir la modale (Zoom)
-    function openModal(element) {
-        var modal = document.getElementById("imageModal");
-        var modalImg = document.getElementById("fullImage");
-        
-        modal.style.display = "flex"; 
-        modalImg.src = element.src;   
-    }
-
-    // 2. Fermer la modale
-    function closeModal() {
-        document.getElementById("imageModal").style.display = "none";
-    }
-
-    // 3. Changer l'image principale au clic sur une miniature
-    function changeMainImage(element) {
-        document.querySelector('.main-image').src = element.src;
-    }
-
-    // 4. Gestion de la quantité (+ / -) et mise à jour du formulaire
-    function updateQty(change) {
-        let input = document.getElementById('qtyInput');   // Input visuel
-        let formInput = document.getElementById('formQty'); // Input caché pour le PHP
-        let min = parseInt(input.min);
-        let newVal = parseInt(input.value) + change;
-        
-        if(newVal >= min) {
-            input.value = newVal;
-            formInput.value = newVal; // On met à jour la valeur envoyée au panier
-        }
-    }
-</script>
+<script src="assets/js/detail_menu.js"></script>
 
 <?php require_once 'Views/partials/footer.php'; ?>

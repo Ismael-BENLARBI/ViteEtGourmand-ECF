@@ -222,4 +222,25 @@ class User {
         return $stmt->execute([':id' => $id]);
     }
 
+    // Création par l'Admin (Sans adresse obligatoire pour l'instant)
+    // Création par l'Admin
+    public static function createByAdmin($nom, $prenom, $email, $password, $roleId) {
+        global $pdo;
+        
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+        // CORRECTION ICI : 'adresse_postale' au lieu de 'adresse'
+        $sql = "INSERT INTO utilisateur (nom, prenom, email, password, role_id, adresse_postale, code_postal, ville) 
+                VALUES (:nom, :prenom, :email, :pass, :role, '', '', '')";
+        
+        $stmt = $pdo->prepare($sql);
+        return $stmt->execute([
+            ':nom' => $nom,
+            ':prenom' => $prenom,
+            ':email' => $email,
+            ':pass' => $hashedPassword,
+            ':role' => $roleId
+        ]);
+    }
+
 }

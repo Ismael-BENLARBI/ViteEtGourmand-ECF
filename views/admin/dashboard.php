@@ -51,7 +51,6 @@
     <div class="tab-content" id="pills-tabContent">
         
         <div class="tab-pane fade show active" id="pills-commandes" role="tabpanel">
-            
             <div class="row g-3 align-items-end mb-4 bg-white p-3 rounded-3 shadow-sm border">
                 <div class="col-md-5">
                     <label class="form-label small fw-bold text-muted text-uppercase">Rechercher un client</label>
@@ -95,7 +94,6 @@
                                     <tr class="cmd-row" 
                                         data-client="<?php echo strtolower($cmd['nom'] . ' ' . $cmd['prenom']); ?>" 
                                         data-status="<?php echo $cmd['statut']; ?>">
-                                        
                                         <td class="fw-bold text-dark">#<?php echo $cmd['numero_commande']; ?></td>
                                         <td>
                                             <span class="d-block fw-bold"><?php echo htmlspecialchars($cmd['prenom'] . ' ' . $cmd['nom']); ?></span>
@@ -176,13 +174,7 @@
                         <table class="table table-hover align-middle">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Client</th>
-                                    <th>Menu</th>
-                                    <th style="width: 30%;">Commentaire</th>
-                                    <th>Note</th>
-                                    <th>Statut</th>
-                                    <th class="text-end">Actions</th>
+                                    <th>Date</th><th>Client</th><th>Menu</th><th style="width: 30%;">Commentaire</th><th>Note</th><th>Statut</th><th class="text-end">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -196,20 +188,14 @@
                                             <td class="text-muted small"><?php echo htmlspecialchars($avis['titre']); ?></td>
                                             <td>
                                                 <div style="max-width: 250px; cursor: help;" title="<?php echo htmlspecialchars($avis['description'] ?? ''); ?>">
-                                                    <span class="d-block text-truncate">
-                                                        <?php echo htmlspecialchars($avis['description'] ?? ''); ?>
-                                                    </span>
+                                                    <span class="d-block text-truncate"><?php echo htmlspecialchars($avis['description'] ?? ''); ?></span>
                                                 </div>
                                             </td>
                                             <td class="text-warning" style="white-space: nowrap;">
                                                 <?php echo $avis['note']; ?> <i class="fa-solid fa-star text-small"></i>
                                             </td>
                                             <td>
-                                                <?php if($avis['statut'] == 'valide'): ?>
-                                                    <span class="badge bg-success js-badge">En ligne</span>
-                                                <?php else: ?>
-                                                    <span class="badge bg-warning text-dark js-badge">En attente</span>
-                                                <?php endif; ?>
+                                                <?php if($avis['statut'] == 'valide'): ?><span class="badge bg-success js-badge">En ligne</span><?php else: ?><span class="badge bg-warning text-dark js-badge">En attente</span><?php endif; ?>
                                             </td>
                                             <td class="text-end">
                                                 <?php if($avis['statut'] != 'valide'): ?>
@@ -228,6 +214,13 @@
         </div>
 
         <div class="tab-pane fade" id="pills-users" role="tabpanel">
+            
+            <div class="d-flex justify-content-end mb-3">
+                <button class="btn-add-menu" data-bs-toggle="modal" data-bs-target="#modalCreateUser" style="border:none;">
+                    <span>+</span> Nouvel Utilisateur
+                </button>
+            </div>
+
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0 fw-bold" style="color: #8B2635;">👥 Gestion des Utilisateurs</h5>
@@ -247,24 +240,38 @@
                                             <td class="text-muted">#<?php echo $u['utilisateur_id']; ?></td>
                                             <td class="fw-bold">
                                                 <?php echo htmlspecialchars($u['nom'] . ' ' . $u['prenom']); ?>
-                                                <?php if($u['utilisateur_id'] == $_SESSION['user']['id']): ?>
-                                                    <span class="badge bg-info ms-2">C'est vous</span>
-                                                <?php endif; ?>
                                             </td>
                                             <td><?php echo htmlspecialchars($u['email']); ?></td>
                                             <td>
-                                                <form onsubmit="return false;">
-                                                    <select class="form-select form-select-sm js-role-select" 
-                                                            data-id="<?php echo $u['utilisateur_id']; ?>"
-                                                            style="width: 140px; font-weight:bold; color: <?php echo ($u['role_id'] == 1 ? '#d63384' : ($u['role_id'] == 2 ? '#0d6efd' : '#333')); ?>">
-                                                        <option value="3" <?php echo $u['role_id'] == 3 ? 'selected' : ''; ?>>Client</option>
-                                                        <option value="2" <?php echo $u['role_id'] == 2 ? 'selected' : ''; ?>>Employé</option>
-                                                        <option value="1" <?php echo $u['role_id'] == 1 ? 'selected' : ''; ?>>Admin</option>
-                                                    </select>
-                                                </form>
+                                                <?php 
+                                                // 1. C'EST VOTRE SESSION (ADMIN)
+                                                if($u['utilisateur_id'] == $_SESSION['user']['id']): ?>
+                                                    <span class="badge bg-danger fs-6">
+                                                        <i class="fa-solid fa-user-shield"></i> Admin (Vous)
+                                                    </span>
+
+                                                <?php 
+                                                // 2. C'EST UN AUTRE ADMIN (Sécurité)
+                                                elseif($u['role_id'] == 1): ?>
+                                                    <span class="badge bg-danger">Administrateur</span>
+
+                                                <?php 
+                                                // 3. CLIENTS ET EMPLOYÉS (Modifiables)
+                                                else: ?>
+                                                    <form onsubmit="return false;">
+                                                        <select class="form-select form-select-sm js-role-select" 
+                                                                data-id="<?php echo $u['utilisateur_id']; ?>"
+                                                                style="width: 140px; font-weight:bold; color: <?php echo ($u['role_id'] == 2 ? '#0d6efd' : '#333'); ?>">
+                                                            <option value="3" <?php echo $u['role_id'] == 3 ? 'selected' : ''; ?>>Client</option>
+                                                            <option value="2" <?php echo $u['role_id'] == 2 ? 'selected' : ''; ?>>Employé</option>
+                                                            </select>
+                                                    </form>
+                                                <?php endif; ?>
                                             </td>
                                             <td class="text-end">
-                                                <?php if($u['utilisateur_id'] != $_SESSION['user']['id']): ?>
+                                                <?php 
+                                                // On ne peut supprimer que si ce n'est pas nous-même ET pas un admin
+                                                if($u['utilisateur_id'] != $_SESSION['user']['id'] && $u['role_id'] != 1): ?>
                                                     <button class="btn btn-sm btn-danger text-white js-delete-user" data-id="<?php echo $u['utilisateur_id']; ?>"><i class="fa-solid fa-trash"></i></button>
                                                 <?php endif; ?>
                                             </td>
@@ -477,6 +484,47 @@
     </div>
 </div>
 
+<div class="modal fade" id="modalCreateUser" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-white" style="background-color: #8B2635;">
+                <h5 class="modal-title">Ajouter un utilisateur</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form-create-user">
+                    <div class="row g-2 mb-3">
+                        <div class="col">
+                            <label class="form-label small">Prénom</label>
+                            <input type="text" name="prenom" class="form-control" required>
+                        </div>
+                        <div class="col">
+                            <label class="form-label small">Nom</label>
+                            <input type="text" name="nom" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small">Email</label>
+                        <input type="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small">Mot de passe</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Rôle</label>
+                        <select name="role" class="form-select" required>
+                            <option value="3" selected>Client</option>
+                            <option value="2">Employé</option>
+                            </select>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 fw-bold">Créer le compte</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php require_once 'Views/partials/footer.php'; ?>
 
-<script src="assets/js/admin_dashboard.js"></script>
+<script src="assets/js/admin_dashboard.js?v=4"></script>
