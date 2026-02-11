@@ -17,7 +17,7 @@ class Panier {
         return $panier;
     }
 
-    // 2. Sauvegarder le panier actuel (à chaque ajout/suppression)
+    // 2. Sauvegarder le panier actuel (CORRIGÉ : Vérifie l'existence du menu)
     public static function saveForUser($userId, $panierSession) {
         global $pdo;
 
@@ -29,16 +29,28 @@ class Panier {
         // B. Si le panier est vide, on s'arrête là
         if (empty($panierSession)) return;
 
-        // C. On insère les nouveaux éléments
+        // C. On prépare les requêtes
         $sqlInsert = "INSERT INTO panier_sauvegarde (utilisateur_id, menu_id, quantite) VALUES (:uid, :mid, :qty)";
         $stmtInsert = $pdo->prepare($sqlInsert);
 
+        // --- NOUVEAU : Requête pour vérifier si le menu existe ---
+        $sqlCheck = "SELECT COUNT(*) FROM menu WHERE menu_id = :mid";
+        $stmtCheck = $pdo->prepare($sqlCheck);
+
         foreach ($panierSession as $menuId => $qty) {
-            $stmtInsert->execute([
-                ':uid' => $userId,
-                ':mid' => $menuId,
-                ':qty' => $qty
-            ]);
+            
+            // 1. On vérifie d'abord si le menu existe encore en base
+            $stmtCheck->execute([':mid' => $menuId]);
+            $exists = $stmtCheck->fetchColumn();
+
+            // 2. S'il existe (> 0), on le sauvegarde. Sinon, on l'ignore (skip).
+            if ($exists > 0) {
+                $stmtInsert->execute([
+                    ':uid' => $userId,
+                    ':mid' => $menuId,
+                    ':qty' => $qty
+                ]);
+            }
         }
     }
 

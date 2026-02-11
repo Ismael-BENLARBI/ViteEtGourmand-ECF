@@ -64,6 +64,12 @@ $totalClean = number_format($totalPanier, 2, '.', '');
                             <label class="form-label">Téléphone</label>
                             <input type="tel" name="phone" class="form-control" required>
                         </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Date de préstation</label>
+                            <input type="date" name="date_prestation" class="form-control" required>
+                        </div>
+
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Heure de livraison</label>
                             <input type="time" name="heure_livraison" class="form-control" min="09:00" max="22:00" required>

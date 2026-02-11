@@ -239,13 +239,22 @@ switch($page) {
         require_once 'Models/Menu.php';
         $panierComplet = []; 
         $totalGeneral = 0; 
+        
         if (isset($_SESSION['panier']) && !empty($_SESSION['panier'])) {
             foreach ($_SESSION['panier'] as $id_menu => $quantite) {
                 $menu = Menu::getById($id_menu);
+                
                 if ($menu) { 
+                    // Le menu existe bien, on l'affiche
                     $totalLigne = $menu['prix_par_personne'] * $quantite;
                     $panierComplet[] = ['menu' => $menu, 'quantite' => $quantite, 'total_ligne' => $totalLigne];
                     $totalGeneral += $totalLigne;
+                } else {
+                    // --- CORRECTION IMPORTANTE ---
+                    // Le menu n'existe plus en BDD (supprimé par l'admin) ?
+                    // ALORS ON LE SUPPRIME DE LA SESSION IMMÉDIATEMENT.
+                    unset($_SESSION['panier'][$id_menu]);
+                    // -----------------------------
                 }
             }
         }
@@ -521,15 +530,20 @@ switch($page) {
             // --- CAS 1 : CRÉATION ---
             if ($page == 'admin_menu_create_action') {
                 Menu::create(
-                    $_POST['titre'], $_POST['description'], 
-                    $_POST['desc_entree'], $_POST['desc_plat'], $_POST['desc_dessert'], 
-                    $_POST['prix'], $_POST['min_personnes'], 
-                    $_POST['theme_id'] ?: null, $_POST['regime_id'] ?: null, 
+                    $_POST['titre'], 
+                    $_POST['description'] ?? '', // <--- CORRECTION ICI (Le '??' évite le crash)
+                    $_POST['desc_entree'], 
+                    $_POST['desc_plat'], 
+                    $_POST['desc_dessert'], 
+                    $_POST['prix'], 
+                    $_POST['min_personnes'], 
+                    $_POST['theme_id'] ?: null, 
+                    $_POST['regime_id'] ?: null, 
                     $img1, $img2, $img3, $img4,
-                    $_POST['stock'],
-                    $_POST['conditions'] // <--- AJOUT ICI
+                    $_POST['stock'] ?? 50,       // Sécurité pour le stock
+                    $_POST['conditions'] ?? null, // Sécurité pour les conditions
                 );
-            } 
+            }
             // --- CAS 2 : MODIFICATION ---
             else {
                 Menu::update(
