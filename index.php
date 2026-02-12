@@ -32,7 +32,6 @@ switch($page) {
         if (isset($_GET['id'])) {
             $id = (int)$_GET['id'];
             $menu = Menu::getById($id);
-            $plats = Menu::getPlatsByMenuId($id);
             
             if ($menu) {
                 require_once 'Views/menus/detail_menu.php'; 
@@ -323,7 +322,7 @@ switch($page) {
             require_once 'Models/Panier.php'; 
 
             $userId = $_SESSION['user']['id'];
-            $commandeId = Commande::create($userId, $_POST['total_final'], $_POST['frais_livraison'], $_POST['montant_reduction'], $_POST['nom'], $_POST['prenom'], $_POST['adresse'], $_POST['cp'], $_POST['ville'], $_POST['phone'], $_POST['heure_livraison'], $_POST['instructions']);
+            $commandeId = Commande::create($userId, $_POST['total_final'], $_POST['frais_livraison'], $_POST['montant_reduction'], $_POST['nom'], $_POST['prenom'], $_POST['adresse'], $_POST['cp'], $_POST['ville'], $_POST['phone'], $_POST['heure_livraison'], $_POST['instructions'],$_POST['date_prestation'] );
 
             foreach ($_SESSION['panier'] as $menuId => $qty) {
                 $menu = Menu::getById($menuId);

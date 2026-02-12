@@ -18,7 +18,7 @@
                     <?php 
                         $imgMain = !empty($menu['image_principale']) ? "assets/images/menu/" . $menu['image_principale'] : "assets/images/default.jpg";
                     ?>
-                    <img src="<?php echo $imgMain; ?>" alt="<?php echo htmlspecialchars($menu['titre']); ?>" class="main-image clickable" onclick="openModal(this)">
+                    <img src="<?php echo $imgMain; ?>" id="mainImage" alt="<?php echo htmlspecialchars($menu['titre']); ?>" class="main-image clickable" onclick="openModal(this)">
                 </div>
 
                 <div class="gallery-grid">
@@ -132,7 +132,7 @@
                                        value="<?php echo $minReq; ?>" 
                                        min="<?php echo $minReq; ?>" 
                                        max="<?php echo $stock; ?>"
-                                       style="width: 50px; text-align: center; border:none; background: transparent; font-weight: bold;">
+                                       style="width: 50px; text-align: center; border:none; background: transparent; font-weight: bold;" readonly>
                                 <button type="button" class="qty-btn" onclick="updateQty(1)">+</button>
                             </div>
                         </div>
@@ -170,11 +170,45 @@
     </div>
 </div>
 
-<div id="imageModal" class="modal-overlay" onclick="closeModal()">
-    <span class="close-modal" onclick="closeModal()">&times;</span>
-    <img class="modal-content-img" id="fullImage">
+<div id="imageModal" class="modal-overlay" onclick="closeModal()" style="display:none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.9);">
+    <span class="close-modal" onclick="closeModal()" style="position: absolute; top: 15px; right: 35px; color: #f1f1f1; font-size: 40px; font-weight: bold; cursor: pointer;">&times;</span>
+    <img class="modal-content-img" id="fullImage" style="margin: auto; display: block; width: 80%; max-width: 700px; margin-top: 100px;">
 </div>
 
-<script src="assets/js/detail_menu.js"></script>
+<script>
+    // 1. Gestion de la quantité et mise à jour du formulaire
+    function updateQty(change) {
+        const input = document.getElementById('qtyInput');
+        const formInput = document.getElementById('formQty'); // Le champ caché qui part au panier
+        
+        let currentVal = parseInt(input.value);
+        let min = parseInt(input.getAttribute('min'));
+        let max = parseInt(input.getAttribute('max'));
+        
+        let newVal = currentVal + change;
+
+        if (newVal >= min && newVal <= max) {
+            input.value = newVal;
+            formInput.value = newVal; // On met à jour le champ caché
+        }
+    }
+
+    // 2. Changer l'image principale au clic
+    function changeMainImage(element) {
+        document.getElementById('mainImage').src = element.src;
+    }
+
+    // 3. Modale (Zoom)
+    function openModal(element) {
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById("fullImage");
+        modal.style.display = "block";
+        modalImg.src = element.src;
+    }
+
+    function closeModal() {
+        document.getElementById('imageModal').style.display = "none";
+    }
+</script>
 
 <?php require_once 'Views/partials/footer.php'; ?>

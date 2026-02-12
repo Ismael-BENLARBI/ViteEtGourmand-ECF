@@ -78,24 +78,6 @@ class Menu {
         return $stmt->fetch();
     }
 
-    // Récupérer la liste des plats d'un menu spécifique
-    public static function getPlatsByMenuId($menu_id) {
-        global $pdo;
-        
-        // On joint la table plat via la table de liaison menu_plat
-        $sql = "SELECT p.* FROM plat p
-                JOIN menu_plat mp ON p.plat_id = mp.plat_id
-                WHERE mp.menu_id = :menu_id
-                ORDER BY FIELD(p.categorie, 'entree', 'plat', 'dessert')"; 
-                // L'ordre FIELD permet de forcer l'affichage Entrée -> Plat -> Dessert
-        
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(':menu_id', $menu_id, PDO::PARAM_INT);
-        $stmt->execute();
-        
-        return $stmt->fetchAll();
-    }
-
     // --- CRÉER UN NOUVEAU MENU ---
     // Mise à jour de la signature de la fonction et de la requête SQL
     // --- CRÉER UN NOUVEAU MENU (Mise à jour avec Régime) ---

@@ -50,6 +50,17 @@
                 </div>
 
                 <div class="mb-3">
+                    <label class="text-muted small">Date de livraison prévue</label>
+                    <div class="fw-bold">
+                        <?php 
+                            $date = (new DateTime($commande['date_prestation']))->format('d/m/Y');
+                            $heure = date('H:i', strtotime($commande['heure_livraison']));
+                            echo $date . ' à ' . $heure; 
+                        ?>
+                    </div>
+                </div>
+
+                <div class="mb-3">
                     <label class="text-muted small">Téléphone</label>
                     <div><?php echo htmlspecialchars($commande['telephone']); ?></div>
                 </div>

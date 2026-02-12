@@ -67,7 +67,7 @@ require_once 'views/partials/header.php';
                             </div>
                             
                             <p class="card-text fst-italic text-muted">
-                                "<?php echo htmlspecialchars(substr($avis['description'], 0, 100)) . (strlen($avis['description']) > 100 ? '...' : ''); ?>"
+                                "<?php echo htmlspecialchars($avis['description']); ?>"
                             </p>
                             
                             <hr class="avis-separator">

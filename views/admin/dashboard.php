@@ -187,8 +187,8 @@
                                             <td class="fw-bold"><?php echo htmlspecialchars($avis['prenom'] . ' ' . $avis['nom']); ?></td>
                                             <td class="text-muted small"><?php echo htmlspecialchars($avis['titre']); ?></td>
                                             <td>
-                                                <div style="max-width: 250px; cursor: help;" title="<?php echo htmlspecialchars($avis['description'] ?? ''); ?>">
-                                                    <span class="d-block text-truncate"><?php echo htmlspecialchars($avis['description'] ?? ''); ?></span>
+                                                <div style="text-align: left !important; min-width: 350px;">
+                                                    <?php echo htmlspecialchars($avis['description']); ?>
                                                 </div>
                                             </td>
                                             <td class="text-warning" style="white-space: nowrap;">

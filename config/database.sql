@@ -1,183 +1,232 @@
--- 1. CRÉATION DE LA BASE ET DES TABLES
-DROP DATABASE IF EXISTS vite_et_gourmand;
-CREATE DATABASE vite_et_gourmand CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE vite_et_gourmand;
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
 
-CREATE TABLE role (
-    role_id INT AUTO_INCREMENT PRIMARY KEY,
-    libelle VARCHAR(50) NOT NULL
-) ENGINE=InnoDB;
+DROP TABLE IF EXISTS `commande_detail`;
+DROP TABLE IF EXISTS `avis`;
+DROP TABLE IF EXISTS `panier_sauvegarde`;
+DROP TABLE IF EXISTS `image`;
+DROP TABLE IF EXISTS `commande`;
+DROP TABLE IF EXISTS `menu`;
+DROP TABLE IF EXISTS `contact`;
+DROP TABLE IF EXISTS `horaire`;
+DROP TABLE IF EXISTS `utilisateur`;
+DROP TABLE IF EXISTS `theme`;
+DROP TABLE IF EXISTS `regime`;
+DROP TABLE IF EXISTS `role`;
 
-CREATE TABLE theme (
-    theme_id INT AUTO_INCREMENT PRIMARY KEY,
-    libelle VARCHAR(50) NOT NULL
-) ENGINE=InnoDB;
+CREATE TABLE `role` (
+  `role_id` int(11) NOT NULL AUTO_INCREMENT,
+  `libelle` varchar(50) NOT NULL,
+  PRIMARY KEY (`role_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE regime (
-    regime_id INT AUTO_INCREMENT PRIMARY KEY,
-    libelle VARCHAR(50) NOT NULL
-) ENGINE=InnoDB;
+INSERT INTO `role` (`role_id`, `libelle`) VALUES
+(1, 'Administrateur'),
+(2, 'Employe'),
+(3, 'Utilisateur');
 
-CREATE TABLE allergene (
-    allergene_id INT AUTO_INCREMENT PRIMARY KEY,
-    libelle VARCHAR(50) NOT NULL
-) ENGINE=InnoDB;
+CREATE TABLE `theme` (
+  `theme_id` int(11) NOT NULL AUTO_INCREMENT,
+  `libelle` varchar(50) NOT NULL,
+  PRIMARY KEY (`theme_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE horaire (
-    horaire_id INT AUTO_INCREMENT PRIMARY KEY,
-    jour VARCHAR(20) NOT NULL,
-    heure_ouverture TIME NOT NULL,
-    heure_fermeture TIME NOT NULL
-) ENGINE=InnoDB;
+INSERT INTO `theme` (`theme_id`, `libelle`) VALUES
+(1, 'Noël'),
+(2, 'Pâques'),
+(3, 'Mariage'),
+(4, 'Anniversaire'),
+(5, 'Entreprise');
 
-CREATE TABLE utilisateur (
-    utilisateur_id INT AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(100) NOT NULL,
-    prenom VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    telephone VARCHAR(20),
-    adresse_postale VARCHAR(255),
-    ville VARCHAR(100),
-    code_postal VARCHAR(20),
-    role_id INT NOT NULL,
-    FOREIGN KEY (role_id) REFERENCES role(role_id)
-) ENGINE=InnoDB;
+CREATE TABLE `regime` (
+  `regime_id` int(11) NOT NULL AUTO_INCREMENT,
+  `libelle` varchar(50) NOT NULL,
+  PRIMARY KEY (`regime_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE menu (
-    menu_id INT AUTO_INCREMENT PRIMARY KEY,
-    titre VARCHAR(100) NOT NULL,
-    description TEXT NOT NULL,
-    prix_par_personne DECIMAL(10, 2) NOT NULL,
-    nombre_personne_min INT NOT NULL DEFAULT 1,
-    quantite_restante INT NOT NULL DEFAULT 0,
-    image_principale VARCHAR(255),
-    image_entree VARCHAR(255) DEFAULT NULL,
-    image_plat VARCHAR(255) DEFAULT NULL,
-    image_dessert VARCHAR(255) DEFAULT NULL,
-    theme_id INT,
-    regime_id INT,
-    FOREIGN KEY (theme_id) REFERENCES theme(theme_id) ON DELETE SET NULL,
-    FOREIGN KEY (regime_id) REFERENCES regime(regime_id) ON DELETE SET NULL
-) ENGINE=InnoDB;
+INSERT INTO `regime` (`regime_id`, `libelle`) VALUES
+(1, 'Classique'),
+(2, 'Végétarien'),
+(3, 'Vegan'),
+(4, 'Halal'),
+(5, 'Sans Gluten');
 
-CREATE TABLE plat (
-    plat_id INT AUTO_INCREMENT PRIMARY KEY,
-    titre_plat VARCHAR(100) NOT NULL,
-    description TEXT,
-    photo VARCHAR(255),
-    categorie ENUM('entree', 'plat', 'dessert') NOT NULL
-) ENGINE=InnoDB;
+CREATE TABLE `horaire` (
+  `horaire_id` int(11) NOT NULL AUTO_INCREMENT,
+  `jour` varchar(20) NOT NULL,
+  `creneau` varchar(150) NOT NULL,
+  `ordre` int(11) NOT NULL,
+  PRIMARY KEY (`horaire_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE image (
-    image_id INT AUTO_INCREMENT PRIMARY KEY,
-    url VARCHAR(255) NOT NULL,
-    alt_text VARCHAR(100),
-    menu_id INT,
-    FOREIGN KEY (menu_id) REFERENCES menu(menu_id) ON DELETE CASCADE
-) ENGINE=InnoDB;
+INSERT INTO `horaire` (`horaire_id`, `jour`, `creneau`, `ordre`) VALUES
+(1, 'Lundi', '11h30 - 14h30 / 18h30 - 20h30', 1),
+(2, 'Mardi', '11h30 - 14h30 / 18h30 - 22h30', 2),
+(3, 'Mercredi', '11h30 - 14h30 / 18h30 - 22h30', 3),
+(4, 'Jeudi', '11h30 - 14h30 / 18h30 - 22h30', 4),
+(5, 'Vendredi', '11h30 - 14h30 / 18h30 - 23h00', 5),
+(6, 'Samedi', '18h30 - 23h30', 6),
+(7, 'Dimanche', '11h30 - 15h30', 7);
 
-CREATE TABLE commande (
-    commande_id INT AUTO_INCREMENT PRIMARY KEY,
-    numero_commande VARCHAR(50) NOT NULL UNIQUE,
-    date_commande DATETIME DEFAULT CURRENT_TIMESTAMP,
-    date_prestation DATE NOT NULL,
-    heure_livraison TIME NOT NULL,
-    adresse_livraison VARCHAR(255) NOT NULL, 
-    ville_livraison VARCHAR(100) NOT NULL,
-    code_postal_livraison VARCHAR(20) NOT NULL,
-    prix_menu DECIMAL(10, 2) NOT NULL,
-    nombre_personne INT NOT NULL,
-    prix_livraison DECIMAL(10, 2) NOT NULL,
-    statut VARCHAR(50) DEFAULT 'en_attente',
-    pret_materiel BOOLEAN DEFAULT FALSE,
-    restitution_materiel BOOLEAN DEFAULT FALSE,
-    utilisateur_id INT NOT NULL,
-    menu_id INT NOT NULL,
-    FOREIGN KEY (utilisateur_id) REFERENCES utilisateur(utilisateur_id),
-    FOREIGN KEY (menu_id) REFERENCES menu(menu_id)
-) ENGINE=InnoDB;
+-- --------------------------------------------------------
+-- UTILISATEURS
+-- --------------------------------------------------------
 
-CREATE TABLE avis (
-    avis_id INT AUTO_INCREMENT PRIMARY KEY,
-    note INT NOT NULL,
-    description TEXT,
-    statut VARCHAR(50) DEFAULT 'en_attente',
-    date_publication DATETIME DEFAULT CURRENT_TIMESTAMP,
-    utilisateur_id INT NOT NULL,
-    menu_id INT NOT NULL,
-    FOREIGN KEY (utilisateur_id) REFERENCES utilisateur(utilisateur_id),
-    FOREIGN KEY (menu_id) REFERENCES menu(menu_id)
-) ENGINE=InnoDB;
+CREATE TABLE `utilisateur` (
+  `utilisateur_id` int(11) NOT NULL AUTO_INCREMENT,
+  `nom` varchar(100) NOT NULL,
+  `prenom` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `telephone` varchar(20) DEFAULT NULL,
+  `adresse_postale` varchar(255) DEFAULT NULL,
+  `ville` varchar(100) DEFAULT NULL,
+  `code_postal` varchar(20) DEFAULT NULL,
+  `role_id` int(11) NOT NULL,
+  `reset_token` varchar(255) DEFAULT NULL,
+  `reset_expires` datetime DEFAULT NULL,
+  PRIMARY KEY (`utilisateur_id`),
+  UNIQUE KEY `email` (`email`),
+  KEY `role_id` (`role_id`),
+  CONSTRAINT `utilisateur_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `role` (`role_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE contact (
-    message_id INT AUTO_INCREMENT PRIMARY KEY,
-    email_visiteur VARCHAR(100) NOT NULL,
-    sujet VARCHAR(100),
-    contenu_message TEXT NOT NULL,
-    date_envoi DATETIME DEFAULT CURRENT_TIMESTAMP,
-    est_traite BOOLEAN DEFAULT FALSE
-) ENGINE=InnoDB;
+-- Insertion de l'ADMINISTRATEUR par défaut (Mdp: Admin123!)
+INSERT INTO `utilisateur` (`utilisateur_id`, `nom`, `prenom`, `email`, `password`, `telephone`, `adresse_postale`, `ville`, `code_postal`, `role_id`) VALUES
+(1, 'Admin', 'Principal', 'admin@vite-et-gourmand.fr', '$2y$10$6P83kGf3OUmsQ0p8wcR9AujFQ.RElKXPReixXUCdQpiwRz7qvbJdu', '0600000000', 'Siège Social', 'Bordeaux', '33000', 1);
 
--- Tables de liaison (Ajoutées ici pour être sûr qu'elles existent)
-CREATE TABLE menu_plat (
-    menu_id INT,
-    plat_id INT,
-    PRIMARY KEY (menu_id, plat_id),
-    FOREIGN KEY (menu_id) REFERENCES menu(menu_id) ON DELETE CASCADE,
-    FOREIGN KEY (plat_id) REFERENCES plat(plat_id) ON DELETE CASCADE
-) ENGINE=InnoDB;
+-- --------------------------------------------------------
+-- MENU & COMPOSANTS
+-- --------------------------------------------------------
 
-CREATE TABLE plat_allergene (
-    plat_id INT,
-    allergene_id INT,
-    PRIMARY KEY (plat_id, allergene_id),
-    FOREIGN KEY (plat_id) REFERENCES plat(plat_id) ON DELETE CASCADE,
-    FOREIGN KEY (allergene_id) REFERENCES allergene(allergene_id) ON DELETE CASCADE
-) ENGINE=InnoDB;
+CREATE TABLE `menu` (
+  `menu_id` int(11) NOT NULL AUTO_INCREMENT,
+  `titre` varchar(100) NOT NULL,
+  `description` text NOT NULL,
+  `prix_par_personne` decimal(10,2) NOT NULL,
+  `nombre_personne_min` int(11) NOT NULL DEFAULT 1,
+  `quantite_restante` int(11) NOT NULL DEFAULT 0,
+  `image_principale` varchar(255) DEFAULT NULL,
+  `theme_id` int(11) DEFAULT NULL,
+  `regime_id` int(11) DEFAULT NULL,
+  `image_entree` varchar(255) DEFAULT NULL,
+  `image_plat` varchar(255) DEFAULT NULL,
+  `image_dessert` varchar(255) DEFAULT NULL,
+  `description_entree` text DEFAULT NULL,
+  `description_plat` text DEFAULT NULL,
+  `description_dessert` text DEFAULT NULL,
+  `date_creation` datetime DEFAULT current_timestamp(),
+  `conditions` text DEFAULT NULL,
+  PRIMARY KEY (`menu_id`),
+  KEY `theme_id` (`theme_id`),
+  KEY `regime_id` (`regime_id`),
+  CONSTRAINT `menu_ibfk_1` FOREIGN KEY (`theme_id`) REFERENCES `theme` (`theme_id`) ON DELETE SET NULL,
+  CONSTRAINT `menu_ibfk_2` FOREIGN KEY (`regime_id`) REFERENCES `regime` (`regime_id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE `image` (
+  `image_id` int(11) NOT NULL AUTO_INCREMENT,
+  `url` varchar(255) NOT NULL,
+  `alt_text` varchar(100) DEFAULT NULL,
+  `menu_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`image_id`),
+  KEY `menu_id` (`menu_id`),
+  CONSTRAINT `image_ibfk_1` FOREIGN KEY (`menu_id`) REFERENCES `menu` (`menu_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 2. INSERTION DES DONNÉES
+-- --------------------------------------------------------
+-- COMMANDES & PANIER
+-- --------------------------------------------------------
 
--- Rôles
-INSERT INTO role (libelle) VALUES ('Administrateur'), ('Employe'), ('Utilisateur');
+CREATE TABLE `commande` (
+  `commande_id` int(11) NOT NULL AUTO_INCREMENT,
+  `numero_commande` varchar(50) NOT NULL,
+  `date_commande` datetime DEFAULT current_timestamp(),
+  `date_prestation` date DEFAULT NULL,
+  `heure_livraison` time NOT NULL,
+  `adresse_livraison` varchar(255) NOT NULL,
+  `ville_livraison` varchar(100) NOT NULL,
+  `telephone` varchar(20) DEFAULT NULL,
+  `instructions` text DEFAULT NULL,
+  `code_postal_livraison` varchar(20) NOT NULL,
+  `prix_menu` decimal(10,2) DEFAULT 0.00,
+  `nombre_personne` int(11) DEFAULT NULL,
+  `prix_livraison` decimal(10,2) NOT NULL,
+  `prix_total` decimal(10,2) DEFAULT NULL,
+  `montant_reduction` decimal(10,2) DEFAULT 0.00,
+  `statut` varchar(50) DEFAULT 'en_attente',
+  `motif_annulation` text DEFAULT NULL,
+  `mode_contact_annulation` varchar(50) DEFAULT NULL,
+  `pret_materiel` tinyint(1) DEFAULT 0,
+  `restitution_materiel` tinyint(1) DEFAULT 0,
+  `utilisateur_id` int(11) NOT NULL,
+  `nom` varchar(100) DEFAULT NULL,
+  `prenom` varchar(100) DEFAULT NULL,
+  `menu_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`commande_id`),
+  UNIQUE KEY `numero_commande` (`numero_commande`),
+  KEY `utilisateur_id` (`utilisateur_id`),
+  KEY `menu_id` (`menu_id`),
+  CONSTRAINT `commande_ibfk_1` FOREIGN KEY (`utilisateur_id`) REFERENCES `utilisateur` (`utilisateur_id`),
+  CONSTRAINT `commande_ibfk_2` FOREIGN KEY (`menu_id`) REFERENCES `menu` (`menu_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Régimes
-INSERT INTO regime (libelle) VALUES ('Classique'), ('Végétarien'), ('Vegan'), ('Halal'), ('Sans Gluten');
+CREATE TABLE `commande_detail` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `commande_id` int(11) NOT NULL,
+  `menu_id` int(11) NOT NULL,
+  `quantite` int(11) NOT NULL,
+  `prix_unitaire` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_commande` (`commande_id`),
+  KEY `fk_menu` (`menu_id`),
+  CONSTRAINT `fk_commande` FOREIGN KEY (`commande_id`) REFERENCES `commande` (`commande_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_menu` FOREIGN KEY (`menu_id`) REFERENCES `menu` (`menu_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Thèmes
-INSERT INTO theme (libelle) VALUES ('Noël'), ('Pâques'), ('Mariage'), ('Anniversaire'), ('Entreprise');
+CREATE TABLE `panier_sauvegarde` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `utilisateur_id` int(11) NOT NULL,
+  `menu_id` int(11) NOT NULL,
+  `quantite` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `utilisateur_id` (`utilisateur_id`),
+  KEY `menu_id` (`menu_id`),
+  CONSTRAINT `panier_sauvegarde_ibfk_1` FOREIGN KEY (`utilisateur_id`) REFERENCES `utilisateur` (`utilisateur_id`) ON DELETE CASCADE,
+  CONSTRAINT `panier_sauvegarde_ibfk_2` FOREIGN KEY (`menu_id`) REFERENCES `menu` (`menu_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Allergènes
-INSERT INTO allergene (libelle) VALUES ('Gluten'), ('Lactose'), ('Oeufs'), ('Arachides'), ('Fruits à coque');
+-- --------------------------------------------------------
+-- AVIS & CONTACT
+-- --------------------------------------------------------
 
--- Utilisateur Admin (Mot de passe : admin123) - INDISPENSABLE POUR LE LOGIN
-INSERT INTO utilisateur (nom, prenom, email, password, role_id) 
-VALUES ('Chef', 'Julie', 'admin@viteetgourmand.fr', '$2y$10$Xk.v/Fg.v/Fg.v/Fg.v/Fg.v/Fg.v/Fg.v/Fg.v/Fg.v/Fg.v/Fg', 1);
+CREATE TABLE `avis` (
+  `avis_id` int(11) NOT NULL AUTO_INCREMENT,
+  `note` int(11) NOT NULL,
+  `description` text DEFAULT NULL,
+  `statut` varchar(50) DEFAULT 'en_attente',
+  `date_avis` datetime DEFAULT current_timestamp(),
+  `utilisateur_id` int(11) NOT NULL,
+  `menu_id` int(11) NOT NULL,
+  PRIMARY KEY (`avis_id`),
+  KEY `utilisateur_id` (`utilisateur_id`),
+  KEY `menu_id` (`menu_id`),
+  CONSTRAINT `avis_ibfk_1` FOREIGN KEY (`utilisateur_id`) REFERENCES `utilisateur` (`utilisateur_id`),
+  CONSTRAINT `avis_ibfk_2` FOREIGN KEY (`menu_id`) REFERENCES `menu` (`menu_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Plats
-INSERT INTO plat (titre_plat, description, photo, categorie) VALUES 
-('Foie gras maison', 'Mi-cuit au torchon avec sa confiture de figues', 'foie_gras.jpg', 'entree'),
-('Dinde aux marrons', 'Farcie et rôtie au four', 'dinde.jpg', 'plat'),
-('Bûche Glacée', 'Parfum fruits rouges et vanille', 'buche.jpg', 'dessert'),
-('Velouté de courge', 'Aux éclats de châtaigne', 'veloute.jpg', 'entree'),
-('Risotto aux cèpes', 'Riz arborio crémeux', 'risotto.jpg', 'plat'),
-('Salade de fruits', 'Fruits de saison frais', 'salade.jpg', 'dessert');
+CREATE TABLE `contact` (
+  `message_id` int(11) NOT NULL AUTO_INCREMENT,
+  `nom_visiteur` varchar(100) DEFAULT NULL,
+  `email_visiteur` varchar(100) NOT NULL,
+  `sujet` varchar(100) DEFAULT NULL,
+  `contenu_message` text NOT NULL,
+  `date_envoi` datetime DEFAULT current_timestamp(),
+  `est_traite` tinyint(1) DEFAULT 0,
+  `reponse` text DEFAULT NULL,
+  `date_reponse` datetime DEFAULT NULL,
+  PRIMARY KEY (`message_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Menus
-INSERT INTO menu (titre, description, prix_par_personne, quantite_restante, image_principale, theme_id, regime_id) VALUES 
-('Menu de Noël', 'Le grand classique des fêtes pour réunir la famille autour de produits nobles.', 45.00, 50, 'menu_noel.jpg', 1, 1),
-('Menu Végétarien', 'Une alternative gourmande et saine, cuisinée avec des produits du marché.', 32.00, 30, 'menu_vege.jpg', 4, 2), 
-('Buffet Entreprise', 'Un assortiment complet sucré/salé idéal pour vos séminaires.', 25.00, 100, 'menu_entreprise.jpg', 5, 1);
-
--- Liaisons Menu <-> Plat
--- Menu Noël (1) : Foie gras(1), Dinde(2), Bûche(3)
-INSERT INTO menu_plat (menu_id, plat_id) VALUES (1, 1), (1, 2), (1, 3);
--- Menu Végé (2) : Velouté(4), Risotto(5), Salade(6)
-INSERT INTO menu_plat (menu_id, plat_id) VALUES (2, 4), (2, 5), (2, 6);
-
--- Liaisons Plat <-> Allergène
--- Bûche (3) contient Lactose(2) et Oeufs(3)
-INSERT INTO plat_allergene (plat_id, allergene_id) VALUES (3, 2), (3, 3);
--- Risotto (5) contient Lactose(2)
-INSERT INTO plat_allergene (plat_id, allergene_id) VALUES (5, 2);
+COMMIT;

@@ -2,7 +2,8 @@
 class Commande {
 
     // 1. Créer la commande principale
-    public static function create($userId, $total, $frais, $reduction, $nom, $prenom, $adresse, $cp, $ville, $phone, $heure, $instructions) {
+    // J'ai ajouté $datePrestation à la fin des arguments
+    public static function create($userId, $total, $frais, $reduction, $nom, $prenom, $adresse, $cp, $ville, $phone, $heure, $instructions, $datePrestation) {
         global $pdo;
 
         // Génération d'un numéro de commande unique
@@ -12,20 +13,25 @@ class Commande {
                     numero_commande,
                     utilisateur_id, 
                     prix_total, 
-                    prix_livraison,      /* <--- CORRECTION ICI : C'est bien 'prix_livraison' */
-                    montant_reduction, 
+                    prix_livraison, 
+                    montant_reduction,
+                    nom,                /* <--- AJOUTÉ */
+                    prenom,             /* <--- AJOUTÉ */
                     adresse_livraison, 
                     code_postal_livraison, 
                     ville_livraison, 
                     telephone, 
                     heure_livraison, 
                     instructions,
+                    date_prestation,    /* <--- AJOUTÉ */
                     statut, 
                     date_commande
                 ) VALUES (
                     :num, :user, :total, :frais, :reduc,
+                    :nom, :prenom,      /* <--- AJOUTÉ */
                     :adr, :cp, :ville,
                     :phone, :heure, :instr,
+                    :datePresta,        /* <--- AJOUTÉ */
                     'en_attente', NOW()
                 )";
         
@@ -37,12 +43,15 @@ class Commande {
             ':total' => $total,
             ':frais' => $frais,
             ':reduc' => $reduction,
+            ':nom'   => $nom,           /* <--- AJOUTÉ */
+            ':prenom'=> $prenom,        /* <--- AJOUTÉ */
             ':adr'   => $adresse,
             ':cp'    => $cp,
             ':ville' => $ville,
             ':phone' => $phone,
             ':heure' => $heure,
-            ':instr' => $instructions
+            ':instr' => $instructions,
+            ':datePresta' => $datePrestation /* <--- AJOUTÉ */
         ]);
 
         return $pdo->lastInsertId();

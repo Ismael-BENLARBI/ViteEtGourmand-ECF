@@ -159,32 +159,48 @@
             </div>
         </div>
 
-        <div class="tab-pane fade" id="pills-avis">
+        <div class="tab-pane fade" id="pills-avis" role="tabpanel">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3"><h5 class="mb-0 fw-bold" style="color: #8B2635;">💬 Modération des Avis</h5></div>
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold" style="color: #8B2635;">💬 Modération des Avis</h5>
+                </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle">
-                            <thead class="table-light"><tr><th>Client</th><th>Menu</th><th>Avis</th><th>Note</th><th>Statut</th><th class="text-end">Actions</th></tr></thead>
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Date</th><th>Client</th><th>Menu</th><th style="width: 30%;">Commentaire</th><th>Note</th><th>Statut</th><th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
                             <tbody>
-                                <?php foreach($avisList as $avis): ?>
-                                    <tr>
-                                        <td class="fw-bold"><?php echo htmlspecialchars($avis['prenom'] . ' ' . $avis['nom']); ?></td>
-                                        <td class="small text-muted"><?php echo htmlspecialchars($avis['titre']); ?></td>
-                                        <td><div style="max-width: 250px;" class="text-truncate"><?php echo htmlspecialchars($avis['description']); ?></div></td>
-                                        <td class="text-warning"><?php echo $avis['note']; ?> <i class="fa-solid fa-star"></i></td>
-                                        <td>
-                                            <?php if($avis['statut'] == 'valide'): ?><span class="badge bg-success js-badge">En ligne</span>
-                                            <?php else: ?><span class="badge bg-warning text-dark js-badge">En attente</span><?php endif; ?>
-                                        </td>
-                                        <td class="text-end">
-                                            <?php if($avis['statut'] != 'valide'): ?>
-                                                <button class="btn btn-sm btn-success text-white me-1 js-validate-avis" data-id="<?php echo $avis['avis_id']; ?>"><i class="fa-solid fa-check"></i></button>
-                                            <?php endif; ?>
-                                            <button class="btn btn-sm btn-danger text-white js-delete-avis" data-id="<?php echo $avis['avis_id']; ?>"><i class="fa-solid fa-trash"></i></button>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
+                                <?php if(empty($avisList)): ?>
+                                    <tr><td colspan="7" class="text-center py-4">Aucun avis.</td></tr>
+                                <?php else: ?>
+                                    <?php foreach($avisList as $avis): ?>
+                                        <tr>
+                                            <td><?php echo (new DateTime($avis['date_publication']))->format('d/m/Y'); ?></td>
+                                            <td class="fw-bold"><?php echo htmlspecialchars($avis['prenom'] . ' ' . $avis['nom']); ?></td>
+                                            <td class="text-muted small"><?php echo htmlspecialchars($avis['titre']); ?></td>
+                                            <td>
+                                                <div style="text-align: left !important; min-width: 350px;">
+                                                    <?php echo htmlspecialchars($avis['description']); ?>
+                                                </div>
+                                            </td>
+                                            <td class="text-warning" style="white-space: nowrap;">
+                                                <?php echo $avis['note']; ?> <i class="fa-solid fa-star text-small"></i>
+                                            </td>
+                                            <td>
+                                                <?php if($avis['statut'] == 'valide'): ?><span class="badge bg-success js-badge">En ligne</span><?php else: ?><span class="badge bg-warning text-dark js-badge">En attente</span><?php endif; ?>
+                                            </td>
+                                            <td class="text-end">
+                                                <?php if($avis['statut'] != 'valide'): ?>
+                                                    <button class="btn btn-sm btn-success text-white me-1 js-validate-avis" data-id="<?php echo $avis['avis_id']; ?>"><i class="fa-solid fa-check"></i></button>
+                                                <?php endif; ?>
+                                                <button class="btn btn-sm btn-danger text-white js-delete-avis" data-id="<?php echo $avis['avis_id']; ?>"><i class="fa-solid fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
