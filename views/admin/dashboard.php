@@ -244,19 +244,16 @@
                                             <td><?php echo htmlspecialchars($u['email']); ?></td>
                                             <td>
                                                 <?php 
-                                                // 1. C'EST VOTRE SESSION (ADMIN)
                                                 if($u['utilisateur_id'] == $_SESSION['user']['id']): ?>
                                                     <span class="badge bg-danger fs-6">
                                                         <i class="fa-solid fa-user-shield"></i> Admin (Vous)
                                                     </span>
 
                                                 <?php 
-                                                // 2. C'EST UN AUTRE ADMIN (Sécurité)
                                                 elseif($u['role_id'] == 1): ?>
                                                     <span class="badge bg-danger">Administrateur</span>
 
                                                 <?php 
-                                                // 3. CLIENTS ET EMPLOYÉS (Modifiables)
                                                 else: ?>
                                                     <form onsubmit="return false;">
                                                         <select class="form-select form-select-sm js-role-select" 
@@ -270,7 +267,6 @@
                                             </td>
                                             <td class="text-end">
                                                 <?php 
-                                                // On ne peut supprimer que si ce n'est pas nous-même ET pas un admin
                                                 if($u['utilisateur_id'] != $_SESSION['user']['id'] && $u['role_id'] != 1): ?>
                                                     <button class="btn btn-sm btn-danger text-white js-delete-user" data-id="<?php echo $u['utilisateur_id']; ?>"><i class="fa-solid fa-trash"></i></button>
                                                 <?php endif; ?>

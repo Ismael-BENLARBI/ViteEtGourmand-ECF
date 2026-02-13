@@ -121,18 +121,17 @@ function toggleFilters() {
     var arrow = document.getElementById("arrow-icon");
     
     if (content.style.display === "none") {
-        content.style.display = "block"; // On affiche
-        arrow.classList.add("open");     // On tourne la flèche
+        content.style.display = "block";
+        arrow.classList.add("open");
     } else {
-        content.style.display = "none";  // On cache
-        arrow.classList.remove("open");  // On remet la flèche normale
+        content.style.display = "none";
+        arrow.classList.remove("open");
     }
 }
 </script>
 
 <script>
 function updateMenus() {
-    // 1. Récupération de TOUTES les valeurs
     const themeInput = document.querySelector('input[name="theme"]:checked');
     const themeVal = themeInput ? themeInput.value : 'all';
 
@@ -142,11 +141,8 @@ function updateMenus() {
     const prixVal = document.getElementById('filter-prix').value;
     const persVal = document.getElementById('filter-pers').value;
 
-    // 2. Construction de l'URL avec tous les paramètres
-    // On encodeURI pour éviter les bugs avec les espaces dans "Sans Gluten"
     const url = `index.php?page=api_menus&theme=${themeVal}&regime=${encodeURIComponent(regimeVal)}&prix=${prixVal}&pers=${persVal}`;
 
-    // 3. Appel AJAX
     fetch(url)
         .then(response => response.json())
         .then(data => {
@@ -189,12 +185,11 @@ function updateMenus() {
         .catch(error => console.error('Erreur AJAX:', error));
 }
 
-// Écouteurs d'événements sur TOUS les champs
 document.addEventListener('DOMContentLoaded', function() {
-    const inputs = document.querySelectorAll('.filters-grid input'); // On cible tout ce qui est dans la grille
+    const inputs = document.querySelectorAll('.filters-grid input');
     inputs.forEach(input => {
-        input.addEventListener('change', updateMenus); // Pour checkbox, radio
-        input.addEventListener('input', updateMenus);  // Pour slider, text (réaction immédiate)
+        input.addEventListener('change', updateMenus);
+        input.addEventListener('input', updateMenus);
     });
 });
 </script>

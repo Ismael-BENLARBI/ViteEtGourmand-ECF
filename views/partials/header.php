@@ -16,7 +16,6 @@
 <body>
 
 <?php
-// 1. Calcul du nombre d'articles dans le panier
 $nbArticles = 0;
 if(isset($_SESSION['panier'])) {
     foreach($_SESSION['panier'] as $qty) {
@@ -24,11 +23,8 @@ if(isset($_SESSION['panier'])) {
     }
 }
 
-// 2. Gestion de l'affichage (Transparence sur Accueil)
 $bgClass = (isset($isHomepage) && $isHomepage === true) ? 'navbar-transparent' : 'navbar-solid';
 
-// 3. SÉCURITÉ : Récupération du Rôle sans erreur
-// On définit une valeur par défaut (0) si role_id n'existe pas encore dans la session
 $userRoleId = isset($_SESSION['user']['role_id']) ? $_SESSION['user']['role_id'] : 0;
 ?>
 

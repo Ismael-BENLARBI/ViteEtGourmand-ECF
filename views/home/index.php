@@ -1,7 +1,7 @@
 <?php 
 
 $isHomepage = true; 
-require_once 'views/partials/header.php'; 
+require_once 'Views/partials/header.php'; 
 ?>
 
 <link rel="stylesheet" href="assets/css/home.css">
@@ -83,4 +83,4 @@ require_once 'views/partials/header.php';
     </div>
 </section>
 
-<?php require_once 'views/partials/footer.php'; ?>
+<?php require_once 'Views/partials/footer.php'; ?>

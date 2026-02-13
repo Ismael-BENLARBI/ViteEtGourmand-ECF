@@ -1,46 +1,43 @@
-/* --- 1. AMBIANCE GÉNÉRALE --- */
 body {
-    background-color: #F2F0ED; /* Ton fond beige */
+    background-color: #F2F0ED;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #333;
 }
 
-/* Les titres en Rouge Bordeaux */
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
     color: #8B2635;
 }
 
-/* Texte courant */
 .text-muted {
     color: #6c757d !important;
 }
 
-/* --- 2. LA CARTE CENTRALE --- */
 .card {
     background: white;
     border: none;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(139, 38, 53, 0.05); /* Ombre légère teintée de rouge */
+    box-shadow: 0 10px 30px rgba(139, 38, 53, 0.05);
 }
 
-/* --- 3. LES BOUTONS (Customisation DA) --- */
-
-/* Boutons principaux (ex: "Découvrir nos menus") */
-.btn-primary, .btn-brand {
+.btn-primary,
+.btn-brand {
     background-color: #8B2635 !important;
     border-color: #8B2635 !important;
     color: white !important;
     transition: all 0.3s ease;
 }
 
-.btn-primary:hover, .btn-brand:hover {
-    background-color: #D8A85E !important; /* Le hover doré */
+.btn-primary:hover,
+.btn-brand:hover {
+    background-color: #D8A85E !important;
     border-color: #D8A85E !important;
-    transform: translateY(-2px); /* Petit effet de levier */
+    transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(216, 168, 94, 0.3);
 }
 
-/* Bouton Déconnexion (Outline) */
 .btn-outline-danger {
     color: #8B2635;
     border-color: #8B2635;
@@ -54,7 +51,6 @@ h1, h2, h3, h4 {
     border-color: #8B2635;
 }
 
-/* Bouton "Voir" (Détails commande) */
 .btn-outline-dark {
     color: #8B2635;
     border: 1px solid #8B2635;
@@ -63,51 +59,42 @@ h1, h2, h3, h4 {
 }
 
 .btn-outline-dark:hover {
-    background-color: #D8A85E; /* Fond doré au survol */
+    background-color: #D8A85E;
     border-color: #D8A85E;
     color: white;
 }
 
-/* --- 4. LE TABLEAU --- */
-
-/* En-têtes du tableau */
 .table thead th {
     background-color: transparent;
-    color: #8B2635; /* Titres des colonnes en rouge */
+    color: #8B2635;
     font-weight: 600;
     text-transform: uppercase;
     font-size: 0.85rem;
     letter-spacing: 1px;
-    border-bottom: 2px solid #D8A85E; /* Soulignement doré */
+    border-bottom: 2px solid #D8A85E;
     padding-bottom: 15px;
 }
 
-/* Cellules */
 .table tbody td {
     padding: 20px 10px;
     border-bottom: 1px solid #eee;
     vertical-align: middle;
 }
 
-/* La référence (#CMD...) */
 td.fw-bold.text-dark {
     color: #333 !important;
 }
 
-/* Le Prix (Déjà géré dans le HTML, mais on force ici au cas où) */
 td.fw-bold[style*="D8A85E"] {
     color: #D8A85E !important;
     font-size: 1.1rem;
 }
 
-/* --- 5. ÉLÉMENTS GRAPHIQUES --- */
-
-/* Icônes générales (Horloge, Panier...) */
-.fa-clock-rotate-left, .fa-basket-shopping {
+.fa-clock-rotate-left,
+.fa-basket-shopping {
     color: #D8A85E;
 }
 
-/* Badges de statut */
 .badge {
     font-weight: 500;
     font-size: 0.75rem;
@@ -115,73 +102,67 @@ td.fw-bold[style*="D8A85E"] {
     padding: 8px 12px !important;
 }
 
-/* Ajustement spécifique pour les badges */
 .bg-warning {
     background-color: #FFEeba !important;
     color: #856404 !important;
 }
+
 .bg-success {
     background-color: #D4EDDA !important;
     color: #155724 !important;
 }
+
 .bg-info {
     background-color: #D1ECF1 !important;
     color: #0C5460 !important;
 }
 
-/* ... (Colle ça à la suite de ton code existant) ... */
-
-/* --- 6. NAVIGATION ONGLETS (STYLE DASHBOARD ADMIN) --- */
 .nav-pills {
     background-color: transparent;
     padding: 0;
 }
 
 .nav-pills .nav-item {
-    margin-right: 15px; /* Espace entre les onglets */
+    margin-right: 15px;
 }
 
 .nav-pills .nav-link {
-    color: #8B2635; /* Texte Bordeaux par défaut */
-    background-color: #fff; /* Fond blanc */
-    border: 1px solid rgba(139, 38, 53, 0.1); /* Bordure très légère */
-    border-radius: 50px; /* Forme arrondie (Pilule) */
-    padding: 12px 30px; /* Plus d'espace intérieur */
-    font-weight: 800; /* Gras comme l'admin */
+    color: #8B2635;
+    background-color: #fff;
+    border: 1px solid rgba(139, 38, 53, 0.1);
+    border-radius: 50px;
+    padding: 12px 30px;
+    font-weight: 800;
     font-size: 0.95rem;
-    text-transform: uppercase; /* Majuscules élégantes */
+    text-transform: uppercase;
     letter-spacing: 0.5px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
 }
 
-/* Au survol (Hover) */
 .nav-pills .nav-link:hover {
-    color: #D8A85E; /* Texte Doré */
+    color: #D8A85E;
     background-color: #fff;
     border-color: #D8A85E;
-    transform: translateY(-3px); /* Légère remontée */
+    transform: translateY(-3px);
     box-shadow: 0 5px 15px rgba(216, 168, 94, 0.15);
 }
 
-/* Onglet Actif (Sélectionné) */
 .nav-pills .nav-link.active {
-    background-color: #8B2635 !important; /* Fond Bordeaux */
-    color: white !important; /* Texte Blanc */
+    background-color: #8B2635 !important;
+    color: white !important;
     border-color: #8B2635;
-    box-shadow: 0 8px 20px rgba(139, 38, 53, 0.3); /* Ombre portée bordeaux */
+    box-shadow: 0 8px 20px rgba(139, 38, 53, 0.3);
     transform: translateY(0);
 }
 
-/* Icônes dans les onglets */
 .nav-pills .nav-link i {
     font-size: 1.1em;
     vertical-align: -1px;
 }
 
-/* --- 7. FORMULAIRES (PROFIL) --- */
 .form-label {
-    color: #8B2635; /* Label bordeaux */
+    color: #8B2635;
     font-weight: 600;
     margin-bottom: 5px;
 }
@@ -189,14 +170,14 @@ td.fw-bold[style*="D8A85E"] {
 .form-control {
     border: 1px solid #e9ecef;
     padding: 12px 15px;
-    border-radius: 12px; /* Coins arrondis modernes */
+    border-radius: 12px;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
     background-color: #fcfcfc;
 }
 
 .form-control:focus {
     background-color: #fff;
-    border-color: #D8A85E; /* Bordure dorée au focus */
-    box-shadow: 0 0 0 4px rgba(216, 168, 94, 0.15); /* Halo doré */
+    border-color: #D8A85E;
+    box-shadow: 0 0 0 4px rgba(216, 168, 94, 0.15);
     outline: none;
 }

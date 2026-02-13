@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    // 1. ONGLETS (COPIÉ ADMIN)
     const tabButtons = document.querySelectorAll('button[data-bs-toggle="pill"]');
     tabButtons.forEach(button => {
         button.addEventListener('click', function(e) {
@@ -13,7 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 2. FILTRES COMMANDES (COPIÉ ADMIN)
     const filterClient = document.getElementById('filter-client');
     const filterStatus = document.getElementById('filter-status');
     const rows = document.querySelectorAll('.cmd-row');
@@ -39,7 +37,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if(filterClient) filterClient.addEventListener('input', filterTable);
     if(filterStatus) filterStatus.addEventListener('change', filterTable);
 
-    // 3. STATUT COMMANDE (LOGIQUE EMPLOYÉ SPÉCIFIQUE)
     document.querySelectorAll('.js-update-status').forEach(select => {
         select.addEventListener('change', function() {
             const formData = new FormData();
@@ -47,14 +44,12 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.append('statut', this.value);
             formData.append('ajax', '1');
 
-            // ALERTE 600€
             if(this.value === 'attente_retour_materiel') {
                 if(!confirm("⚠️ ATTENTION : Cela va envoyer un email de pénalité (600€) au client. Confirmer ?")) {
                     this.value = this.getAttribute('data-original'); return;
                 }
             }
 
-            // Route Employé
             fetch('index.php?page=employe_update_status', { method: 'POST', body: formData })
             .then(res => res.json())
             .then(data => {
@@ -71,7 +66,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 4. ANNULATION COMMANDE (LOGIQUE EMPLOYÉ SPÉCIFIQUE)
     document.querySelectorAll('.js-open-cancel').forEach(btn => {
         btn.addEventListener('click', function() {
             document.getElementById('cancel-id').value = this.getAttribute('data-id');
@@ -97,8 +91,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 5. MENUS / HORAIRES / AVIS (ROUTES ADMIN PARTAGÉES)
-    // --- Validation Avis ---
     document.querySelectorAll('.js-validate-avis').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
@@ -114,7 +106,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // --- Suppression Avis ---
     document.querySelectorAll('.js-delete-avis').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
@@ -126,7 +117,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // --- Horaires ---
     document.querySelectorAll('.js-save-horaire').forEach(btn => {
         btn.addEventListener('click', function() {
             const id = this.getAttribute('data-id');

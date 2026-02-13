@@ -4,7 +4,6 @@
 <div class="container py-5">
 
     <?php 
-        // Gestion du bouton retour
         $lienRetour = 'index.php?page=compte';
         $texteRetour = 'Retour à mes commandes';
 
@@ -100,7 +99,6 @@
                             </div>
 
                             <?php 
-                                // C'EST ICI LA MODIFICATION DE RESTRICTION : Uniquement 'terminee'
                                 $isClient = isset($_SESSION['user']['role_id']) && $_SESSION['user']['role_id'] != 1 && $_SESSION['user']['role_id'] != 2;
                                 
                                 if($commande['statut'] == 'terminee' && $isClient): 

@@ -2,14 +2,13 @@
 <link rel="stylesheet" href="assets/css/panier.css">
 
 <?php
-// Calculs PHP (Invisible)
 $qtyTotal = 0;
 if(isset($_SESSION['panier'])) {
     foreach($_SESSION['panier'] as $id => $qty) {
         $qtyTotal += $qty;
     }
 }
-// Formatage propre pour le JS (125.00)
+
 $totalClean = number_format($totalPanier, 2, '.', '');
 ?>
 

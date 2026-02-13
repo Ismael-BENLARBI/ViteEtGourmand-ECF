@@ -86,7 +86,6 @@
                     <?php 
                         $stock = $menu['quantite_restante'] ?? 0;
                         $minReq = $menu['nombre_personne_min'];
-                        // Est-ce qu'on peut commander ? (Stock doit être >= au minimum requis)
                         $isOrderable = ($stock >= $minReq);
                     ?>
 
@@ -176,10 +175,9 @@
 </div>
 
 <script>
-    // 1. Gestion de la quantité et mise à jour du formulaire
     function updateQty(change) {
         const input = document.getElementById('qtyInput');
-        const formInput = document.getElementById('formQty'); // Le champ caché qui part au panier
+        const formInput = document.getElementById('formQty');
         
         let currentVal = parseInt(input.value);
         let min = parseInt(input.getAttribute('min'));
@@ -189,16 +187,14 @@
 
         if (newVal >= min && newVal <= max) {
             input.value = newVal;
-            formInput.value = newVal; // On met à jour le champ caché
+            formInput.value = newVal;
         }
     }
 
-    // 2. Changer l'image principale au clic
     function changeMainImage(element) {
         document.getElementById('mainImage').src = element.src;
     }
 
-    // 3. Modale (Zoom)
     function openModal(element) {
         const modal = document.getElementById('imageModal');
         const modalImg = document.getElementById("fullImage");

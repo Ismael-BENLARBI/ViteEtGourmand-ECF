@@ -4,11 +4,8 @@
 <div class="container py-5">
     
     <?php 
-        // --- LOGIQUE INTELLIGENTE POUR LE BOUTON RETOUR ---
-        // Par défaut, on retourne chez l'admin
         $lienRetour = "index.php?page=admin_dashboard";
         
-        // Si c'est un employé (role_id = 2), on retourne chez l'employé
         if (isset($_SESSION['user']['role_id']) && $_SESSION['user']['role_id'] == 2) {
             $lienRetour = "index.php?page=employe_dashboard";
         }

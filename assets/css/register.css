@@ -1,23 +1,20 @@
-/* --- CONFIGURATION GLOBALE --- */
 body {
-    background-color: #F2F0ED; /* Le fond beige du site */
+    background-color: #F2F0ED;
     font-family: 'Montserrat', sans-serif;
 }
 
-/* --- LA CARTE DU FORMULAIRE --- */
 .register-card {
     background: #ffffff;
-    border-radius: 30px; /* Gros arrondis comme sur la page détail */
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05); /* Ombre légère */
+    border-radius: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
     padding: 40px;
     margin-top: 30px;
     margin-bottom: 50px;
-    border: none; /* Pas de bordure grise moche */
+    border: none;
 }
 
-/* --- TITRES --- */
 .form-title {
-    color: #D8A85E; /* Le doré de la marque */
+    color: #D8A85E;
     font-weight: 800;
     text-transform: uppercase;
     font-size: 1.8rem;
@@ -37,7 +34,6 @@ body {
     padding-bottom: 10px;
 }
 
-/* --- CHAMPS DE FORMULAIRE --- */
 .form-label {
     font-weight: 600;
     font-size: 0.9rem;
@@ -54,9 +50,9 @@ body {
 }
 
 .form-control:focus {
-    border-color: #D8A85E; /* Bordure dorée quand on clique dedans */
+    border-color: #D8A85E;
     background-color: white;
-    box-shadow: 0 0 0 3px rgba(216, 168, 94, 0.1); /* Petite lueur dorée */
+    box-shadow: 0 0 0 3px rgba(216, 168, 94, 0.1);
 }
 
 .form-text {
@@ -64,28 +60,26 @@ body {
     color: #999;
 }
 
-/* --- BOUTON D'ACTION --- */
 .btn-register {
-    background-color: #8B2635; /* Noir/Gris foncé */
+    background-color: #8B2635;
     color: white;
     font-weight: 800;
     text-transform: uppercase;
-    border-radius: 50px; /* Bouton pilule */
+    border-radius: 50px;
     padding: 15px;
     width: 100%;
     border: none;
     margin-top: 20px;
     transition: transform 0.2s, background-color 0.2s;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .btn-register:hover {
-    background-color: #D8A85E; /* Devient doré au survol */
-    transform: scale(1.02); /* Petit effet de zoom */
+    background-color: #D8A85E;
+    transform: scale(1.02);
     color: white;
 }
 
-/* --- LIEN RETOUR LOGIN --- */
 .login-link {
     display: block;
     text-align: center;

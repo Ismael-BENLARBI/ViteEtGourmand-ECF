@@ -3,7 +3,6 @@ require_once __DIR__ . '/../config/db.php';
 
 class Stats {
 
-    // 1. Chiffre d'Affaires sur une période donnée
     public static function getChiffreAffaires($dateDebut = null, $dateFin = null) {
         global $pdo;
         $sql = "SELECT SUM(prix_total) as total FROM commande WHERE statut != 'annulee'";
@@ -20,7 +19,6 @@ class Stats {
         return $result['total'] ?? 0;
     }
 
-    // 2. Le Menu le plus vendu sur une période
     public static function getBestSeller($dateDebut = null, $dateFin = null) {
         global $pdo;
         $sql = "SELECT m.titre, SUM(d.quantite) as total_ventes 
@@ -42,10 +40,8 @@ class Stats {
         return $stmt->fetch();
     }
 
-    // 3. Commandes par mois (pour le graphique/tableau) - 12 derniers mois
     public static function getOrdersByMonth() {
         global $pdo;
-        // On formate la date en "Année-Mois" (ex: 2023-10) et on compte
         $sql = "SELECT DATE_FORMAT(date_commande, '%Y-%m') as mois, COUNT(*) as total 
                 FROM commande 
                 WHERE statut != 'annulee'

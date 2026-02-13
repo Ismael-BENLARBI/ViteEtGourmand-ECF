@@ -21,7 +21,7 @@
                     </div>
                 <?php elseif(isset($_GET['success'])): ?>
                     <div class="alert alert-custom alert-custom-success p-3 mb-4">
-                        <i class="fa-solid fa-paper-plane me-2"></i> Email envoyé ! Vérifiez vos spams (ou log_emails.txt en local).
+                        <i class="fa-solid fa-paper-plane me-2"></i> Email envoyé ! Vérifiez vos spams.
                     </div>
                 <?php endif; ?>
 

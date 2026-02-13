@@ -1,15 +1,15 @@
-/* --- 1. CONFIGURATION GLOBALE --- */
 body {
-    background-color: #F2F0ED; /* Fond Beige */
+    background-color: #F2F0ED;
     font-family: 'Montserrat', sans-serif;
-    color: #444; /* Gris foncé neutre */
+    color: #444;
 }
 
-a { text-decoration: none; }
+a {
+    text-decoration: none;
+}
 
-/* --- 2. EN-TÊTE DASHBOARD --- */
 .dashboard-title {
-    color: #8B2635; /* Rouge Bordeaux */
+    color: #8B2635;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: -0.5px;
@@ -17,13 +17,12 @@ a { text-decoration: none; }
 }
 
 .dashboard-subtitle {
-    color: #D8A85E; /* Doré */
+    color: #D8A85E;
     font-weight: 600;
     font-size: 1.1rem;
     font-style: italic;
 }
 
-/* --- 3. ONGLETS (STYLE PILULE HARMONISÉ) --- */
 .nav-pills {
     background-color: transparent;
     padding: 0;
@@ -36,21 +35,21 @@ a { text-decoration: none; }
 }
 
 .nav-pills .nav-link {
-    color: #8B2635; /* Texte Bordeaux */
+    color: #8B2635;
     background-color: #fff;
     border: 1px solid rgba(139, 38, 53, 0.1);
-    border-radius: 50px; /* Pilule */
+    border-radius: 50px;
     padding: 12px 25px;
     font-weight: 700;
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
 }
 
 .nav-pills .nav-link:hover {
-    color: #D8A85E; /* Texte Doré */
+    color: #D8A85E;
     background-color: #fff;
     border-color: #D8A85E;
     transform: translateY(-2px);
@@ -58,7 +57,7 @@ a { text-decoration: none; }
 }
 
 .nav-pills .nav-link.active {
-    background-color: #8B2635 !important; /* Fond Bordeaux */
+    background-color: #8B2635 !important;
     color: white !important;
     border-color: #8B2635;
     box-shadow: 0 8px 20px rgba(139, 38, 53, 0.3);
@@ -70,7 +69,6 @@ a { text-decoration: none; }
     vertical-align: -2px;
 }
 
-/* --- 4. CARTES ET CONTENEURS --- */
 .dashboard-card {
     background: white;
     border-radius: 20px;
@@ -80,10 +78,9 @@ a { text-decoration: none; }
 }
 
 .card {
-    border-radius: 20px; /* Arrondi pour toutes les cartes (stats incluses) */
+    border-radius: 20px;
 }
 
-/* --- 5. BOUTONS --- */
 .btn-add-menu {
     background-color: #D8A85E;
     color: white;
@@ -104,7 +101,6 @@ a { text-decoration: none; }
     transform: translateY(-2px);
 }
 
-/* Boutons d'action ronds (Voir, Editer, Supprimer) */
 .action-btn {
     width: 35px;
     height: 35px;
@@ -117,12 +113,15 @@ a { text-decoration: none; }
     border: 1px solid transparent;
 }
 
-.btn-view, .btn-edit {
+.btn-view,
+.btn-edit {
     background-color: #fff;
     color: #D8A85E;
     border-color: #D8A85E;
 }
-.btn-view:hover, .btn-edit:hover {
+
+.btn-view:hover,
+.btn-edit:hover {
     background-color: #D8A85E;
     color: white;
 }
@@ -132,14 +131,20 @@ a { text-decoration: none; }
     color: #8B2635;
     border-color: #8B2635;
 }
+
 .btn-delete:hover {
     background-color: #8B2635;
     color: white;
 }
 
-/* --- 6. TABLEAUX --- */
-.table { margin-bottom: 0; }
-.table thead { background-color: #fff; }
+.table {
+    margin-bottom: 0;
+}
+
+.table thead {
+    background-color: #fff;
+}
+
 .table thead th {
     color: #D8A85E;
     font-size: 0.85rem;
@@ -149,25 +154,31 @@ a { text-decoration: none; }
     padding: 20px;
     border-bottom: 2px solid #F2F0ED;
 }
+
 .table tbody td {
     vertical-align: middle;
     padding: 20px;
     border-bottom: 1px solid #F2F0ED;
 }
 
-/* Images et Textes Tableaux */
 .menu-thumb {
     width: 60px;
     height: 60px;
     object-fit: cover;
     border-radius: 12px;
 }
-.menu-title { font-weight: 700; color: #333; }
-.menu-price { font-weight: 700; color: #8B2635; font-size: 1.1rem; }
 
-/* --- 7. ÉLÉMENTS SPÉCIFIQUES (Statuts, Badges, Stars) --- */
+.menu-title {
+    font-weight: 700;
+    color: #333;
+}
 
-/* Sélecteur de statut (Commandes) */
+.menu-price {
+    font-weight: 700;
+    color: #8B2635;
+    font-size: 1.1rem;
+}
+
 .status-select {
     border-radius: 50px;
     font-weight: 700;
@@ -178,15 +189,37 @@ a { text-decoration: none; }
     border: 1px solid transparent;
     transition: all 0.3s;
 }
-.status-select:focus { outline: none; box-shadow: none; }
 
-/* Couleurs statuts */
-.status-select.en_attente { background-color: #fff3cd; color: #856404; border-color: #ffeeba; }
-.status-select.validee { background-color: #d1ecf1; color: #0c5460; border-color: #bee5eb; }
-.status-select.livree { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
-.status-select.annulee { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; text-decoration: line-through; }
+.status-select:focus {
+    outline: none;
+    box-shadow: none;
+}
 
-/* Badges (Menus / Avis) */
+.status-select.en_attente {
+    background-color: #fff3cd;
+    color: #856404;
+    border-color: #ffeeba;
+}
+
+.status-select.validee {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-color: #bee5eb;
+}
+
+.status-select.livree {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+}
+
+.status-select.annulee {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+    text-decoration: line-through;
+}
+
 .badge-custom {
     background-color: #F2F0ED;
     color: #8B2635;
@@ -196,29 +229,37 @@ a { text-decoration: none; }
     font-size: 0.8rem;
 }
 
-.badge.bg-success { background-color: #d4edda !important; color: #155724 !important; }
-.badge.bg-warning { background-color: #fff3cd !important; color: #856404 !important; }
+.badge.bg-success {
+    background-color: #d4edda !important;
+    color: #155724 !important;
+}
 
-/* Etoiles Avis */
-.fa-star { color: #D8A85E; } /* Étoiles dorées */
+.badge.bg-warning {
+    background-color: #fff3cd !important;
+    color: #856404 !important;
+}
 
-/* --- 8. FORMULAIRES (Filtres Stats) --- */
+.fa-star {
+    color: #D8A85E;
+}
+
 .form-control {
     border-radius: 10px;
     border: 1px solid #e9ecef;
     padding: 10px 15px;
 }
+
 .form-control:focus {
     border-color: #8B2635;
     box-shadow: 0 0 0 0.25rem rgba(139, 38, 53, 0.15);
 }
 
-/* Sélecteur de Rôle (Utilisateurs) */
 .js-role-select {
     border-radius: 10px;
     border: 1px solid #e9ecef;
     cursor: pointer;
 }
+
 .js-role-select:focus {
     border-color: #D8A85E;
     box-shadow: none;

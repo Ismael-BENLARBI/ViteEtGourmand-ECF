@@ -4,7 +4,6 @@
 <div class="container py-5">
     
     <?php 
-        // Logique "Retour Intelligent" (Admin ou Employé)
         $lienRetour = "index.php?page=admin_dashboard";
         if (isset($_SESSION['user']['role_id']) && $_SESSION['user']['role_id'] == 2) {
             $lienRetour = "index.php?page=employe_dashboard";

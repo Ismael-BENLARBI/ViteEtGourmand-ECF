@@ -1,34 +1,30 @@
-/* --- CONFIGURATION GLOBALE --- */
 body {
     background-color: #F2F0ED;
     font-family: 'Montserrat', sans-serif;
 }
 
-/* --- TITRE DE PAGE (Nouveau) --- */
 .page-title {
     text-align: center;
-    color: #8B2635; /* La couleur demandée */
+    color: #8B2635;
     font-family: 'Montserrat', sans-serif;
-    font-weight: 800; /* Gras pour le style titre */
+    font-weight: 800;
     text-transform: uppercase;
     font-size: 2.5rem;
     margin-bottom: 20px;
     margin-top: 0;
 }
 
-/* --- BLOC FILTRES (Le carré Orange/Doré) --- */
 .filters-container {
     background-color: #D8A85E;
     border-radius: 20px;
-    padding: 15px 30px; /* Padding réduit car c'est repliable */
+    padding: 15px 30px;
     max-width: 900px;
     margin: 0 auto 50px auto;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     color: #8B2635;
     transition: all 0.3s ease;
 }
 
-/* En-tête du filtre (La partie cliquable avec la flèche) */
 .filters-header {
     display: flex;
     justify-content: center;
@@ -42,27 +38,24 @@ body {
     font-weight: 800;
     text-transform: uppercase;
     font-size: 1.2rem;
-    margin: 0; /* Pas de marge pour bien aligner */
+    margin: 0;
 }
 
-/* La flèche */
 .toggle-arrow {
     font-size: 1.2rem;
     font-weight: bold;
     transition: transform 0.3s ease;
 }
 
-/* Classe pour faire tourner la flèche quand ouvert */
 .toggle-arrow.open {
     transform: rotate(180deg);
 }
 
-/* Le contenu caché (Formulaire) */
 .filters-content {
-    display: none; /* Caché par défaut ou via JS */
+    display: none;
     margin-top: 20px;
     padding-top: 20px;
-    border-top: 1px solid rgba(139, 38, 53, 0.2); /* Petit trait de séparation */
+    border-top: 1px solid rgba(139, 38, 53, 0.2);
 }
 
 .filters-grid {
@@ -89,12 +82,11 @@ body {
     padding: 5px 10px;
 }
 
-/* --- CARTES DES MENUS --- */
 .menu-card {
     background: white;
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
     transition: transform 0.3s ease;
     height: 100%;
     display: flex;
@@ -106,12 +98,11 @@ body {
     transform: translateY(-5px);
 }
 
-/* Modification Image (Plus de bords blancs) */
 .menu-img-container {
     height: 220px;
     overflow: hidden;
     position: relative;
-    padding: 0; /* PADDING À 0 : L'image touche les bords */
+    padding: 0;
     width: 100%;
 }
 
@@ -130,7 +121,6 @@ body {
     flex-grow: 1;
 }
 
-/* --- BADGES --- */
 .badges-container {
     display: flex;
     gap: 10px;
@@ -159,7 +149,6 @@ body {
     font-weight: 600;
 }
 
-/* --- TYPO --- */
 .menu-title {
     font-weight: 800;
     color: #000;

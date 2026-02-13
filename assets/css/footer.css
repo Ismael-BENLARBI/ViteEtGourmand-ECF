@@ -1,12 +1,11 @@
-/* --- STYLE DU FOOTER --- */
 .main-footer {
-    background-color: #8B2635; /* Le fond Bordeaux demandé */
-    color: #F2F0ED; /* Texte en Beige clair (plus doux que le blanc pur) */
-    border-top: 5px solid #D8A85E; /* Bordure Dorée pour le contraste */
+    background-color: #8B2635;
+    color: #F2F0ED;
+    border-top: 5px solid #D8A85E;
 }
 
 .main-footer h5 {
-    color: #D8A85E; /* Titres en Doré */
+    color: #D8A85E;
     font-weight: 800;
     letter-spacing: 1px;
 }
@@ -18,15 +17,15 @@
 }
 
 .main-footer a:hover {
-    color: #D8A85E; /* Devient doré au survol */
-    padding-left: 5px; /* Petit effet de glissement */
+    color: #D8A85E;
+    padding-left: 5px;
 }
 
 .main-footer .text-white-50 {
-    color: rgba(242, 240, 237, 0.7) !important; /* Force le beige transparent pour les sous-textes */
+    color: rgba(242, 240, 237, 0.7) !important;
 }
 
 .main-footer hr {
-    background-color: #D8A85E; /* Ligne de séparation dorée */
+    background-color: #D8A85E;
     opacity: 0.3;
 }

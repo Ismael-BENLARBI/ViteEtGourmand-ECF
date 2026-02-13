@@ -2,7 +2,6 @@
 require_once 'Views/partials/header.php'; 
 require_once 'Models/User.php'; 
 
-// On récupère les infos fraîches de l'utilisateur connecté
 $currentUser = User::getById($_SESSION['user']['id']);
 ?>
 <link rel="stylesheet" href="assets/css/compte.css">
@@ -16,7 +15,6 @@ $currentUser = User::getById($_SESSION['user']['id']);
         </div>
         <div class="text-end">
             <?php 
-                // Vérification sécurisée du rôle (Admin = 1, Employé = 2)
                 $role = $_SESSION['user']['role_id'] ?? 3;
                 if ($role == 1): 
             ?>

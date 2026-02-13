@@ -1,7 +1,7 @@
 <?php
 // Informations de connexion Alwaysdata
 $host     = 'mysql-vite-et-gourmand-projet.alwaysdata.net';
-$dbname   = 'vite-et-gourmand-projet_vite-et-gourmand-projet_bdd';       // Ex: jean-dupond_vite_et_gourmand
+$dbname   = 'vite-et-gourmand-projet_bdd';       // Ex: jean-dupond_vite_et_gourmand
 $username = 'vite-et-gourmand-projet';                    // Ton nom d'utilisateur Alwaysdata
 $password = 'VEG-admin123!';                   // Le mot de passe défini dans l'admin Alwaysdata
 

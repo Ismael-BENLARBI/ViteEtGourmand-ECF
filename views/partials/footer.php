@@ -1,6 +1,4 @@
 <?php
-// 1. ON RÉCUPÈRE LES HORAIRES DEPUIS LA BDD
-// (On utilise @ pour éviter les erreurs si le fichier est déjà inclus ailleurs)
 require_once __DIR__ . '/../../Models/Horaire.php';
 $footerHoraires = Horaire::getAll();
 ?>

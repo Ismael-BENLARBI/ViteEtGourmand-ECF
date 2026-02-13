@@ -7,16 +7,12 @@ $page = $_GET['page'] ?? 'home';
 
 switch($page) {
     
-    // ============================================================
-    // PARTIE PUBLIQUE (Accessible à tous)
-    // ============================================================
-
     case 'home':
         require_once 'Models/Menu.php';
         require_once 'Models/Avis.php';
         $menus = Menu::getAll(); 
         $avisRecents = Avis::getLastThree(); 
-        require_once 'views/home/index.php';
+        require_once 'Views/home/index.php';
         break;
 
     case 'menus':
@@ -44,7 +40,7 @@ switch($page) {
         break;
 
     case 'contact':
-        require_once 'views/front/contact.php';
+        require_once 'Views/front/contact.php';
         break;
 
     case 'contact_submit':
@@ -81,10 +77,6 @@ switch($page) {
         exit;
         break;
 
-    // ============================================================
-    // AUTHENTIFICATION (Login, Register, Logout)
-    // ============================================================
-
     case 'register':
         require_once 'Views/auth/register.php';
         break;
@@ -117,7 +109,6 @@ switch($page) {
         require_once 'Views/auth/login.php';
         break;
 
-    // --- C'EST ICI QUE LA REDIRECTION EST GÉRÉE ---
     case 'login_action':
         require_once 'Models/User.php';
 
@@ -129,44 +120,36 @@ switch($page) {
 
             if ($user && password_verify($pass_input, $user['password'])) {
                 
-                // On stocke les infos et surtout le ROLE_ID
                 $_SESSION['user'] = [
                     'id' => $user['utilisateur_id'],
                     'prenom' => $user['prenom'],
                     'nom' => $user['nom'],
                     'email' => $user['email'],
-                    'role_id' => $user['role_id'] // 1=Admin, 2=Employé, 3=Client
+                    'role_id' => $user['role_id']
                 ];
 
-                // --- DEBUT AJOUT : GESTION DU PANIER SAUVEGARDÉ ---
                 require_once 'Models/Panier.php';
                 
-                // 1. On récupère le panier sauvegardé en BDD
                 $panierBdd = Panier::loadFromUser($user['utilisateur_id']);
                 
-                // 2. Initialisation si pas de panier session
                 if (!isset($_SESSION['panier'])) $_SESSION['panier'] = [];
 
-                // 3. Fusion : On ajoute les produits de la BDD au panier de la session
                 foreach($panierBdd as $mid => $qty) {
                     if (isset($_SESSION['panier'][$mid])) {
-                        $_SESSION['panier'][$mid] += $qty; // On additionne si existe déjà
+                        $_SESSION['panier'][$mid] += $qty;
                     } else {
-                        $_SESSION['panier'][$mid] = $qty; // Sinon on crée
+                        $_SESSION['panier'][$mid] = $qty;
                     }
                 }
 
-                // 4. On sauvegarde le résultat fusionné immédiatement en BDD
                 Panier::saveForUser($user['utilisateur_id'], $_SESSION['panier']);
-                // --- FIN AJOUT ---
 
-                // REDIRECTION INTELLIGENTE
                 if ($user['role_id'] == 1) {
-                    header('Location: index.php?page=admin_dashboard'); // Admin
+                    header('Location: index.php?page=admin_dashboard');
                 } elseif ($user['role_id'] == 2) {
-                    header('Location: index.php?page=employe_dashboard'); // Employé
+                    header('Location: index.php?page=employe_dashboard');
                 } else {
-                    header('Location: index.php?page=home'); // Client
+                    header('Location: index.php?page=home');
                 }
                 exit;
 
@@ -183,24 +166,47 @@ switch($page) {
         exit;
         break;
 
-    // --- MOT DE PASSE OUBLIÉ ---
     case 'forgot_password':
         require_once 'Views/auth/forgot_password.php';
         break;
 
     case 'forgot_password_submit':
         require_once 'Models/User.php';
+        require_once 'Models/Mailer.php'; 
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $email = $_POST['email'];
+            
             $user = User::getByEmail($email);
+
             if ($user) {
                 $token = bin2hex(random_bytes(32));
                 User::setResetToken($email, $token);
-                $link = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . "/index.php?page=reset_password&token=" . $token;
-                // Simulation envoi mail (écrit dans fichier log)
-                $log = "To: $email | Token Link: $link\n";
-                file_put_contents('log_emails.txt', $log, FILE_APPEND);
+
+                $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
+                $path = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+                $link = $protocol . $_SERVER['HTTP_HOST'] . $path . "/index.php?page=reset_password&token=" . $token;
+
+                $sujet = "Réinitialisation de votre mot de passe - Vite & Gourmand";
+                $message = "
+                    <html>
+                    <body>
+                        <h3>Bonjour " . htmlspecialchars($user['prenom']) . ",</h3>
+                        <p>Vous avez demandé à réinitialiser votre mot de passe.</p>
+                        <p>Cliquez sur le lien ci-dessous pour en créer un nouveau (valable 1h) :</p>
+                        <p>
+                            <a href='$link' style='background-color: #D8A85E; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>
+                                Réinitialiser mon mot de passe
+                            </a>
+                        </p>
+                        <p><small>Ou copiez ce lien : $link</small></p>
+                    </body>
+                    </html>
+                ";
+
+                Mailer::send($email, $sujet, $message);
             }
+
             header('Location: index.php?page=forgot_password&success=1');
         }
         break;
@@ -230,10 +236,6 @@ switch($page) {
         }
         break;
 
-    // ============================================================
-    // PARTIE CLIENT (Panier, Commande, Compte)
-    // ============================================================
-
     case 'panier':
         require_once 'Models/Menu.php';
         $panierComplet = []; 
@@ -244,14 +246,10 @@ switch($page) {
                 $menu = Menu::getById($id_menu);
                 
                 if ($menu) { 
-                    // Le menu existe bien, on l'affiche
                     $totalLigne = $menu['prix_par_personne'] * $quantite;
                     $panierComplet[] = ['menu' => $menu, 'quantite' => $quantite, 'total_ligne' => $totalLigne];
                     $totalGeneral += $totalLigne;
                 } else {
-                    // --- CORRECTION IMPORTANTE ---
-                    // Le menu n'existe plus en BDD (supprimé par l'admin) ?
-                    // ALORS ON LE SUPPRIME DE LA SESSION IMMÉDIATEMENT.
                     unset($_SESSION['panier'][$id_menu]);
                     // -----------------------------
                 }
@@ -270,12 +268,10 @@ switch($page) {
             if(isset($_SESSION['panier'][$id])) $_SESSION['panier'][$id] += $qty;
             else $_SESSION['panier'][$id] = $qty;
 
-            // --- AJOUT : SAUVEGARDE EN BDD SI CONNECTÉ ---
             if(isset($_SESSION['user'])) {
                 require_once 'Models/Panier.php';
                 Panier::saveForUser($_SESSION['user']['id'], $_SESSION['panier']);
             }
-            // ---------------------------------------------
 
             header('Location: index.php?page=panier');
             exit;
@@ -287,19 +283,17 @@ switch($page) {
         if(isset($_GET['id'])) { 
             unset($_SESSION['panier'][(int)$_GET['id']]); 
             
-            // --- AJOUT : MISE À JOUR BDD SI CONNECTÉ ---
             if(isset($_SESSION['user'])) {
                 require_once 'Models/Panier.php';
                 Panier::saveForUser($_SESSION['user']['id'], $_SESSION['panier']);
             }
-            // -------------------------------------------
         }
         header('Location: index.php?page=panier');
         break;
 
     case 'commande':
         require_once 'Utils/Auth.php';
-        Auth::check(); // Client connecté obligatoire
+        Auth::check();
         if (empty($_SESSION['panier'])) { header('Location: index.php?page=panier'); exit; }
         
         require_once 'Models/Menu.php';
@@ -318,23 +312,82 @@ switch($page) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SESSION['panier'])) {
             require_once 'Models/Commande.php';
             require_once 'Models/Menu.php';
-            // On a besoin du modèle Panier pour nettoyer la BDD après commande
             require_once 'Models/Panier.php'; 
+            require_once 'Models/Mailer.php';
 
             $userId = $_SESSION['user']['id'];
+            
             $commandeId = Commande::create($userId, $_POST['total_final'], $_POST['frais_livraison'], $_POST['montant_reduction'], $_POST['nom'], $_POST['prenom'], $_POST['adresse'], $_POST['cp'], $_POST['ville'], $_POST['phone'], $_POST['heure_livraison'], $_POST['instructions'],$_POST['date_prestation'] );
+
+            $sujet = "Confirmation de votre commande #" . $commandeId . " - Vite & Gourmand";
+            $messageHTML = "
+                <html>
+                <body style='font-family: Arial, sans-serif; color: #333;'>
+                    <div style='background-color: #f8f9fa; padding: 20px; text-align: center; border-bottom: 3px solid #D8A85E;'>
+                        <h2 style='color: #D8A85E; margin:0;'>Vite & Gourmand</h2>
+                        <p>Merci pour votre commande !</p>
+                    </div>
+                    
+                    <div style='padding: 20px;'>
+                        <p>Bonjour <strong>" . htmlspecialchars($_POST['prenom']) . "</strong>,</p>
+                        <p>Votre commande a bien été enregistrée. Voici le récapitulatif :</p>
+                        
+                        <div style='background-color: #fdfdfd; padding: 15px; border: 1px solid #eee; margin-bottom: 20px;'>
+                            <h4 style='margin-top: 0;'>📅 Livraison prévue</h4>
+                            <p style='margin: 0;'>
+                                Le <strong>" . htmlspecialchars($_POST['date_prestation']) . "</strong> à <strong>" . htmlspecialchars($_POST['heure_livraison']) . "</strong><br>
+                                À l'adresse : " . htmlspecialchars($_POST['adresse']) . ", " . htmlspecialchars($_POST['cp']) . " " . htmlspecialchars($_POST['ville']) . "
+                            </p>
+                        </div>
+
+                        <table width='100%' border='0' cellspacing='0' cellpadding='10' style='border-collapse: collapse; border: 1px solid #ddd;'>
+                            <tr style='background-color: #eee;'>
+                                <th style='text-align: left; border-bottom: 1px solid #ddd;'>Menu</th>
+                                <th style='text-align: center; border-bottom: 1px solid #ddd;'>Quantité</th>
+                                <th style='text-align: right; border-bottom: 1px solid #ddd;'>Total</th>
+                            </tr>
+            ";
 
             foreach ($_SESSION['panier'] as $menuId => $qty) {
                 $menu = Menu::getById($menuId);
-                if ($menu) Commande::addDetail($commandeId, $menuId, $qty, $menu['prix_par_personne']);
-                Menu::decrementStock($menuId, $qty);
+                
+                if ($menu) {
+                    Commande::addDetail($commandeId, $menuId, $qty, $menu['prix_par_personne']);
+                    Menu::decrementStock($menuId, $qty);
+
+                    $prixLigne = $menu['prix_par_personne'] * $qty;
+                    $messageHTML .= "
+                        <tr>
+                            <td style='border-bottom: 1px solid #ddd;'>" . htmlspecialchars($menu['titre']) . "</td>
+                            <td style='border-bottom: 1px solid #ddd; text-align: center;'>" . $qty . "</td>
+                            <td style='border-bottom: 1px solid #ddd; text-align: right;'>" . number_format($prixLigne, 2) . " €</td>
+                        </tr>
+                    ";
+                }
             }
 
-            // --- DEBUT AJOUT : VIDER LE PANIER EN BDD ---
-            Panier::clearSavedCart($userId);
-            // --- FIN AJOUT ---
+            $messageHTML .= "
+                            <tr style='background-color: #f9f9f9; font-weight: bold;'>
+                                <td colspan='2' style='text-align: right; border-top: 2px solid #ddd;'>TOTAL PAYÉ</td>
+                                <td style='text-align: right; border-top: 2px solid #ddd; color: #D8A85E; font-size: 18px;'>
+                                    " . htmlspecialchars($_POST['total_final']) . " €
+                                </td>
+                            </tr>
+                        </table>
+                        
+                        <p style='margin-top: 30px; font-size: 12px; color: #777;'>
+                            Si vous avez la moindre question, n'hésitez pas à répondre directement à cet email.
+                        </p>
+                    </div>
+                </body>
+                </html>
+            ";
 
+            Mailer::send($_SESSION['user']['email'], $sujet, $messageHTML);
+
+            Panier::clearSavedCart($userId);
             unset($_SESSION['panier']);
+            
             header('Location: index.php?page=commande_success');
             exit;
         }
@@ -352,7 +405,6 @@ switch($page) {
         $commandeId = $_GET['id'];
         $commande = Commande::getById($commandeId);
         
-        // Sécurité : Seulement le propriétaire ou Staff (Admin/Employé)
         $isStaff = isset($_SESSION['user']['role_id']) && in_array($_SESSION['user']['role_id'], [1, 2]);
         if ($commande['utilisateur_id'] != $_SESSION['user']['id'] && !$isStaff) {
             header('Location: index.php?page=compte'); exit;
@@ -377,7 +429,6 @@ switch($page) {
             $id = $_SESSION['user']['id'];
             User::update($id, $_POST['nom'], $_POST['prenom'], $_POST['email'], $_POST['telephone'], $_POST['adresse'], $_POST['code_postal'], $_POST['ville']);
             
-            // Mise à jour session
             $_SESSION['user']['nom'] = $_POST['nom'];
             $_SESSION['user']['prenom'] = $_POST['prenom'];
             
@@ -402,13 +453,11 @@ switch($page) {
         }
         break;
 
-    // --- ACTIONS CLIENT SUR COMMANDE ---
-
     case 'client_order_cancel':
         require_once 'Utils/Auth.php';
         Auth::check(); 
         require_once 'Models/Commande.php';
-        require_once 'Models/Menu.php'; // Nécessaire pour le stock
+        require_once 'Models/Menu.php';
 
         if(isset($_GET['id'])) {
             $id = (int)$_GET['id'];
@@ -416,12 +465,10 @@ switch($page) {
 
             if($cmd && $cmd['utilisateur_id'] == $_SESSION['user']['id'] && $cmd['statut'] == 'en_attente') {
                 
-                // --- RESTOCKAGE AVANT ANNULATION ---
                 $details = Commande::getDetails($id);
                 foreach($details as $d) {
                     Menu::incrementStock($d['menu_id'], $d['quantite']);
                 }
-                // -----------------------------------
 
                 Commande::updateStatus($id, 'annulee');
                 header('Location: index.php?page=compte&success=Commande annulée');
@@ -437,7 +484,7 @@ switch($page) {
         Auth::check();
         require_once 'Models/Commande.php';
         require_once 'Models/Panier.php';
-        require_once 'Models/Menu.php'; // Nécessaire pour le stock
+        require_once 'Models/Menu.php';
 
         if(isset($_GET['id'])) {
             $id = (int)$_GET['id'];
@@ -447,14 +494,11 @@ switch($page) {
                 
                 $details = Commande::getDetails($id);
 
-                // 1. Remettre dans le panier (Session)
                 $_SESSION['panier'] = [];
                 foreach($details as $d) {
                     $_SESSION['panier'][$d['menu_id']] = $d['quantite'];
                     
-                    // --- 2. RESTOCKAGE (Important car on annule la commande) ---
                     Menu::incrementStock($d['menu_id'], $d['quantite']);
-                    // -----------------------------------------------------------
                 }
 
                 Panier::saveForUser($_SESSION['user']['id'], $_SESSION['panier']);
@@ -478,15 +522,10 @@ switch($page) {
         }
         break;
 
-    // ============================================================
-    // PARTIE STAFF (Partagée Admin + Employé)
-    // ============================================================
-    // Ces routes utilisent checkStaff() pour autoriser Admin (1) et Employé (2)
-
     case 'admin_menu_add':
     case 'admin_menu_edit':
         require_once 'Utils/Auth.php';
-        Auth::checkStaff(); // <-- Autorisé pour l'employé
+        Auth::checkStaff();
         require_once 'Models/Menu.php';
         $themes = Menu::getThemes();
         $regimes = Menu::getRegimes();
@@ -506,31 +545,26 @@ switch($page) {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
-            // Fonction helper interne pour les images
             function getUploadedImageOrKeepOld($inputName) {
-                // 1. Nouveau fichier uploadé ?
                 if (isset($_FILES[$inputName]) && $_FILES[$inputName]['error'] === 0) {
                     $ext = pathinfo($_FILES[$inputName]['name'], PATHINFO_EXTENSION);
                     $filename = 'menu_' . uniqid() . '.' . $ext;
                     move_uploaded_file($_FILES[$inputName]['tmp_name'], "assets/images/menu/" . $filename);
                     return $filename;
                 }
-                // 2. Sinon, on garde l'ancien (champ caché)
                 $oldKey = 'old_' . $inputName;
                 return !empty($_POST[$oldKey]) ? $_POST[$oldKey] : null;
             }
 
-            // Traitement des 4 images
             $img1 = getUploadedImageOrKeepOld('image_principale');
             $img2 = getUploadedImageOrKeepOld('image_entree');
             $img3 = getUploadedImageOrKeepOld('image_plat');
             $img4 = getUploadedImageOrKeepOld('image_dessert');
 
-            // --- CAS 1 : CRÉATION ---
             if ($page == 'admin_menu_create_action') {
                 Menu::create(
                     $_POST['titre'], 
-                    $_POST['description'] ?? '', // <--- CORRECTION ICI (Le '??' évite le crash)
+                    $_POST['description'] ?? '',
                     $_POST['desc_entree'], 
                     $_POST['desc_plat'], 
                     $_POST['desc_dessert'], 
@@ -539,11 +573,11 @@ switch($page) {
                     $_POST['theme_id'] ?: null, 
                     $_POST['regime_id'] ?: null, 
                     $img1, $img2, $img3, $img4,
-                    $_POST['stock'] ?? 50,       // Sécurité pour le stock
-                    $_POST['conditions'] ?? null, // Sécurité pour les conditions
+                    $_POST['stock'] ?? 50,
+                    $_POST['conditions'] ?? null,
                 );
             }
-            // --- CAS 2 : MODIFICATION ---
+
             else {
                 Menu::update(
                     $_GET['id'], 
@@ -553,11 +587,10 @@ switch($page) {
                     $_POST['theme_id'] ?: null, $_POST['regime_id'] ?: null, 
                     $img1, $img2, $img3, $img4,
                     $_POST['stock'],
-                    $_POST['conditions'] // <--- AJOUT ICI
+                    $_POST['conditions']
                 );
             }
 
-            // Redirection intelligente selon le rôle
             $redir = ($_SESSION['user']['role_id'] == 2) ? 'employe_dashboard' : 'admin_dashboard';
             header("Location: index.php?page=$redir&success=Menu enregistré");
             exit;
@@ -566,7 +599,7 @@ switch($page) {
 
     case 'admin_menu_delete':
         require_once 'Utils/Auth.php';
-        Auth::checkStaff(); // <-- Autorisé pour l'employé
+        Auth::checkStaff();
         require_once 'Models/Menu.php';
         if (isset($_GET['id'])) Menu::delete($_GET['id']);
         $redir = ($_SESSION['user']['role_id'] == 2) ? 'employe_dashboard' : 'admin_dashboard';
@@ -575,7 +608,7 @@ switch($page) {
 
     case 'admin_horaire_update':
         require_once 'Utils/Auth.php';
-        Auth::checkStaff(); // <-- Autorisé pour l'employé
+        Auth::checkStaff();
         require_once 'Models/Horaire.php';
         if(isset($_POST['id'])) {
             Horaire::update($_POST['id'], $_POST['creneau']);
@@ -587,7 +620,7 @@ switch($page) {
     case 'admin_avis_validate':
     case 'admin_avis_delete':
         require_once 'Utils/Auth.php';
-        Auth::checkStaff(); // <-- Autorisé pour l'employé
+        Auth::checkStaff();
         require_once 'Models/Avis.php';
         if(isset($_GET['id'])) {
             if($page == 'admin_avis_validate') Avis::validate($_GET['id']);
@@ -599,13 +632,9 @@ switch($page) {
         header("Location: index.php?page=$redir");
         break;
 
-    // ============================================================
-    // PARTIE EMPLOYÉ (Spécifique)
-    // ============================================================
-
     case 'employe_dashboard':
         require_once 'Utils/Auth.php';
-        Auth::checkStaff(); // On accepte Admin et Employé pour voir le dashboard
+        Auth::checkStaff();
         
         require_once 'Models/Commande.php';
         require_once 'Models/Menu.php';
@@ -622,14 +651,13 @@ switch($page) {
 
     case 'employe_update_status':
         require_once 'Utils/Auth.php';
-        Auth::checkStaff(); // Seul le staff peut faire ça
+        Auth::checkStaff();
         require_once 'Models/Commande.php';
         header('Content-Type: application/json');
 
         if(isset($_POST['id']) && isset($_POST['statut'])) {
             Commande::updateStatus($_POST['id'], $_POST['statut']);
             
-            // Logique Métier : Email Matériel
             if ($_POST['statut'] === 'attente_retour_materiel') {
                 $cmd = Commande::getById($_POST['id']);
                 if ($cmd && !empty($cmd['email'])) {
@@ -644,12 +672,11 @@ switch($page) {
 
     case 'employe_cancel_order':
         require_once 'Utils/Auth.php';
-        Auth::checkStaff(); // Seul le staff peut faire ça
+        Auth::checkStaff();
         require_once 'Models/Commande.php';
         header('Content-Type: application/json');
 
         if(isset($_POST['id']) && isset($_POST['motif']) && isset($_POST['contact'])) {
-            // Assure-toi que cette méthode existe dans Models/Commande.php !
             if(Commande::cancelByEmploye($_POST['id'], $_POST['motif'], $_POST['contact'])) {
                 echo json_encode(['status' => 'success']);
             } else {
@@ -658,11 +685,6 @@ switch($page) {
             exit;
         }
         break;
-
-    // ============================================================
-    // PARTIE ADMIN (Exclusive)
-    // ============================================================
-    // Ces routes utilisent checkAdmin() (Rôle 1 uniquement)
 
     case 'admin_dashboard':
         require_once 'Utils/Auth.php';
@@ -688,13 +710,11 @@ switch($page) {
     case 'admin_user_role':
     case 'admin_user_delete':
         require_once 'Utils/Auth.php';
-        Auth::checkAdmin(); // Seul l'admin gère les users
+        Auth::checkAdmin();
         require_once 'Models/User.php';
         
         if($page == 'admin_user_role' && isset($_POST['id'])) {
             
-            // --- AJOUT SÉCURITÉ ICI ---
-            // Si on essaie de passer le rôle à 1 (Admin), on bloque tout.
             if ($_POST['role_id'] == 1) {
                 echo json_encode([
                     'status' => 'error', 
@@ -702,14 +722,12 @@ switch($page) {
                 ]);
                 exit;
             }
-            // --------------------------
 
             User::updateRole($_POST['id'], $_POST['role_id']);
             echo json_encode(['status'=>'success']); exit;
         }
 
         if($page == 'admin_user_delete' && isset($_GET['id'])) {
-            // Optionnel : Tu peux aussi empêcher de supprimer un autre admin ici si tu veux
             User::delete($_GET['id']);
             echo json_encode(['status'=>'success']); exit;
         }
@@ -719,14 +737,45 @@ switch($page) {
     case 'admin_message_delete':
     case 'admin_message_read':
         require_once 'Utils/Auth.php';
-        Auth::checkAdmin(); // Seul l'admin gère les messages
+        Auth::checkAdmin();
         require_once 'Models/Contact.php';
         header('Content-Type: application/json');
 
         if ($page == 'admin_message_reply' && isset($_POST['id'])) {
+            require_once 'Models/Mailer.php';
+
+            $messageOrigine = Contact::getById($_POST['id']);
+
+            if ($messageOrigine) {
+                $sujet = "Réponse à votre message : " . htmlspecialchars($messageOrigine['sujet']);
+                $corps = "
+                    <html>
+                    <body style='font-family: Arial, sans-serif;'>
+                        <h3>Bonjour " . htmlspecialchars($messageOrigine['nom_visiteur']) . ",</h3>
+                        <p>Merci de nous avoir contactés.</p>
+                        <div style='border-left: 3px solid #ccc; padding-left: 10px; margin: 15px 0; color: #555;'>
+                            <strong>Votre message :</strong><br>
+                            " . nl2br(htmlspecialchars($messageOrigine['contenu_message'])) . "
+                        </div>
+                        <div style='background-color: #f8f9fa; padding: 15px; border-radius: 5px;'>
+                            <strong>Notre réponse :</strong><br>
+                            " . nl2br(htmlspecialchars($_POST['message'])) . "
+                        </div>
+                        <br>
+                        <p>Cordialement,<br>L'équipe Vite & Gourmand</p>
+                    </body>
+                    </html>
+                ";
+
+                Mailer::send($messageOrigine['email_visiteur'], $sujet, $corps);
+            }
+
             Contact::saveReply($_POST['id'], $_POST['message']);
-            echo json_encode(['status'=>'success']); exit;
+            
+            echo json_encode(['status'=>'success']); 
+            exit;
         }
+
         if ($page == 'admin_message_delete' && isset($_GET['id'])) {
             Contact::delete($_GET['id']);
             echo json_encode(['status'=>'success']); exit;
@@ -756,7 +805,7 @@ switch($page) {
 
     case 'admin_commande_delete':
         require_once 'Utils/Auth.php';
-        Auth::checkAdmin(); // Suppression brute = Admin seulement
+        Auth::checkAdmin();
         require_once 'Models/Commande.php';
         if(isset($_GET['id'])) Commande::delete($_GET['id']);
         header('Location: index.php?page=admin_dashboard');
@@ -764,7 +813,7 @@ switch($page) {
 
     case 'admin_commande_status':
         require_once 'Utils/Auth.php';
-        Auth::checkAdmin(); // Version Admin (sans mail obligatoire)
+        Auth::checkAdmin();
         require_once 'Models/Commande.php';
         if(isset($_POST['id'])) {
             Commande::updateStatus($_POST['id'], $_POST['statut']);
@@ -773,10 +822,9 @@ switch($page) {
         header('Location: index.php?page=admin_dashboard');
         break;
 
-    // --- ACTION : CRÉER UN UTILISATEUR (ADMIN SEULEMENT) ---
     case 'admin_user_create':
         require_once 'Utils/Auth.php';
-        Auth::checkAdmin(); // Sécurité absolue
+        Auth::checkAdmin();
         require_once 'Models/User.php';
 
         header('Content-Type: application/json');
@@ -786,21 +834,18 @@ switch($page) {
             $prenom = $_POST['prenom'];
             $email = $_POST['email'];
             $pass = $_POST['password'];
-            $role = (int)$_POST['role']; // 2 ou 3
+            $role = (int)$_POST['role'];
 
-            // 1. Règle métier : Interdiction de créer un Admin (ID 1)
             if ($role === 1) {
                 echo json_encode(['status' => 'error', 'message' => 'Interdit de créer un Admin ici.']);
                 exit;
             }
 
-            // 2. Vérifier si l'email existe déjà
             if (User::findByEmail($email)) {
                 echo json_encode(['status' => 'error', 'message' => 'Cet email existe déjà.']);
                 exit;
             }
 
-            // 3. Création
             if (User::createByAdmin($nom, $prenom, $email, $pass, $role)) {
                 echo json_encode(['status' => 'success']);
             } else {

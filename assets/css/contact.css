@@ -1,32 +1,29 @@
-/* --- AMBIANCE GÉNÉRALE --- */
 body {
-    background-color: #F2F0ED; /* Fond Beige */
+    background-color: #F2F0ED;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #444;
 }
 
-/* --- LA CARTE CENTRALE --- */
 .contact-card {
     background: white;
-    border-radius: 25px; /* Arrondi prononcé */
-    box-shadow: 0 15px 40px rgba(139, 38, 53, 0.08); /* Ombre légère teintée de bordeaux */
+    border-radius: 25px;
+    box-shadow: 0 15px 40px rgba(139, 38, 53, 0.08);
     border: none;
     overflow: hidden;
     transition: transform 0.3s ease;
 }
 
 .contact-card:hover {
-    transform: translateY(-5px); /* Petit effet de levitation */
+    transform: translateY(-5px);
 }
 
-/* --- EN-TÊTE DE LA CARTE --- */
 .contact-header {
     padding: 40px 40px 20px 40px;
     text-align: center;
 }
 
 .contact-title {
-    color: #8B2635; /* Rouge Bordeaux */
+    color: #8B2635;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -35,8 +32,8 @@ body {
 }
 
 .contact-subtitle {
-    color: #D8A85E; /* Doré */
-    font-family: 'Georgia', serif; /* Touche d'élégance pour le sous-titre */
+    color: #D8A85E;
+    font-family: 'Georgia', serif;
     font-style: italic;
     font-size: 1.1rem;
 }
@@ -49,7 +46,6 @@ body {
     border-radius: 2px;
 }
 
-/* --- FORMULAIRE --- */
 .card-body {
     padding: 20px 50px 50px 50px;
 }
@@ -66,18 +62,17 @@ body {
 .form-control {
     background-color: #fdfdfd;
     border: 2px solid #eee;
-    border-radius: 15px; /* Champs bien arrondis */
+    border-radius: 15px;
     padding: 15px 20px;
     font-size: 1rem;
     color: #333;
     transition: all 0.3s ease;
 }
 
-/* Effet au clic dans le champ (Focus) */
 .form-control:focus {
     background-color: #fff;
-    border-color: #D8A85E; /* Bordure dorée */
-    box-shadow: 0 0 0 4px rgba(216, 168, 94, 0.15); /* Halo doré */
+    border-color: #D8A85E;
+    box-shadow: 0 0 0 4px rgba(216, 168, 94, 0.15);
     outline: none;
 }
 
@@ -86,12 +81,10 @@ body {
     font-size: 0.9rem;
 }
 
-/* Zone de texte (Textarea) */
 textarea.form-control {
-    resize: none; /* Empêche de déformer le design */
+    resize: none;
 }
 
-/* --- BOUTON D'ENVOI --- */
 .btn-submit-wrapper {
     margin-top: 30px;
     text-align: center;
@@ -103,7 +96,7 @@ textarea.form-control {
     font-weight: 700;
     text-transform: uppercase;
     padding: 15px 50px;
-    border-radius: 50px; /* Bouton Pilule */
+    border-radius: 50px;
     border: none;
     font-size: 1rem;
     letter-spacing: 1px;
@@ -115,8 +108,8 @@ textarea.form-control {
 }
 
 .btn-send:hover {
-    background-color: #D8A85E; /* Passe au doré */
-    transform: translateY(-3px); /* Remonte légèrement */
+    background-color: #D8A85E;
+    transform: translateY(-3px);
     box-shadow: 0 15px 30px rgba(216, 168, 94, 0.3);
     color: white;
 }
@@ -125,7 +118,6 @@ textarea.form-control {
     transform: translateY(-1px);
 }
 
-/* --- MESSAGES D'ALERTE --- */
 .alert-success {
     background-color: #d4edda;
     color: #155724;

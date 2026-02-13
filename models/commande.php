@@ -1,12 +1,8 @@
 <?php
 class Commande {
-
-    // 1. Créer la commande principale
-    // J'ai ajouté $datePrestation à la fin des arguments
     public static function create($userId, $total, $frais, $reduction, $nom, $prenom, $adresse, $cp, $ville, $phone, $heure, $instructions, $datePrestation) {
         global $pdo;
 
-        // Génération d'un numéro de commande unique
         $numeroCommande = 'CMD-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -4));
 
         $sql = "INSERT INTO commande (
@@ -15,23 +11,23 @@ class Commande {
                     prix_total, 
                     prix_livraison, 
                     montant_reduction,
-                    nom,                /* <--- AJOUTÉ */
-                    prenom,             /* <--- AJOUTÉ */
+                    nom,
+                    prenom,
                     adresse_livraison, 
                     code_postal_livraison, 
                     ville_livraison, 
                     telephone, 
                     heure_livraison, 
                     instructions,
-                    date_prestation,    /* <--- AJOUTÉ */
+                    date_prestation,
                     statut, 
                     date_commande
                 ) VALUES (
                     :num, :user, :total, :frais, :reduc,
-                    :nom, :prenom,      /* <--- AJOUTÉ */
+                    :nom, :prenom,
                     :adr, :cp, :ville,
                     :phone, :heure, :instr,
-                    :datePresta,        /* <--- AJOUTÉ */
+                    :datePresta,
                     'en_attente', NOW()
                 )";
         
@@ -43,21 +39,20 @@ class Commande {
             ':total' => $total,
             ':frais' => $frais,
             ':reduc' => $reduction,
-            ':nom'   => $nom,           /* <--- AJOUTÉ */
-            ':prenom'=> $prenom,        /* <--- AJOUTÉ */
+            ':nom'   => $nom,
+            ':prenom'=> $prenom,
             ':adr'   => $adresse,
             ':cp'    => $cp,
             ':ville' => $ville,
             ':phone' => $phone,
             ':heure' => $heure,
             ':instr' => $instructions,
-            ':datePresta' => $datePrestation /* <--- AJOUTÉ */
+            ':datePresta' => $datePrestation
         ]);
 
         return $pdo->lastInsertId();
     }
 
-    // 2. Ajouter une ligne de menu à la commande
     public static function addDetail($commandeId, $menuId, $quantite, $prixUnitaire) {
         global $pdo;
         
@@ -73,7 +68,6 @@ class Commande {
         ]);
     }
 
-    // Récupérer toutes les commandes d'un utilisateur
     public static function getAllByUser($userId) {
         global $pdo;
         
@@ -87,11 +81,8 @@ class Commande {
         return $stmt->fetchAll();
     }
 
-    // Récupérer le CONTENU (les menus) d'une commande
-    // Récupérer le CONTENU (les menus) d'une commande
     public static function getDetails($commandeId) {
         global $pdo;
-        // ATTENTION : Il faut bien sélectionner m.menu_id
         $sql = "SELECT d.*, m.titre, m.image_principale, m.menu_id 
                 FROM commande_detail d 
                 JOIN menu m ON d.menu_id = m.menu_id 
@@ -100,11 +91,8 @@ class Commande {
         $stmt->execute([':id' => $commandeId]);
         return $stmt->fetchAll();
     }
-
-    // Récupérer TOUTES les commandes (Pour l'Admin)
     public static function getAll() {
         global $pdo;
-        // On récupère la commande ET le nom du client (table utilisateur)
         $sql = "SELECT c.*, u.nom, u.prenom 
                 FROM commande c
                 JOIN utilisateur u ON c.utilisateur_id = u.utilisateur_id
@@ -114,22 +102,14 @@ class Commande {
         return $stmt->fetchAll();
     }
 
-    // Supprimer une commande et son contenu
     public static function delete($id) {
         global $pdo;
-        
-        // 1. On supprime d'abord les détails (les plats contenus dans la commande)
         $stmt = $pdo->prepare("DELETE FROM commande_detail WHERE commande_id = :id");
         $stmt->execute([':id' => $id]);
-
-        // 2. Ensuite, on supprime la commande elle-même
         $stmt = $pdo->prepare("DELETE FROM commande WHERE commande_id = :id");
         return $stmt->execute([':id' => $id]);
     }
 
-    // --- GESTION EMPLOYÉ ---
-
-    // 1. Annuler une commande (Spécifique Employé avec Motif)
     public static function cancelByEmploye($id, $motif, $contact) {
         global $pdo;
         
@@ -147,7 +127,6 @@ class Commande {
         ]);
     }
 
-    // 2. Mettre à jour le statut (Utilisé par Admin et Employé)
     public static function updateStatus($id, $statut) {
         global $pdo;
         $sql = "UPDATE commande SET statut = :statut WHERE commande_id = :id";
@@ -158,10 +137,8 @@ class Commande {
         ]);
     }
 
-    // 3. Récupérer une commande par ID (Indispensable pour l'envoi d'email)
     public static function getById($id) {
         global $pdo;
-        // On fait une jointure pour avoir l'email et le nom du client
         $sql = "SELECT c.*, u.email, u.nom, u.prenom 
                 FROM commande c 
                 JOIN utilisateur u ON c.utilisateur_id = u.utilisateur_id 

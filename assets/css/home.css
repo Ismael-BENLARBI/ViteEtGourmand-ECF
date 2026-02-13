@@ -5,14 +5,22 @@ body {
     overflow-x: hidden;
 }
 
-h1, h2, h3, h4, h5, p, div, span, a {
+h1,
+h2,
+h3,
+h4,
+h5,
+p,
+div,
+span,
+a {
     font-family: 'Montserrat', sans-serif !important;
 }
 
 .hero-wrapper {
     position: relative;
     width: 100%;
-    margin-bottom: 0; 
+    margin-bottom: 0;
     padding-top: 0;
     display: flex;
     justify-content: center;
@@ -28,14 +36,14 @@ h1, h2, h3, h4, h5, p, div, span, a {
     -webkit-mask-image: radial-gradient(closest-side, black 40%, transparent 85%);
     mask-image: radial-gradient(closest-side, black 40%, transparent 85%);
     object-fit: contain;
-    margin-bottom: -20px; 
+    margin-bottom: -20px;
 }
 
 .hero-content {
     text-align: center;
     position: relative;
     z-index: 10;
-    margin-top: 0; 
+    margin-top: 0;
     padding-bottom: 60px;
     padding-left: 20px;
     padding-right: 20px;
@@ -54,7 +62,7 @@ h1, h2, h3, h4, h5, p, div, span, a {
     line-height: 1.6;
     max-width: 800px;
     margin: 0 auto 40px auto;
-    color: #333; 
+    color: #333;
 }
 
 .btn-hero {
@@ -65,7 +73,7 @@ h1, h2, h3, h4, h5, p, div, span, a {
     text-transform: uppercase;
     border-radius: 8px;
     border: none;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s;
 }
 
@@ -87,13 +95,13 @@ h1, h2, h3, h4, h5, p, div, span, a {
     color: #8B2635;
     padding: 40px;
     border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
 }
 
 .about-img {
     width: 100%;
     border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .review-card {
@@ -103,7 +111,7 @@ h1, h2, h3, h4, h5, p, div, span, a {
     border-radius: 15px;
     height: 100%;
     text-align: center;
-    box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
 }
 
 .review-stars {
@@ -118,9 +126,8 @@ h1, h2, h3, h4, h5, p, div, span, a {
     font-size: 1.1rem;
 }
 
-/* --- SECTION AVIS CLIENTS --- */
 .section-avis {
-    background-color: #F2F0ED; /* Le fond général de la page reste blanc */
+    background-color: #F2F0ED;
 }
 
 .avis-title {
@@ -129,12 +136,11 @@ h1, h2, h3, h4, h5, p, div, span, a {
     text-transform: uppercase;
 }
 
-/* --- LA CARTE AVIS (CHANGEMENTS ICI) --- */
 .card-avis {
-    background-color: #D8A85E; /* FOND DORÉ */
+    background-color: #D8A85E;
     border-radius: 20px;
     border: none;
-    box-shadow: 0 4px 15px rgba(216, 168, 94, 0.4); /* Ombre dorée */
+    box-shadow: 0 4px 15px rgba(216, 168, 94, 0.4);
     transition: transform 0.3s ease;
 }
 
@@ -142,41 +148,35 @@ h1, h2, h3, h4, h5, p, div, span, a {
     transform: translateY(-5px);
 }
 
-/* Les étoiles (Blanches pour le contraste sur le doré) */
 .avis-stars {
-    color: #8B2635; 
+    color: #8B2635;
     font-size: 1.3rem;
-    text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Le commentaire */
-/* On force la couleur bordeaux même si Bootstrap met du gris */
 .card-avis .card-text {
-    color: #8B2635 !important; /* TEXTE BORDEAUX */
+    color: #8B2635 !important;
     font-weight: 600;
     font-size: 1.05rem;
 }
 
-/* La petite ligne de séparation */
 .avis-separator {
     width: 50px;
-    border-top: 2px solid #8B2635; /* Ligne Bordeaux */
+    border-top: 2px solid #8B2635;
     margin: 15px auto;
     opacity: 1;
 }
 
-/* Le nom du client */
 .avis-author {
-    color: #8B2635; /* TEXTE BORDEAUX */
+    color: #8B2635;
     font-weight: 800;
     margin-bottom: 0;
     font-size: 1.1rem;
     text-transform: uppercase;
 }
 
-/* Le nom du menu goûté */
 .avis-menu-name {
-    color: #8B2635; /* Blanc pour le distinguer du nom du client, ou met #8B2635 si tu préfères */
+    color: #8B2635;
     font-size: 0.9rem;
     font-style: italic;
     opacity: 0.9;
