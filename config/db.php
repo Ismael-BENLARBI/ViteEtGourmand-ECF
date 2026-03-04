@@ -6,7 +6,7 @@ $username = 'vite-et-gourmand-projet';                    // Ton nom d'utilisate
 $password = 'VEG-admin123!';                   // Le mot de passe défini dans l'admin Alwaysdata
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
+    $pdo = new PDO('mysql:host=db;dbname=vite_et_gourmand', 'root', 'root');
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 } catch (PDOException $e) {

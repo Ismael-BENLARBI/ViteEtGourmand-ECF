@@ -144,6 +144,26 @@ switch($page) {
 
                 Panier::saveForUser($user['utilisateur_id'], $_SESSION['panier']);
 
+                try {
+                    $manager = new MongoDB\Driver\Manager("mongodb://mongo:27017");
+                    
+                    $logDocument = [
+                        'utilisateur_id' => $user['utilisateur_id'],
+                        'email' => $user['email'],
+                        'role' => $user['role_id'],
+                        'action' => 'Connexion réussie',
+                        'ip_address' => $_SERVER['REMOTE_ADDR'],
+                        'date_connexion' => date('Y-m-d H:i:s')
+                    ];
+
+                    $bulk = new MongoDB\Driver\BulkWrite;
+                    $bulk->insert($logDocument);
+                    $manager->executeBulkWrite('vite_et_gourmand.logs_activite', $bulk);
+
+                } catch (Exception $e) {
+                    error_log("Alerte NoSQL : " . $e->getMessage());
+                }
+
                 if ($user['role_id'] == 1) {
                     header('Location: index.php?page=admin_dashboard');
                 } elseif ($user['role_id'] == 2) {
