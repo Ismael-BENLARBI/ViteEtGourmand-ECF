@@ -42,6 +42,11 @@
             </button>
         </li>
         <li class="nav-item">
+            <button class="nav-link" id="pills-activity-tab" data-bs-toggle="pill" data-bs-target="#pills-activity" type="button" role="tab">
+                <i class="fa-solid fa-database me-2"></i> Activite NoSQL
+            </button>
+        </li>
+        <li class="nav-item">
             <button class="nav-link" id="pills-horaires-tab" data-bs-toggle="pill" data-bs-target="#pills-horaires" type="button" role="tab">
                 <i class="fa-solid fa-clock me-2"></i> Horaires
             </button>
@@ -422,6 +427,53 @@
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr><td colspan="3" class="text-center">Aucun horaire trouvé. Veuillez vérifier la base de données.</td></tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="pills-activity" role="tabpanel">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold" style="color: #8B2635;">🧾 Journal d'activite (MongoDB)</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small mb-3">Flux NoSQL non bloquant: si MongoDB est indisponible, le site continue de fonctionner.</p>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Action</th>
+                                    <th>IP</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if(empty($activityLogs)): ?>
+                                    <tr><td colspan="5" class="text-center py-4 text-muted">Aucune donnee disponible.</td></tr>
+                                <?php else: ?>
+                                    <?php foreach($activityLogs as $log): ?>
+                                        <tr>
+                                            <td><?php echo htmlspecialchars($log['created_at'] ?? ''); ?></td>
+                                            <td><?php echo htmlspecialchars($log['email'] ?? ''); ?></td>
+                                            <td>
+                                                <?php
+                                                    $role = (int)($log['role_id'] ?? 0);
+                                                    if ($role === 1) echo 'Administrateur';
+                                                    elseif ($role === 2) echo 'Employe';
+                                                    elseif ($role === 3) echo 'Client';
+                                                    else echo 'Inconnu';
+                                                ?>
+                                            </td>
+                                            <td><?php echo htmlspecialchars($log['action'] ?? ''); ?></td>
+                                            <td><?php echo htmlspecialchars($log['ip_address'] ?? ''); ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
                                 <?php endif; ?>
                             </tbody>
                         </table>

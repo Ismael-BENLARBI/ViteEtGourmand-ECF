@@ -144,25 +144,12 @@ switch($page) {
 
                 Panier::saveForUser($user['utilisateur_id'], $_SESSION['panier']);
 
-                try {
-                    $manager = new MongoDB\Driver\Manager("mongodb://mongo:27017");
-                    
-                    $logDocument = [
-                        'utilisateur_id' => $user['utilisateur_id'],
-                        'email' => $user['email'],
-                        'role' => $user['role_id'],
-                        'action' => 'Connexion réussie',
-                        'ip_address' => $_SERVER['REMOTE_ADDR'],
-                        'date_connexion' => date('Y-m-d H:i:s')
-                    ];
-
-                    $bulk = new MongoDB\Driver\BulkWrite;
-                    $bulk->insert($logDocument);
-                    $manager->executeBulkWrite('vite_et_gourmand.logs_activite', $bulk);
-
-                } catch (Exception $e) {
-                    error_log("Alerte NoSQL : " . $e->getMessage());
-                }
+                require_once 'models/ActivityLog.php';
+                ActivityLog::logAuthSuccess([
+                    'id' => $user['utilisateur_id'],
+                    'email' => $user['email'],
+                    'role_id' => $user['role_id']
+                ], $_SERVER['REMOTE_ADDR'] ?? null);
 
                 if ($user['role_id'] == 1) {
                     header('Location: index.php?page=admin_dashboard');
@@ -716,6 +703,7 @@ switch($page) {
         require_once 'Models/User.php';
         require_once 'Models/Contact.php';
         require_once 'Models/Horaire.php';
+        require_once 'models/ActivityLog.php';
 
         $commandes = Commande::getAll();
         $menus = Menu::getAll();
@@ -723,6 +711,7 @@ switch($page) {
         $users = User::getAll();
         $messages = Contact::getAll();
         $horaires = Horaire::getAll();
+        $activityLogs = ActivityLog::getRecent(50);
 
         require_once 'Views/admin/dashboard.php';
         break;

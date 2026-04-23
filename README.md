@@ -49,6 +49,37 @@ Une application web complète de gestion de traiteur permettant aux clients de c
 3.  **Configuration :**
     * Vérifier les paramètres de connexion dans `config/db.php` (si nécessaire).
 
+## 🐳 Docker (Validation compétence)
+
+Le projet inclut une stack Docker complète:
+
+- `web` : PHP 8.2 + Apache + extensions `pdo_mysql` et `mongodb`
+- `db` : MySQL 8 avec import automatique de `config/database.sql`
+- `phpmyadmin` : interface MySQL
+- `mongo` : MongoDB pour journal d'activite NoSQL
+
+### Démarrage
+
+```bash
+docker compose up -d --build
+```
+
+### Accès
+
+- Application: `http://localhost:8000`
+- phpMyAdmin: `http://localhost:8080`
+- MongoDB: `mongodb://localhost:27017`
+
+## 🧾 NoSQL (Validation compétence)
+
+Le site reste basé sur MySQL pour les données métier. MongoDB est utilisé pour un besoin complémentaire:
+
+- journal d'activite des connexions réussies (email, role, ip, date)
+- stockage NoSQL non bloquant (si Mongo est indisponible, le site fonctionne quand meme)
+- visualisation dans l'onglet admin `Activite NoSQL`
+
+Variables utiles (voir `.env.example`) : `MONGO_DSN`, `MONGO_DB`, `MONGO_ACTIVITY_COLLECTION`.
+
 ## 🔐 Identifiants de Démonstration
 
 Pour tester l'application intégralement, voici les comptes pré-configurés :
