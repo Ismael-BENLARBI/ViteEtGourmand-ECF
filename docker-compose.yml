@@ -10,6 +10,7 @@ services:
       DB_NAME: vite_et_gourmand
       DB_USER: root
       DB_PASSWORD: root
+      APP_TIMEZONE: Europe/Paris
       MONGO_DSN: mongodb://mongo:27017
       MONGO_DB: vite_et_gourmand
       MONGO_ACTIVITY_COLLECTION: logs_activite
