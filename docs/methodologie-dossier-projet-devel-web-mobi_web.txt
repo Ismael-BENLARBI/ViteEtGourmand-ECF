@@ -1,0 +1,665 @@
+Méthodologie du
+dossier projet - TP
+Développeur Web
+et Web Mobile
+
+
+
+
+         Tous droits réservés à STUDI - Reproduction interdite
+Table des matières
+I - Contexte                                                                                                        3
+II - Le contexte du dossier projet                                                                                  4
+    A. Rôle et utilité du dossier projet ........................................................................ 4
+    B. Les projets types possibles ............................................................................. 4
+    C. Les attentes spécifiques .................................................................................. 6
+III - Structure et contenu du dossier projet                                                                        7
+    A. La structure du dossier projet.......................................................................... 7
+    B. Les recommandations d’écriture..................................................................... 8
+IV - Structure et contenu de la présentation orale                                                                  9
+    A. La structure et le contenu de la présentation ................................................. 9
+    B. La préparation de l’oral..................................................................................... 9
+    C. Questionnaire professionnel.......................................................................... 11
+V - L'essentiel                                                                                                   12
+VI - Auto-évaluation                                                                                              13
+Solutions des exercices                                                                                           15
+
+
+
+
+2                                                                 Tous droits réservés à STUDI - Reproduction interdite
+I      Contexte
+
+                                                                                       Contexte
+
+    Objectifs :
+           Appréhender l'importance du dossier de projet dans l'obtention de votre Titre
+           Professionnel
+           Comprendre les critères d'évaluation du jury
+           Remplir votre document en suivant le plan type recommandé pour correspondre aux
+           attentes du jury et à la réalité du métier
+           Savoir présenter efficacement votre expérience professionnelle dans le domaine ciblé
+
+
+
+
+Tous droits réservés à STUDI - Reproduction interdite                                             3
+II Le contexte du dossier projet
+    A. Rôle et utilité du dossier projet
+
+
+                                                                                       Fondamental
+    Le dossier projet occupe une place centrale dans le processus d’obtention du titre
+    professionnel Développeur Web et Web Mobile (DWWM). Nous allons visualiser ensemble le
+    rôle et l’utilité de ce dossier dans la validation de vos compétences.
+
+
+Le dossier projet, tel que requis par les exigences du titre professionnel DWWM, est un ouvrage
+détaillant un projet que vous avez effectué au sein de votre formation (ou dans le domaine
+personnel, professionnel, en stage ou en alternance) permettant de valider vos compétences
+auprès du jury d’examen. Il permet de démontrer de manière concrète et approfondie votre
+capacité à concevoir, développer et déployer des solutions web et web mobile de qualité.
+Pour rappel, en fonction de votre inscription, vous pouvez soit valider via votre dossier projet, soit
+avec une des deux activités types, ou les deux. Voici le détail des activités types :
+       Activité Type 1 : développer la partie front-end d’une application web ou web mobile
+       sécurisée
+             Installer et configurer son environnement de travail en fonction du projet web ou web
+             mobile,
+             Maquetter des interfaces utilisateur web ou web mobile,
+             Réaliser des interfaces utilisateur statiques web ou web mobile,
+             Développer la partie dynamique des interfaces utilisateur web ou web mobile.
+       Activité Type 2 : développer la partie back-end d'une application web ou web mobile
+       sécurisée
+             Mettre en place une base de données relationnelle,
+             Développer des composants d'accès aux données SQL et NoSQL,
+             Développer des composants métier coté serveur,
+             Documenter le déploiement d'une application dynamique web ou web mobile.
+
+
+                                                                                            Attention
+    Il est important de noter que votre dossier projet ne contiendra qu’un seul projet permettant
+    de valider l’ensemble des compétences. De même, le projet que vous mentionnez dans le
+    dossier projet ne peux pas être mentionné dans le dossier professionnel.
+
+
+    B. Les projets types possibles
+Durant votre formation, vous allez avoir un examen final, appelé ECF (Évaluation en Cours de
+Formation) qui a été conçu de manière à valider toutes vos compétences. Toutefois, des
+alternatives existent, comme un projet personnel que vous pouvez détailler ainsi qu’un projet
+d’entreprise effectué dans le cadre d’un stage ou d’une alternance.
+En fonction de votre inscription, vous pouvez ne proposer que la partie front-end ou back-end de
+votre projet afin de valider l’activité type associée.
+
+4                                                         Tous droits réservés à STUDI - Reproduction interdite
+                                                                             Le contexte du dossier projet
+
+Voici un énoncé type d’un projet personnel, valable pour un dossier projet : « Vous allez développer
+une application web permettant aux personnes de votre famille de créer des listes de courses pour
+leurs besoins alimentaires. L’application offrira des fonctionnalités de recherche de produits et
+d’affectation de ceux-ci à une liste. Chaque personne pourra se créer un compte et concevoir ses
+propres listes. Dans un souci d’ergonomie, l’application devra être responsive ».
+Ce projet est inspiré d’une activité du quotidien que nous pratiquons tous : faire nos courses. Vous
+pouvez prendre des sujets très simples que vous connaissez au quotidien et en faire un projet
+intéressant.
+Décortiquons maintenant ce projet en détaillant chaque compétence.
+
+
+                                                                                          Exemple
+           Installer et configurer son environnement de travail en fonction du projet web ou web
+           mobile.
+                  Exemple : vous présentez comment vous avez installé les langages, initialisé le
+                  projet ainsi que le Git (et éventuellement la gestion de projet). Vous pouvez
+                  également présenter tous les outils utilisés.
+           Maquetter des interfaces utilisateur web ou web mobile : vous allez élaborer des
+           wireframes et maquette qui illustrent les différentes pages et les interactions de
+           l’application.
+                  Exemple : maquette et interaction de la page d’accueil, de la page contenu les
+                  listes ainsi que des produits (maquette mobile + desktop).
+           Réaliser des interfaces utilisateur statique web ou web mobile : vous allez créer les
+           interfaces statiques en utilisant HTML, CSS et potentiellement des frameworks
+           responsif (Bootstrap) pour assurer l’adaptabilité sur différentes tailles d’écran.
+                  Exemple : vous présenterez les fichiers HTML / CSS qui composent la page
+                  d’accueil, les listes de courses ainsi que des produits.
+           Développer la partie dynamique des interfaces utilisateur web ou web mobiles : vous
+           allez mettre en œuvre des interactions dynamiques en utilisant JavaScript, pour par
+           exemple, la recherche des produits.
+                  Exemple : vous expliquez comment vous avez ajouté la recherche des produits et
+                  l’ajout dans la liste de courses sans rechargement de page. Le code JavaScript
+                  sera présenté de manière technique.
+           Mettre en place une base de données relationnelle : vous devez concevoir et mettre en
+           place la structure d’une base de données qui stockera les informations relatives aux
+           produits, aux utilisateurs et aux listes de course.
+                  Exemple : votre schéma de données sera représenté sous la forme d’un
+                  diagramme de classe ou d’un modèle conceptuel de données. N’hésitez pas à
+                  donner des indications sur comment vous avez installé votre base de données et
+                  à mettre en avant les éléments qui vous ont aidé à choisir le SGBD.
+           Développer des composants d’accès aux données SQL et NoSQL : vous devez
+           concevoir des éléments applicatifs permettant d’interagir avec la base de données.
+                  Exemple : dans votre code back-end, vous montrez les éléments vous permettant
+                  de mettre à jour, supprimer, lire, créer une liste de courses. L’aspect code ne sera
+                  pas suffisant, vous devez également fournir les requêtes SQL que vous avez
+                  effectuées dans votre projet (par exemple, jeu de données). Le NoSQL est
+                  souvent utilisé pour stocker beaucoup de données statistiques, ainsi, vous
+                  pouvez afficher comment votre back-end contacte la base NoSQL afin de stocker
+                  des chiffres statistiques.
+
+
+Tous droits réservés à STUDI - Reproduction interdite                                                    5
+Le contexte du dossier projet
+
+          Développer des composants métier côtés serveur : vous allez aborder comment vous
+          avez implémenté les conditions, contraintes, règles imposées par le métier de votre
+          client dans votre application back-end.
+                Exemple : vous présentez dans le détail les fonctionnalités affectées par le métier
+                de votre client. Les composants métier sont également les fonctionnalités
+                spécifiques demandées par le client.
+          Documenter le déploiement d'une application dynamique web ou web mobile : vous
+          documentez comment vous avez déployé votre application et comment vous avez
+          paramétré votre déploiement automatique.
+                Exemple : vous présentez dans le détail le paramétrage intégral de votre projet
+                afin de proposer un déploiement de qualité et automatique (à chaque push, par
+                exemple, sur la branche Main de votre Git).
+
+
+    C. Les attentes spécifiques
+Dans la quête de l'obtention du diplôme, le dossier de projet se positionne en tant que preuve
+centrale de l'expertise de l'apprenant. Le jury accorde une importance capitale à certaines
+composantes essentielles du projet. Voici les attentes spécifiques :
+       Attente de sécurité
+       L'une des préoccupations primordiales du jury réside dans la sécurité. L'apprenant doit
+       démontrer une veille constante sur les normes de sécurité en vigueur. Cette vigilance
+       permettra de garantir la livraison d'une application sécurisée et pertinente aux utilisateurs
+       finaux. Les mécanismes de protection des données, les pratiques d'authentification et les
+       mesures de prévention des vulnérabilités devraient être clairement présentés et expliqués
+       dans le dossier projet.
+       Attente de maîtrise des bases de données
+       La maîtrise du langage SQL est une compétence fondamentale. Le jury attend de l'apprenant
+       qu'il démontre sa capacité à concevoir, créer et interagir avec des bases de données. Ceci
+       peut être accompli en présentant des extraits de scripts SQL pertinents au sein du projet.
+       Ces scripts devraient refléter la conception de la base de données ainsi que les opérations
+       de lecture et d'écriture.
+       Attente de dynamisme avec JavaScript
+       La dimension dynamique est un aspect incontournable du développement web moderne. Le
+       jury accorde une grande importance à l'utilisation du langage JavaScript pour créer des
+       interactions en temps réel au sein de l'application. Contrairement à certains langages back-
+       end comme PHP, qui nécessitent le rafraîchissement de la page pour obtenir des résultats,
+       JavaScript offre une expérience utilisateur fluide et interactive. L'apprenant doit démontrer
+       son aptitude à intégrer efficacement des fonctionnalités dynamiques dans l'interface
+       utilisateur.
+
+
+                                                                                            Attention
+    Il est crucial de souligner que toutes les compétences listées sont d'une importance égale
+    dans l'évaluation du dossier de projet. Cependant, une attention particulière est accordée aux
+    éléments mentionnés ci-dessus en raison de leur impact direct sur la sécurité, la
+    fonctionnalité et l'expérience utilisateur de l'application développée.
+
+
+
+
+6                                                         Tous droits réservés à STUDI - Reproduction interdite
+III         Structure et contenu du dossier projet
+  A. La structure du dossier projet
+
+
+                                                                                           Attention
+   Le contenu ne fait pas tout. Le jury lisant énormément de dossiers projet, il est très important
+   de penser à la structure du dossier afin de faire la différence. Pour ce faire, nous vous
+   recommandons une police Calibri de taille 12 avec une interligne de 1,5, avec un nombre de
+   pages compris entre 40 et 60 pages dans le but d’assurer un équilibre entre capture d’écran
+   de code et explication.
+
+
+
+
+                                                                                             Conseil
+   Tout d’abord, nous vous recommandons de prévoir une table des matières qui comportera
+   une liste détaillée des sections et sous-sections du dossier, avec les numéros de page
+   correspondants. Elle facilite la navigation et l'accès rapide aux informations.
+   Ensuite, une introduction concise qui présente le contexte du projet, ses objectifs, son
+   importance et les technologies utilisées. C'est la première impression que le jury aura du
+   projet. Il s’agit du point de départ, l’objectif de cette partie est de capter l’attention du jury dès
+   le début.
+   La prochaine partie est aussi importante que le développement de votre projet, il s’agit du
+   résumé. Vous devez mettre en évidence les points forts, les réalisations clés et les résultats
+   obtenus en énumérant la durée de développement du projet. Le jury doit appréhender
+   rapidement l’essence du projet. Vous pouvez, à la suite du résumé, exprimer votre gratitude
+   envers les personnes qui ont contribué au succès de votre projet via la page de
+   remerciements.
+   Le développement (contenu) est le cœur du dossier projet et devrait être divisé en sous-
+   sections correspondant aux étapes importantes du développement. Chaque compétence
+   devrait être présentée de manière claire et approfondie, en expliquant les choix de conception,
+   les défis rencontrés et les solutions mises en œuvre.
+   La conclusion est une synthèse des points saillants du projet mettant en avant les
+   accomplissements majeurs et les apprentissages tirés de l'expérience.
+   Enfin, les annexes devront contenir les extraits de code, les captures d'écran, les schémas, les
+   diagrammes et tout autre élément qui soutient et enrichit vos explications (la taille de chaque
+   élément dépasse la demi-page).
+
+
+
+
+                                                                                          Remarque
+   L’introduction, le résumé ainsi que la conclusion font chacun une page maximum. De même,
+   ces 3 parties sont les premières parties à être lues par le jury. Elles doivent être claires,
+   pertinentes et captivantes pour susciter l’intérêt du jury à explorer d’avantage le contenu
+   détaillé de votre projet.
+
+
+
+
+Tous droits réservés à STUDI - Reproduction interdite                                                       7
+Structure et contenu du dossier projet
+
+
+
+                                                                                       Fondamental
+    Votre dossier projet doit contenir une introduction, un résumé, une page de remerciements
+    (optionnelle), un développement, une conclusion et des annexes. Il est primordial de respecter
+    ce plan.
+
+
+    B. Les recommandations d’écriture
+Dans la rédaction de votre projet, il est vivement conseillé d’avoir une approche très technique en
+fournissant des explications détaillées pour chaque compétence abordée. Vous devez montrer que
+vous comprenez les concepts et que vous pouvez les appliquer. Pour ce faire, des extraits de code
+ainsi que des captures d’écran seront vos meilleurs alliés. Montrer l’aspect technique et le rendu de
+votre application est un atout indéniable pour prouver au jury que vous maîtrisez les différentes
+facettes des compétences.
+À l’inverse, nous déconseillons les descriptions trop brèves et générales qui ne montrent pas votre
+compréhension approfondie. De même, utilisez vos propres mots et évitez le plagiat : si vous
+utilisez des sources, n’hésitez pas à reformuler la source pour qu’elle vous appartienne, le jury
+sentira que vous maîtrisez la notion.
+
+
+
+
+8                                                         Tous droits réservés à STUDI - Reproduction interdite
+IV Structure et contenu de la présentation
+   orale
+  A. La structure et le contenu de la présentation
+La présentation orale constitue le socle de l'échange entre vous et le jury. Elle offre l'opportunité de
+démontrer la compréhension globale du projet tout en mettant en avant les compétences
+acquises. Cette section aborde l'importance de la présentation orale et comment vous pouvez
+aborder toutes les compétences de manière concise en utilisant un format simple.
+Introduction
+L'introduction pose les bases de votre présentation. Présentez-vous brièvement et donnez un
+aperçu du projet que vous allez exposer. C'est l'occasion d'attirer l'attention du jury et de susciter
+son intérêt pour ce qui va suivre.
+Présentation du besoin client
+Expliquez le contexte dans lequel le projet a été conçu. Mettez en évidence le besoin ou le
+problème que votre projet vise à résoudre. Cette section montre que vous comprenez les enjeux et
+les objectifs de votre projet.
+Ressources humaines et informatiques
+Décrivez les ressources humaines et informatiques que vous avez mobilisées pour mener à bien le
+projet. Mentionnez les membres de l'équipe, les technologies utilisées et les outils de
+développement. Cela démontre votre capacité à gérer les aspects organisationnels d'un projet.
+Réalisations les plus significatives
+Sélectionnez 2 réalisations majeures issues de votre projet. Ces réalisations devraient mettre en
+évidence vos compétences clés et vos accomplissements. Expliquez-en les détails techniques, les
+choix de conception et les difficultés surmontées.
+Conclusion
+La conclusion de votre dossier est importante et doit figurer dans votre présentation.
+
+
+                                                                                        Attention
+   Votre oral doit être complémentaire à l’écrit, il ne faut pas copier-coller votre dossier, mais le
+   présenter de manière différente.
+
+
+  B. La préparation de l’oral
+
+                                                                                        Attention
+   Préparer l’oral est très important. Une fois votre présentation effectuée, vous allez avoir
+   besoin de vous entraîner. Vous devrez présenter votre dossier projet pendant 35 minutes, s’en
+   suivra un entretien technique de 40 minutes. À la suite de cela, vous devrez répondre à un
+   questionnaire professionnel d’une durée de 30 minutes, enfin, vous aurez 15 minutes
+   d’échanges sur le dossier professionnel.
+
+
+
+
+Tous droits réservés à STUDI - Reproduction interdite                                                   9
+Structure et contenu de la présentation orale
+
+
+
+                                                                                                 Conseil
+     Tout d’abord, il est important que vous ayez bien compris votre sujet, cela va vous rassurer et
+     vous permettre de démarrer sereinement. Les objectifs, vos résultats et vos réalisations ne
+     doivent plus avoir de secret. Organisez vos idées est essentiel afin de mener à bien cet
+     objectif. Pour ce faire, minimisez vos notes, cela vous permettra à la fois de maintenir le
+     contact visuel avec le jury et à la fois de garder une ligne directrice qui vous évitera de perdre
+     le fil.
+     Ensuite, pratiquez la diction : il est important de ne pas parler trop vite ni trop lentement.
+     L’entraînement sera d’une grande aide et vous permettra de gagner en confiance, d’identifier
+     les points à améliorer et même de corriger certains tics de langage que vous pouvez adopter
+     sans forcément vous en rendre compte. L’effet engendré par l’entraînement sera l’anticipation
+     des questions du jury. Vous pourrez ainsi optimiser votre prestation de manière à tendre les
+     bonnes perches auprès du jury, c’est-à-dire le « forcer » indirectement à vous poser les
+     questions que vous attendez.
+     Durant votre présentation devant le jury, exprimez-vous par la gestuelle. Cela montre que vous
+     maîtrisez votre sujet, que vous êtes à l’aise. Focalisez votre regard sur le jury. Le regard
+     permet de prouver que vous maîtrisez votre sujet et le jury sera beaucoup plus captivé par
+     votre prestation.
+
+
+Jeu d’essai
+Présentez un jeu d'essai concret pour montrer comment votre application fonctionne. Effectuez
+une démonstration en direct pour mettre en évidence les fonctionnalités et l'interface utilisateur.
+Cela illustre votre capacité à présenter votre travail de manière pratique. Nous vous
+recommandons une vidéo de votre application afin de parer à toute éventualité le jour J.
+Conclusion
+Concluez votre présentation en résumant les points clés, les réalisations et les enseignements
+tirés du projet. Fournissez une perspective sur les développements futurs ou les extensions
+possibles de l'application.
+En structurant votre présentation selon ce format, vous pouvez aborder l'ensemble des
+compétences tout en gardant une synthèse claire et percutante. La présentation orale est une
+occasion de faire briller vos compétences et de montrer votre engagement dans le projet.
+
+
+                                                                                               Attention
+     Le danger est de vouloir exposer trop de chose, il faut garder en tête que la présentation orale
+     est de 40 minutes, c’est à la fois long et court.
+     Vous devez ainsi prioriser les éléments que vous considérez les plus importants, les autres
+     éléments seront visibles dans votre dossier projet.
+
+
+
+
+10                                                           Tous droits réservés à STUDI - Reproduction interdite
+                                                           Structure et contenu de la présentation orale
+
+  C. Questionnaire professionnel
+Le questionnaire professionnel sera une documentation applicative rédigée en anglais, cela se
+déroule sur une durée de 30 minutes et tous les candidats le passent simultanément sous la
+supervision d'un surveillant.
+Une documentation technique rédigée en anglais vous sera présenté, puis, des questions vous
+seront posé sur ce sujet. Le questionnaire comprend deux types de questions :
+    1. Questions fermées à choix unique en français : ces questions permettent d'évaluer la
+       compréhension du candidat en matière de concepts clés en développement web. Le
+       candidat doit sélectionner la réponse appropriée parmi les options proposées en français.
+    2. Questions ouvertes en anglais : ces questions exigent que le candidat rédige des réponses
+       courtes en anglais. Elles sont conçues pour évaluer la capacité du candidat à communiquer
+       efficacement en anglais, ce qui est crucial dans un environnement professionnel
+       international. Les réponses aux questions ouvertes peuvent porter sur des sujets techniques,
+       des procédures de développement, des pratiques de programmation, etc.
+Ce questionnaire professionnel est un moyen de mesure précieux pour évaluer à la fois vos
+compétences techniques et linguistiques des candidats. Il met en avant la nécessité d'avoir une
+compréhension solide des concepts techniques, tout en étant capable de les expliquer en anglais.
+Cela reflète la réalité du secteur du développement web et web mobile, où la collaboration et la
+communication internationale sont monnaie courante.
+
+
+
+
+Tous droits réservés à STUDI - Reproduction interdite                                                11
+V       L'essentiel
+Vous êtes maintenant prêt à rédiger le dossier de projet ! N'oubliez pas de relire plusieurs fois votre
+texte après l'avoir écrit pour vous assurer qu'il est complet et clair.
+Rappelez-vous aussi que vous devez absolument transmettre votre dossier de projet avant le délai
+imparti si vous voulez prétendre à l'obtention du Titre Professionnel Développeur Web ou Web
+Mobile.
+N'hésitez pas à utiliser le forum pour discuter avec vos collègues de promotion et vos formateurs
+afin d'optimiser votre document. Vous pouvez aussi contacter le service pédagogique pour toute
+question ou assistance nécessaire.
+
+
+
+
+12                                                        Tous droits réservés à STUDI - Reproduction interdite
+VI Auto-évaluation
+  Exercice 1 : Quiz                                                               [solution n°1 p. 15]
+
+
+ Question 1
+  Quelle est la fonction de l'introduction dans un dossier projet ?
+
+    Présenter les remerciements aux personnes impliquées dans le projet
+
+
+    Donner un aperçu des compétences techniques abordées
+
+
+    Établir le contexte, les objectifs et l'importance du projet
+
+
+ Question 2
+  Quelle partie du dossier projet met en évidence les points clés, les accomplissements majeurs et
+  les résultats obtenus ?
+
+    Introduction
+
+
+    Résumé
+
+
+    Conclusion
+
+
+ Question 3
+  Pourquoi est-il important de détailler chaque compétence dans la section « Contenu du projet » ?
+
+    Pour augmenter le nombre de pages du dossier
+
+
+    Pour montrer que vous pouvez inclure des détails pertinents
+
+
+    Pour démontrer votre compréhension et votre capacité à appliquer chaque compétence
+
+
+ Question 4
+  Dans la section « Contenu du projet », comment pouvez-vous montrer que vous avez compris une
+  compétence technique spécifique ?
+
+    En utilisant des images aléatoires
+
+
+    En fournissant des extraits de code non liés au sujet
+
+
+    En expliquant vos choix de conception et en décrivant comment vous avez surmonté les défis
+
+
+
+Tous droits réservés à STUDI - Reproduction interdite                                             13
+Auto-évaluation
+
+
+ Question 5
+  Quels sont les éléments que vous devriez éviter d'inclure dans votre dossier projet ?
+
+     Des explications techniques approfondies
+
+
+     Des extraits de code significatifs
+
+
+     Des termes vagues et des détails non pertinents
+
+
+ Question 6
+  Pourquoi est-il crucial de faire preuve d'une attention particulière à la sécurité, à la base de
+  données et au dynamisme dans un projet de développement web ?
+
+     Pour rendre le dossier plus intéressant à lire
+
+
+     Pour répondre aux exigences du jury concernant la longueur du dossier
+
+
+     Pour garantir que l'application est sécurisée, fonctionnelle et engageante pour les utilisateurs
+
+
+ Question 7
+  En quoi la structure du dossier projet (police, interligne, nombre de pages, etc.) peut-elle
+  influencer l'impression laissée sur le jury ?
+
+     La structure n’exerce aucune influence sur l'impression du jury
+
+
+     Une structure soignée et conforme montre votre professionnalisme et facilite la lecture pour
+     le jury
+
+
+     La structure du dossier n'affecte que la table des matières
+
+
+
+
+14                                                         Tous droits réservés à STUDI - Reproduction interdite
+Solutions des exercices
+Solution n°1                                                                             [exercice p. 13]
+
+
+ Question 1
+
+ Quelle est la fonction de l'introduction dans un dossier projet ?
+
+   Présenter les remerciements aux personnes impliquées dans le projet
+
+
+   Donner un aperçu des compétences techniques abordées
+
+
+    Établir le contexte, les objectifs et l'importance du projet
+
+
+
+    L’introduction va présenter votre projet, de ce fait, vous devez décrire le contexte (besoin
+         client) ainsi que les objectifs (ce que l’application fournira comme avantage) tout en
+         présentant l’importance du projet pour votre client (en quoi cela est important pour lui).
+
+
+ Question 2
+
+ Quelle partie du dossier projet met en évidence les points clés, les accomplissements majeurs et
+ les résultats obtenus ?
+
+   Introduction
+
+
+   Résumé
+
+
+    Conclusion
+
+
+
+    La conclusion est une prise de recul sur votre projet, vous devez présenter les points
+         positifs et négatif de votre réalisation, énumérer vos réalisations majeures et les
+         résultats.
+
+
+ Question 3
+
+ Pourquoi est-il important de détailler chaque compétence dans la section « Contenu du projet » ?
+
+   Pour augmenter le nombre de pages du dossier
+
+
+   Pour montrer que vous pouvez inclure des détails pertinents
+
+
+    Pour démontrer votre compréhension et votre capacité à appliquer chaque compétence
+
+
+
+
+Tous droits réservés à STUDI - Reproduction interdite                                                 15
+Solutions des exercices
+
+
+      Pour valider les compétences, il est important de bien les comprendre. Cela permet de
+         présenter au jury que vous maitrisez votre sujet.
+
+
+ Question 4
+
+ Dans la section « Contenu du projet », comment pouvez-vous montrer que vous avez compris une
+ compétence technique spécifique ?
+
+  En utilisant des images aléatoires
+
+
+  En fournissant des extraits de code non liés au sujet
+
+
+   En expliquant vos choix de conception et en décrivant comment vous avez surmonté les
+    défis
+
+
+
+      Il est très important de fournir des captures d’écran de code ainsi que des captures
+         d’écran de résultats concrets couplés à des explications.
+
+
+ Question 5
+
+ Quels sont les éléments que vous devriez éviter d'inclure dans votre dossier projet ?
+
+  Des explications techniques approfondies
+
+
+  Des extraits de code significatifs
+
+
+   Des termes vagues et des détails non pertinents
+
+
+
+      Des termes vagues vont montrer au jury que vous ne maitrisez pas les notions. Soyez
+         toujours très précis et juste dans vos propos.
+
+
+ Question 6
+
+ Pourquoi est-il crucial de faire preuve d'une attention particulière à la sécurité, à la base de
+ données et au dynamisme dans un projet de développement web ?
+
+  Pour rendre le dossier plus intéressant à lire
+
+
+  Pour répondre aux exigences du jury concernant la longueur du dossier
+
+
+   Pour garantir que l'application est sécurisée, fonctionnelle et engageante pour les
+    utilisateurs
+
+
+
+
+16                                                           Tous droits réservés à STUDI - Reproduction interdite
+                                                                                  Solutions des exercices
+
+
+    La sécurité est un enjeu très important, le jury est très sensible à cela, puis, au
+         dynamisme (JavaScript) : cela permet de garantir une application sécurisée, de qualité
+         et performante !
+
+
+ Question 7
+
+ En quoi la structure du dossier projet (police, interligne, nombre de pages, etc.) peut-elle
+ influencer l'impression laissée sur le jury ?
+
+   La structure n’exerce aucune influence sur l'impression du jury
+
+
+    Une structure soignée et conforme montre votre professionnalisme et facilite la lecture
+     pour le jury
+
+
+   La structure du dossier n'affecte que la table des matières
+
+
+
+    Le jury va lire des milliers de dossiers, il est très important de soigner sa présentation
+         afin de se démarquer et de donner envie au jury de lire votre réalisation.
+
+
+
+
+Tous droits réservés à STUDI - Reproduction interdite                                                 17
+

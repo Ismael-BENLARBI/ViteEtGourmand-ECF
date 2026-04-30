@@ -1,0 +1,94 @@
+1er dépôt du dossier projet
+Vous devez déposer dans cet espace la première version de votre dossier projet. Cette
+version est un entraînement et n’est pas notée. Vous recevrez en déposant cette version un
+premier retour de l’un de vos formateurs avec des axes d’amélioration. Ce dépôt n’est pas
+obligatoire, mais fortement conseillé.
+
+
+Pour vous aider, une méthodologie du Dossier Projet est disponible dans le module “Réussir
+mon TP Développeur Web et Web Mobile” de votre médiathèque.
+
+
+
+Mise en œuvre des compétences lors de la
+réalisation du projet
+Le projet couvre obligatoirement les compétences suivantes :
+Pour l'activité type 1 « Développer la partie front-end d'une application web ou web mobile
+sécurisée »
+    ● Maquetter des interfaces utilisateur web ou web mobile
+    ● Réaliser des interfaces utilisateur statiques web ou web mobile
+    ● Développer la partie dynamique des interfaces utilisateur web ou web mobile
+Pour l'activité type 2 « Développer la partie back-end d'une application web ou web mobile
+sécurisée »
+    ● Mettre en place une base de données relationnelle
+    ● Développer des composants d'accès aux données SQL et NoSQL
+    ● Développer des composants métier côté serveur
+
+
+Le projet donne lieu à une production complémentaire :
+    ● Une présentation orale du projet, devant le jury, basée sur un support de
+      présentation.
+
+
+©Studi Reproduction interdite                                                Page 1 sur 3
+Contenu du dossier de projet
+Le dossier de projet rend compte de l’ensemble des projets.
+Hors page de garde, sommaire et annexes, le dossier projet comporte entre 30 et 50 pages
+au maximum, schémas et illustrations compris.
+Les annexes comportent 30 pages au maximum.
+Le plan de votre dossier projet va dépendre de si votre projet est basé sur une expérience en
+entreprise ou sur des projets réalisés pendant la formation.
+Pour un projet réalisé en entreprise, le dossier projet suit le plan suivant :
+    ● La liste des compétences du référentiel couvertes par le projet ;
+    ● Le contexte du projet :
+           ○ La présentation de l’entreprise et du service ;
+           ○ Le cahier des charges ou l'expression des besoins ;
+           ○ Les contraintes du projet, les livrables attendus ;
+           ○ L’environnement humain et technique, les objectifs de qualité
+    ● Les réalisations comportant les éléments les plus significatifs coté front-end, les
+      arguments qui ont conduit à ses choix, y compris pour la sécurité :
+           ○ La présentation de maquettes de l’application, adaptation web et adaptation
+               web mobile ;
+           ○ Le schéma de l’enchaînement des maquettes de l’application ;
+           ○ Les captures d’écran d’interfaces utilisateur, adaptation web et adaptation
+               web mobile ;
+           ○ Des extraits de code d’interfaces utilisateur statiques ;
+           ○ Des extraits de code de la partie dynamique d’interfaces utilisateur ;
+    ● Les réalisations comportant les éléments les plus significatifs coté back-end, les
+      arguments qui ont conduit à ses choix, y compris pour la sécurité :
+           ○ La présentation de la base de données (schéma conceptuel avec données et
+               relations, schéma physique, script de création ou de modification de la base
+               de données) ;
+           ○ Des extraits de code de composants métier ;
+           ○ Des extraits de code de composants d’accès aux données ;
+    ● La présentation d’éléments de sécurité de l’application ;
+    ● La présentation d’un jeu d’essai élaboré par le candidat de la fonctionnalité la plus
+      représentative (données en entrée, données attendues, données obtenues) et
+      analyse des écarts éventuels ;
+    ● La description de la veille, effectuée durant le projet, sur les vulnérabilités de
+      sécurité, description des vulnérabilités éventuellement trouvées et des failles
+      potentiellement corrigées.
+
+©Studi Reproduction interdite                                                    Page 2 sur 3
+Les annexes comportent les éléments de la fonctionnalité la plus représentative d’un projet
+en entreprise, coté front-end et back-end :
+    ● Les maquettes des interfaces utilisateur ;
+    ● Les captures d'écran des interfaces utilisateurs et le code correspondant ;
+    ● Le code de composants métier les plus significatifs ;
+    ● Le code de composants d’accès aux données les plus significatifs.
+
+Pour les projets réalisés pendant la formation, le dossier projet suit le plan suivant :
+   ● La liste des compétences mises en œuvre dans le cadre du projet ;
+   ● L’expression des besoins du projet pour définir les objectifs et les limites du projet ;
+   ● L’environnement technique ;
+   ● Les réalisations permettant la mise en œuvre des compétences.
+
+
+Nos experts vous guident et annotent votre Dossier Projet mais ne vous attribuent pas de
+note.
+
+
+
+
+©Studi Reproduction interdite                                                    Page 3 sur 3
+
